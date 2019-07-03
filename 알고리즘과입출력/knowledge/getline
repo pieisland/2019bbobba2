@@ -1,0 +1,10 @@
+[getline]
+istream& getline(istream& is, string& str);
+is-입력스트림 오브젝트. cin
+str-입력받은 문자열을 저장할 string 객체
+
+공백을 포함한 문자열을 받을 수 있다.
+
+사용법은
+string s;
+getline(cin, s);
