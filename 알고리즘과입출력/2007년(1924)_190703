@@ -1,0 +1,65 @@
+#include<cstdio>
+#include<iostream>
+#include<vector>
+#include<algorithm>
+#include<string>
+#include<cstring>
+#include<queue>
+using namespace std;
+
+/*
+2019.07.03.수.
+*/
+
+int main(){
+
+	string days[7]={"SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"};
+
+	cin.tie(NULL);
+	int x, y;
+	cin >> x>>y;
+
+	int ans=0;
+	for(int i=1;i<x;i++)
+	{
+		if(i==1||i==3||i==5||i==7||i==8||i==10||i==12)
+		{
+			ans+=31;
+		}
+		else if(i==4||i==6||i==9||i==11)
+			ans+=30;
+		else
+			ans+=28;
+	}
+	ans+=y;
+
+	int day=ans%7;
+	cout<<days[day]<<endl;
+	
+  //오류 나는 이유..?
+	/*switch(day)
+		case 1:
+			cout<<"MON"<<endl;
+			break;
+		case 2:
+			cout<<"TUE"<<endl;
+			break;
+		case 3:
+			cout<<"WED"<<endl;
+			break;
+		case 4:
+			cout<<"THU"<<endl;
+			break;
+		case 5:
+			cout<<"FRI"<<endl;
+			break;
+		case 6:
+			cout<<"SAT"<<endl;
+			break;
+		case 0:
+			cout<<"SUN"<<endl;
+			break;
+*/
+
+	return 0;
+}
