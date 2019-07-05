@@ -1,0 +1,17 @@
+#include<stdio.h>
+ 
+void main(void)
+{
+    int num;
+    scanf("%d", &num);
+ 
+    //계속 10으로 나눠서 몫이 0이 될 때까지 하면 된다.
+    int cnt=0;
+    while(num!=0)
+    {
+        num/=10;
+        cnt++;
+    }
+ 
+    printf("%d\n", cnt);
+}
