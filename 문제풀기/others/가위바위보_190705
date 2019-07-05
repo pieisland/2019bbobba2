@@ -1,0 +1,28 @@
+#include<iostream>
+#include<string>
+#include<cstdlib>
+using namespace std;
+
+//look up table을 만들면 if문을 줄일 수 있다.
+//결과를 미리 가지고 있어서 그것만 뽑아 쓰는 것.
+//rand는 난수를 발생시키는 함수이고 cstdlib에 들어있다.
+//계속해서 발생시키려면 time 관련해서 뭔가를 해야되는 것 같음.
+
+int main()
+{
+	int result[3][3]={{0, 2, 1}, {1, 0, 2}, {2, 1, 0}};
+	char msg1[3][5]={"가위", "바위", "보"};
+	char msg2[3][5]={"비김", "승리", "패배"};
+
+	int n;
+	cin>>n;
+	if(n<0||n>2)
+		return 0;
+	int com=rand()%3;
+
+	cout<<"나 : "<<msg1[n]<<endl;
+	cout<<"컴퓨터 : "<<msg1[com]<<endl;
+	cout<<"결과 : "<<msg2[result[n][com]]<<endl;
+
+	return 0;
+}
