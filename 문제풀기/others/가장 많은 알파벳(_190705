@@ -1,0 +1,39 @@
+#include<cstdio>
+#include<iostream>
+#include<vector>
+#include<algorithm>
+#include<string>
+#include<cstring>
+#include<queue>
+#include<math.h>
+#include<stdio.h>
+using namespace std;
+
+int main(){
+
+	char s[30];
+	int arr[26]={0};
+
+	scanf("%s", s);
+
+	//마지막 번째를 찾는 방법은 이렇게 조건에 s[i] 넣으면 마지막 null일 때까지 간다고 함.
+	for(int i=0;s[i];i++)
+	{	
+		//대문자가 들어왔을 때 처리는 굳이 안해줘도 되는 건
+		//아마 그.. 인덱스 값이 이상해도 오류가 나지 않아서 그런 건가?
+		arr[s[i]-97]++;
+	}
+
+	int max=0;
+	int idx=0;
+	for(int i=0;i<26;i++)
+		if(arr[i]>max){
+			max=arr[i];
+			idx=i;
+		}
+
+	printf("%c\n", idx+97);
+
+	
+	return 0;
+}
