@@ -1,0 +1,62 @@
+#include<cstdio>
+#include<iostream>
+#include<vector>
+#include<algorithm>
+#include<string>
+#include<cstring>
+#include<queue>
+#include<math.h>
+using namespace std;
+
+/*
+19.07.05.금.
+구조체 이용하기.
+.을 통해 인자에 접근한다.
+구조체는 전체로 복사 가능하다.
+
+그리고 추가로, 어느 정도까지만 순위를 알고싶다면 모든 것을 정렬하지 않아도 되고
+그 순위까지만 정렬하면 된다(단순 정렬 사용 시).
+*/
+
+struct st
+{	
+	int id;
+	int score;
+};
+
+//모두 sorting 안 해도 되고 3번만 돌려도 된다.
+int main()
+{
+	int n;
+	cin>>n;
+
+	struct st student[5000];
+
+	int score;
+	for(int i=0;i<n;i++)
+	{
+		cin>>score;
+		student[i].id=i+1;
+		student[i].score=score;
+	}
+
+	//2까지 가야 3번이 되는 것.
+	for(int i=0;i<3;i++)
+		for(int j=i+1;j<n;j++)
+		{
+			//점수가 큰 사람이 뒤에 있다면 앞으로 옮긴다.
+			if(student[i].score<student[j].score)
+			{
+				struct st tmp;
+				tmp=student[i];
+				student[i]=student[j];
+				student[j]=tmp;	
+			}
+		}
+
+	//3순위까지만 하면 되므로.
+	for(int i=0;i<3;i++)
+		cout<<student[i].id<<" ";
+
+	return 0;
+}
