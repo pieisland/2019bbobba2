@@ -1,0 +1,42 @@
+#include<cstdio>
+#include<iostream>
+#include<vector>
+#include<algorithm>
+#include<string>
+#include<cstring>
+#include<queue>
+#include<math.h>
+#define ABS(x) ((x)<0?(-x):(x))
+
+using namespace std;
+
+/*
+19.07.08.
+핵심은 괄호를 쳐야한다는 거다.
+cout에서 안되고 ABS(num)자체를 볼 수도 없었는데 괄호치니까 해결됨..
+왜지;
+*/
+
+int a[4]={1, 2, 3, 4};
+
+int main()
+{
+	int num;
+	int max=-100000;
+	for(int i=0;i<5;i++)
+	{
+		cin>>num;
+		
+		num = ABS(num);
+	
+		//cout<<ABS(num)<<endl;
+		//printf("%d\n", ABS(num));
+
+		if(num>max)
+			max=num;
+	}
+
+	cout<<max<<endl;
+	
+	return 0;
+}
