@@ -1,0 +1,17 @@
+#include <stdio.h>
+ 
+
+unsigned int str_lenth(const char * d)
+{
+    unsigned int cnt=0;
+    while(*d++)//null까지 가면 멈춘다. null 제외하고 글자의 길이가 세어진다.
+        cnt++;
+    return cnt;
+}
+ 
+void main(void)
+{
+      char a[ ] = "Willtek";
+      printf("%d\n", sizeof(a));
+      printf("%d\n", str_lenth(a));
+}
