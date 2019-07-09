@@ -1,0 +1,33 @@
+#include <stdio.h>
+ 
+  
+ 
+void str_add(char * d, const char * s)
+ 
+{
+    while(*d++);
+    d--;//널까지 돼서 끝났나봄.
+ 
+    //null 이전으로 돌아와서 그 자리에 다음 문장을 연결.
+    while(*(d)++=*s++);
+}
+ 
+  
+ 
+void main(void)
+ 
+{
+ 
+      char a[15] = "Willtek";
+ 
+      char b[15] = " Corp.";
+ 
+  
+ 
+      str_add(a, b);
+ 
+  
+ 
+      printf("%s\n", a);
+ 
+}
