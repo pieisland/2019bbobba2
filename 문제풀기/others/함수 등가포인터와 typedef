@@ -1,0 +1,25 @@
+#include <stdio.h> 
+
+typedef int (*RTN2)[4];
+typedef RTN2 (*RTN1)(void);
+
+//이렇게 쓰면 된데요.
+ //int (*f2(void))[4]
+ RTN2 f2(void)
+ {
+     static int a[3][4] = {1,2,3,4,5,6,7,8,9,10,11,12};
+
+     return a;
+ }
+
+ //int (*(* f1(void) )(void))[4] 
+ RTN1 f1(void)
+ {
+     return f2;
+ }
+
+ void main(void)
+ {
+     printf("%d\n", f1( )()[1][2]);    
+ }
+
