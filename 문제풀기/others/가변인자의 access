@@ -1,0 +1,26 @@
+ #include <stdio.h>
+
+
+void func(int a, ...)
+{
+	printf("%d\n", a);
+	printf("%u\n", *(&a+1));
+	printf("%c\n", *(int *)(&a+2));
+	printf("%f\n", *(double *)(&a+3));
+	printf("%f\n", *(double *)(&a+5));
+	//double 타입이기 때문에 4*2 byte 증가되야 해서 +4가 아니라 +5가 된다.
+
+}
+
+void main(void)
+
+{
+
+	int a=10;
+	unsigned char b=100;
+	unsigned char c='a';
+	float d=3.14f;
+	double e=5.124;
+
+	func(a, b, c, d, e);
+}
