@@ -1,0 +1,104 @@
+#include<cstdio>
+#include<iostream>
+#include<vector>
+#include<algorithm>
+#include<string>
+#include<cstring>
+#include<queue>
+#include<math.h>
+using namespace std;
+
+int n, m;
+int r, c, d;
+int arr[50][50];
+int ans;//청소한 칸의 개수
+int dir[4][2]={{-1, 0}, {0, 1}, {1, 0}, {0, -1}};//북 동 남 서. 각 방향의 값과 맞게 이동 시 변화되는 좌표 값을 저장
+int check[50][50]; //벽은 1을 주고 청소가 된 부분은 2를 준다. 아직 청소를 할 수 있는 부분은 0으로 되어 있다.
+
+
+/*
+2019.07.
+왼쪽으로 회전하는 것 떄문에 생고생을 했다. 
+모듈러 연산을 생각 못 할 것 같으면
+차라리 그냥 배열에 값 저장해서 쓰는 게 맞는 것 같다... 에휴.
+
+그리고 회전한 결과 변수를 새로 만들어야 되는데(ndi) 그걸 di에 누적해서 썼더니 잘못된 결과가 계속 나왔다..; 
+di는 고정이고 회전을 바꿔야 되는데 변화된 회전으로 또 회전하니까 제대로 된 결과가 나올 리가 있나..
+총체적 난국으로 시간만 다 잡아먹고 결국 구글에 도움 요청..;
+정답률 보고 또르륵 하는 문제였다 ㅎ.ㅎ
+
+그리고 제일 이상하게 코딩을 했었던 건, 문제에서 로봇 청소기는 다음과 같이 동작한다를 보고
+그 a, b, c, d 대로 코딩했다가 완전 이상하게 했음.
+저대로 풀어야 되는 게 아님을 상기하면서 다음 문제를 풀기를..;
+*/
+
+void bfs()
+{
+	queue<pair<pair<int, int>, int>> q; //청소기가 움직인 위치와 현재 방향을 저장한다.
+	q.push(make_pair(make_pair(r, c), d)); //큐에 맨 처음 위치와 방향을 넣어주자.
+	check[r][c] = 2;//먼저 시작 위치는 바로 청소할 것이기 때문에 2를 먼저 준다.
+	ans = 1; //맨 처음 청소를 했으니 1을 주자.
+
+	while (!q.empty())
+	{
+		//좌표와 바라보고 있는 방향
+		int y = q.front().first.first;
+		int x = q.front().first.second;
+		int di = q.front().second;
+		q.pop();
+
+		bool clean=false; //네 방향을 돌아봤을 때, 청소를 했나 안했나 확인한다. 한 번이라도 청소하면 된다.
+
+		//네 방향에 대해서 왼쪽으로 돌아보자.
+		for(int i=0;i<4;i++)
+		{
+			int ndi=(di+(3-i))%4; //왼쪽으로 회전하는 연산. 으으... 이런 거 혼자 생각 못하겠다.
+			int ny=y+dir[ndi][0]; //새로운 위치
+			int nx=x+dir[ndi][1];
+
+			if(0<=ny&&ny<n&&0<=nx&&nx<m) //새로운 위치가 범위에 맞으며
+				if(check[ny][nx]==0) //청소할 수 있는 곳이라면
+				{
+					q.push(make_pair(make_pair(ny, nx), ndi)); //큐에 넣어주고
+					clean=true; //청소했음을 표시하고
+					check[ny][nx]=2; //청소했음을 표시하고
+					ans++; //값을 증가한다.
+
+					break; //빠져나가서 이번에 새로 큐에 넣은 위치와 방향으로 다시 청소 시작하자!
+				}
+		}
+
+		if(clean==false) //네 방향으로 모두 돌아봤는데 청소할 곳이 없었다면..
+		{
+			int ny=y-dir[di][0]; //후진 띠로리로~
+			int nx=x-dir[di][1];
+
+			if(0<=ny&&ny<n&&0<=nx&&nx<m&&check[ny][nx]!=1) //범위에 맞고 뒤로 간 방향이 벽이 아니라면
+			{
+				q.push(make_pair(make_pair(ny, nx), di)); //이전에 이미 청소를 한 곳으로 돌아가 회전하며 찾아보자.
+			}
+			else
+				break; //벽이라면 청소를 멈춘다.
+		}
+	}
+}
+
+
+int main()
+{
+	cin >> n >> m;
+	cin >> r >> c >> d;
+
+	for (int i = 0; i < n; i++)
+		for (int j = 0; j < m; j++)
+		{
+			cin >> arr[i][j];
+			if (arr[i][j] == 1) //벽이라면
+				check[i][j] = 1; //못 감을 의미
+		}
+	bfs();
+
+	cout << ans << endl;
+
+	return 0;
+}
