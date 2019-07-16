@@ -1,0 +1,79 @@
+#include <stdio.h>
+ 
+int N;
+int a[20+10];
+char op[20+10];
+int sol; 
+int stack[1000];
+  
+int main(void)
+{
+      int i;
+      int sp;
+ 
+      // 입력받는 부분
+ 
+      scanf("%d",&N);
+      scanf("%d",&a[0]);
+ 
+      for(i=1;i<N;i++)
+      {
+            scanf(" %c %d",&op[i],&a[i]);
+      }
+     
+    sp=20;
+    stack[--sp]=a[0];
+ 
+    for(i=1;i<N;i++)
+    {
+        switch(op[i])
+        {
+        case '+':
+            stack[--sp]=a[i]; break;
+        case '-':
+            stack[--sp]=-a[i]; break;
+        case '*':
+            stack[sp]*=a[i]; break;
+        case '/':
+            stack[sp]/=a[i]; break;
+        }
+    }
+ 
+ 
+    /*sol=a[0];
+    p=1;
+    for(i=1;i<N;i++)
+    {
+        if(op[i]=="+")
+        {
+            stack[p++]=a[i];
+        }
+        else if(op[i]=="-")
+        {
+            stack[p++]=-a[i];
+        }
+        else if(op[i]=="*")
+        {
+            p=p-1;
+            stack[p]=stack[p]*a[i];
+            p++;
+        }
+        else
+        {
+            p=p-1;
+            stack[p]=stack[p]/a[i];
+            p++;
+        }
+    }*/
+ 
+    for(i=0;i<20;i++){
+	      printf("%d\n", stack[i]);
+        sol+=stack[i];
+    }
+ 
+    // 출력하는 부분
+ 
+    printf("%d",sol);
+ 
+    return 0;
+}
