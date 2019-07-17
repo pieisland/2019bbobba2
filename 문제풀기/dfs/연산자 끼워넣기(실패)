@@ -1,0 +1,73 @@
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+int n;
+vector<int> nums;
+int main(void)
+{ 
+	cin>>n;
+
+	int num;
+	for(int i=0;i<n;i++){
+		cin>>num;
+		nums.push_back(num);
+	}
+
+	//사칙연산의개수를입력한다.
+	int a, b, c, d;
+	cin>>a>>b>>c>>d;
+
+	vector<string> vec;
+	
+	//아니진짜이것만하면되는데..ㅋㅋㅋ
+	//이경우의수찾는거어떻게해요..?
+	vec.push_back("+*");
+	vec.push_back("*+");//다넣은거죠?
+
+	//숫자는n개지만, 연산자는n-1개라는걸
+	//사실이미알고있으니까
+	//이벡터에들어가있는것은? string
+	int max=-100000;
+	int min=1000000;
+	for(int i=0;i<vec.size();i++)
+	{
+		int result = nums[0];
+		int a=1;
+		//string이들어가있다고하면이렇게해도되겠지
+		for(int k=0;k<n-1;k++)//라고해도될거야!
+		{
+			//nums[a];
+			char ab = vec[i][k];
+			if(ab=='+')
+			{
+				result+=nums[a];
+			}
+			else if(ab=='-')
+			{
+				result-=nums[a];
+			}
+			else if(ab=='*')
+			{
+				result*=nums[a];
+			}
+			else
+			{
+				result/=nums[a];
+			}
+			a++;//넘어가고
+		}
+		//result값을비교한다
+		if(result>max)
+			max=result;
+		if(result<min)
+			min=result;
+	}
+
+	//결과출력
+	cout<<max<<endl<<min<<endl;
+
+    return 0;
+}
+
