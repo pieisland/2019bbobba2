@@ -1,0 +1,72 @@
+#include <iostream>
+#include<vector>
+
+using namespace std;
+
+/*
+2019.07.17.수.
+단지 내 번호 붙이기를 bfs 대신 dfs로 구현해보자.
+bfs보다 훨씬 더 쉽게 구현 가능하다.
+특정 영역을 구하는 문제는 이렇게 구하면 좋다. 
+이런 걸 flood fill 기법이라고 부른다고 하네.
+*/
+
+int n;
+int arr[30][30];//테두리를 0으로 해주려면 공간이 더 필요했구만..
+int house;
+int dir[4][2]={{0,1}, {0, -1}, {1, 0}, {-1, 0}};
+int sol[1000];
+int cnt;
+vector<int> ans;
+
+void dfs(int y, int x)
+{
+	if(arr[y][x]!=1)
+		return;//집이 아니면 return한다
+	arr[y][x]=0;//방문했는지 검사하는 것도 귀찮기 때문에 아예 0으로 해준다.
+
+	//집의 개수 증가
+	house++;
+
+	//4방향으로 dfs를 돌린다.
+	for(int i=0;i<4;i++)
+		dfs(y+dir[i][0], x+dir[i][1]);
+}
+
+int main(void)
+{ 
+	cin>>n;
+	for(int i=1;i<=n;i++)
+		for(int j=1;j<=n;j++)
+			scanf("%1d", &arr[i][j]);
+
+	for(int i=1;i<=n;i++)
+		for(int j=1;j<=n;j++)
+		{	
+			if(arr[i][j]==1)
+			{	
+				//집 수를 초기화 하고 dfs를 돌린다.
+				house = 0;
+				dfs(i, j);
+				//dfs내에서 얻은 house 수를 sol 배열에 저장한다.
+				sol[cnt++]=house;			
+			}
+		}
+	
+	//정렬 stl안쓰고 그냥 일반 정렬로 했다. 허허.
+	for(int i=0;i<cnt-1;i++)
+		for(int j=i+1;j<cnt;j++)
+			if(sol[i]>sol[j])
+			{
+				int temp=sol[i];
+				sol[i]=sol[j];
+				sol[j]=temp;
+			}
+
+	//결과 출력.
+	cout<<cnt<<endl;
+	for(int i=0;i<cnt;i++)
+		cout<<sol[i]<<endl;
+
+    return 0;
+}
