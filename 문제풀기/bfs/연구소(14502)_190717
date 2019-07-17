@@ -1,0 +1,147 @@
+#include <iostream> 
+#include <queue>
+
+using namespace std; 
+
+/*
+2019.07.17.수.
+연구소. bfs로풀었고, 벽세개의위치를고르고저장하는데시간이많이걸렸다.
+뭔가저장하기위한구조도헷갈리고.. 사실어떻게해야되는지도몰라서그냥3중포문을돌렸다.
+구조체까지만들어버렸는데그렇게까지할필요가있는건지는사실의문이다.
+그리고최대값이8밖에되지않기때문에다행히도시간초과가안난듯하다.(근데비쥬얼에서돌리면2초넘던데..??)
+다른사람들코드를봐야될것같다.
+*/
+
+int y, x;
+int arr[8][8]; //연구소상태저장.
+int arr2[8][8]; //벽이세개추가로세워진연구소상태저장.
+int check[8][8]; //지나간곳인지체크한다.
+int dir[4][2]={{0, 1}, {0, -1}, {1, 0}, {-1, 0}}; //방향이동. 남, 북, 서, 동.
+int ans; //안전영역의값
+
+//세개의벽을세울위치를저장할구조체.
+typedef struct newWall
+{
+	int y1, x1, y2, x2, y3, x3;
+}Wall;
+
+//그구조체를저장할벡터.
+vector<Wall> vwall;
+
+//범위에있는가?
+bool isinside(int a, int b)
+{
+	if(a>=0&&a<y&&b>=0&&b<x)
+		return true;
+	else
+		return false;
+}
+
+//시작하는위치를받아와bfs를수행한다.
+void bfs(int a, int b)
+{
+	queue<pair<int, int>> q;
+	q.push(make_pair(a, b));
+	check[a][b]=1;
+	
+	while(!q.empty())
+	{
+		int cy = q.front().first;
+		int cx=q.front().second;
+		q.pop();
+
+		for(int i=0;i<4;i++)
+		{
+			int ny=cy+dir[i][0];
+			int nx=cx+dir[i][1];
+			if(isinside(ny, nx)&&check[ny][nx]==0&&arr2[ny][nx]==0)
+			{
+				check[ny][nx]=1;
+				arr2[ny][nx]=2;//바이러스가퍼진다.
+				q.push(make_pair(ny, nx));
+			}
+		}
+	}
+}
+
+int main()
+{
+	cin>>y>>x;
+
+	//벽이안세워진곳(0)의좌표를담는벡터.
+	vector<pair<int, int>> vec;
+	
+	for(int i=0;i<y;i++)
+		for(int j=0;j<x;j++)
+		{
+			cin>>arr[i][j];
+			arr2[i][j]=arr[i][j];//arr2는arr의값을저장한후추가로벽을세운다.
+			
+			if(arr[i][j]==0)//벽이안세워진곳을벡터에담는다.
+				vec.push_back(make_pair(i, j));
+		}
+
+	//벽이세워지지않은곳중세곳을골라구조체에담아주고그구조체를벡터에또담는다.
+	for(int i=0;i<vec.size()-2;i++)
+		for(int j=i+1;j<vec.size()-1;j++)
+			for(int k=j+1;k<vec.size();k++)
+			{
+				Wall w;
+				w.y1=vec[i].first;
+				w.x1=vec[i].second;
+
+				w.y2=vec[j].first;
+				w.x2=vec[j].second;
+
+				w.y3=vec[k].first;
+				w.x3=vec[k].second;
+
+				vwall.push_back(w);
+			}
+
+	//담은좌표들로bfs를수행해본다.
+	for(int i=0;i<vwall.size();i++)
+	{
+		//구조체에저장된값으로벽을세군데세운다.
+		arr2[vwall[i].y1][vwall[i].x1]=1;
+		arr2[vwall[i].y2][vwall[i].x2]=1;
+		arr2[vwall[i].y3][vwall[i].x3]=1;
+
+		//arr2에바이러스를퍼뜨린다.
+		for(int a=0;a<y;a++)
+			for(int b=0;b<x;b++)
+			{
+				if(check[a][b]==0&&arr2[a][b]==2)
+				{
+					bfs(a, b);
+				}
+			}
+
+		//bfs로바이러스가다퍼진후에안전영역의개수를센다.
+		int safe=0;
+		for(int a=0;a<y;a++)
+			for(int b=0;b<x;b++)
+			{
+				if(arr2[a][b]==0)
+					safe++;
+			}
+
+		//구한안전영역의값을계속해서ans와비교해가며ans를큰값으로만들어준다.
+		if(safe>ans)
+			ans=safe;
+
+		//다시새로운벽으로세우기위해arr 값으로arr2를초기화해준다.
+		//check 배열의값도0으로만들어준다.
+		for(int a=0;a<y;a++)
+			for(int b=0;b<x;b++)
+			{
+				arr2[a][b]=arr[a][b];
+				check[a][b]=0;
+			}
+	}
+	
+	//가장큰안전영역의값을출력한다.
+	cout<<ans<<endl;
+	
+	return 0;
+}
