@@ -1,0 +1,75 @@
+#include <iostream> 
+#include <queue>
+ 
+using namespace std; 
+ 
+int x, y;  
+int arr[100+10][100+10];
+int dir[4][2]={{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+int check[101][101];
+//int ans;
+ 
+bool isinside(int y_, int x_)
+{
+    if(y_>=1&&y<=y&&x_>=1&&x<=x)
+        return true;
+    else
+        return false;
+}
+ 
+int main(void) 
+{ 
+    int sy, sx, ey, ex;
+ 
+    cin>>x>>y;
+ 
+    //cin>>sx>>sy>>ex>>ey;
+ 
+ 
+    for(int i=1;i<=y;i++)
+        for(int j=1;j<=x;j++){
+            scanf("%1d", &arr[i][j]);
+            if(arr[i][j]==1)//저글링이면
+                check[i][j]=-1;//저글링 표시하기.
+        }
+    cin>>sx>>sy;
+ 
+    queue<pair<int, int>> q;
+    q.push(pair<int, int>(sy, sx));//시작 주소 집어 넣는다.
+    check[sy][sx]=1;
+ 
+    int ans;
+    while(!q.empty())
+    {
+        int yy=q.front().first;
+        int xx=q.front().second;
+        q.pop();
+ 
+        ans=check[yy][xx];
+ 
+        for(int k=0;k<4;k++)
+        {
+            int ny=yy+dir[k][0];
+            int nx=xx+dir[k][1];
+            if(isinside(ny, nx)&&check[ny][nx]==-1&&arr[ny][nx]==1)//저글링이면 죽여야지
+            {
+                q.push(pair<int, int>(ny, nx));
+                check[ny][nx]=check[yy][xx]+1;
+            }
+         
+        }
+    }
+ 
+    cout<<ans+2<<endl;
+    int ans2=0;
+    for(int i=1;i<=y;i++)
+        for(int j=1;j<=x;j++){
+            if(arr[i][j]==1&&check[i][j]==-1)//저글링이면
+                ans2++;
+        }
+     
+ 
+    cout<<ans2<<endl;
+ 
+      return 0; 
+} 
