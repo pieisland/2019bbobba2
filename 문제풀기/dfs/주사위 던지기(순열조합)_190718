@@ -1,0 +1,79 @@
+#include <stdio.h>
+
+int n, m;
+int sel[7];
+int dice[7];
+
+void Dice1(int depth)
+{
+	int i;
+	if(depth>n)
+	{
+		for(i=1;i<=n;i++)
+			printf("%d ", dice[i]);
+		printf("\n");
+		return;
+	}
+
+	for(i=1;i<=6;i++)
+	{
+		dice[depth]=i; //깊이에 내가 선택한 값을 저장한다.
+		Dice1(depth+1); //다음 깊이로 넘어간다.
+	}
+}
+
+void Dice2(int depth, int s)
+{
+	int i;
+	if(depth>n)
+	{
+		for(i=1;i<=n;i++)
+			printf("%d ", dice[i]);
+		printf("\n");
+		return;
+	}
+
+	for(i=s;i<=6;i++) //시작숫자부터 다음 숫자를 고른다.
+	{
+		dice[depth]=i; //해당 깊이에 수를 저장한다.
+		Dice2(depth+1, i); //선택한 수 이상으로 선택하기 위해 다음 깊이롱 이동한다.
+	}
+	
+}
+
+void Dice3(int depth)
+{
+	int i;
+	if(depth>n)
+	{
+		for(i=1;i<=n;i++)
+			printf("%d ", dice[i]);
+		printf("\n");
+		return;
+	}
+
+	for(i=1;i<=6;i++)
+	{
+		//선택이 된 것이면 안한다.
+		if(sel[i]) continue;
+		sel[i]=1; //선택함을 표시하고 
+		dice[depth]=i; //선택된 숫자를 저장하고
+		Dice3(depth+1); //다음 깊이로 넘어간다.
+		sel[i]=0; //return 후에 다른 경우도 찾아봐야 되기 때문에 0으로 초기화해준다.
+	}
+}
+
+
+int main(void)
+{
+	scanf("%d %d", &n, &m);
+
+	if(m==1)
+		Dice1(1);
+	else if(m==2)
+		Dice2(1, 1);
+	else
+		Dice3(1);
+
+    return 0;
+}
