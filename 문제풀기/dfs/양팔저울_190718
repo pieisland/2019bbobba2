@@ -1,0 +1,48 @@
+#include <iostream>
+#include <queue>
+
+using namespace std;
+
+int n;
+int w1[12];
+int m;
+int w2[12];
+
+int dfs(int depth, int sum, int weight)
+{
+	//근데 이거 또 보니까 > 로 해야될지도 모름;; 으으으
+	if(sum>weight) return 0;
+	if(sum==weight) return 1;
+	if(depth==n) return 0;
+
+	//이게 근데 그러면 다뤄야 되는 게 두 개라고.;
+
+	//아까 그 문제랑 비슷한데 빼는 것까지 고려하면 됨.
+	if(dfs(depth+1, sum+w1[depth], weight)==1) return 1;
+	if(dfs(depth+1, sum, weight)) return 1;
+	if(dfs(depth+1, sum-w1[depth], weight)==1) return 1;
+
+	return 0;
+}
+
+
+int main()
+{
+	//추의 개수
+	cin>>n;
+	for(int i=0;i<n;i++)
+		cin>>w1[i];
+
+	//확인하고자 하는 추의 개수
+	cin>>m;
+	for(int i=0;i<m;i++)
+		cin>>w2[i];
+
+	//확인하려는 추에 대해서
+	for(int i=0;i<m;i++)
+	{
+		int a = dfs(0, 0, w2[i]);
+		if(a==1) cout<<"Y ";
+		else	cout<<"N ";
+	}
+}
