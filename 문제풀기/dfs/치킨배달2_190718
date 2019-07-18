@@ -1,0 +1,111 @@
+#include <iostream>
+#include <queue>
+
+using namespace std;
+
+/*
+19.07.18.목.
+완전 뿌듯해!
+어려웠던 점은 m군데의 치킨집을 모두 선택한 다음에 치킨 거리를 구해야 되는데,
+선택된 치킨집을 어떻게 저장을 할 지 아이디어가 생각이 안났다.
+그런데 생각해보니, 이미 sel 배열에서 그 정보를 담고있는 것!
+1 값을 담고 있는 idx 값으로 치킨 집의 위치를 받을 수 있고
+모든 집의 위치도 이미 저장했기 때문에 구할 수 있다.
+집과 모든 치킨집의 치킨거리를 구한 다음 그 중에서 가장 작은 값을
+치킨 거리로 두고, 모든 집의 치킨거리를 모두 구하면 m개의 치킨집이 선택됐을 떄의
+치킨거리가 된다!
+
+모든 가능한 경우의 수를 구한 후에 최소 값을 찾아 ans에 저장하면 구할 수 있다.
+
+사실 의도했던 대로 풀었는지는 모르겠지만 그래도 했다는 거에 의의를 둔다..!! 으아아
+
+dfs의 매개변수가 하나밖에 없는 게 이게 맞는건지도 의문! 나중에 풀이해주시면 봐야될 것 같음.
+*/
+
+int n, m;
+int arr[20][20];
+int house[40][2]; //집 위치 저장. 2n개를 넘지 않으니까 어차피 상관 없겠지.
+int sel[13]; //선택된 치킨 집 인덱스를 저장하는 배열.
+int chicken[13][2]; //모든 치킨집 위치 저장.
+int cnt1, cnt2; //치킨집 개수와 집 개수
+int ans=100000000;
+.
+int chickDist(void)
+{
+	//모든 집에 대해서를 먼저 봐야 된다!
+	//내 집이랑 치킨집거리 중 제일 가까운 치킨 집을 선택해 거리를 구해 더해나가야 되니까
+	int sum=0; //반환할 치킨 거리의 최소값.
+	for(int j=0;j<cnt2;j++) //모든 집에서
+	{
+		int dis=100000;
+		for(int i=0;i<13;i++) //선택된 치킨집에 대해
+		{
+			if(sel[i]==0) continue;
+			
+			//한 집에서 모든 치킨집까지의 거리를 구해본다.
+			int y = chicken[i][0]-house[j][0];
+			int x= chicken[i][1]-house[j][1];
+			if(y<0) y=-y;
+			if(x<0) x=-x;
+			
+			//제일 작은 dis 값을 찾아서 
+			if(y+x<dis)
+				dis=y+x;
+		}
+		//다 더한 다음에
+		sum+=dis;
+	}
+	
+	return sum;
+}
+
+void dfs(int depth)
+{
+	//폐업을 시키지 않을 치킨 집을 모두 선택했다.
+	if(depth==m){
+		//치킨 거리를 tmp에 저장한다.
+		int tmp = chickDist();
+		if(tmp<ans)
+			ans=tmp;
+
+		return;
+	}
+	
+	//전체 치킨 집에서 m개의 치킨 집을 고른다.
+	for(int i=0;i<cnt1;i++)
+	{
+		//선택된 치킨집이라면 패스.
+		if(sel[i]) return;
+		sel[i]=1;
+		dfs(depth+1); //다른 치킨집을 고르러 가자.
+		sel[i]=0;//다시 해제시켜준다.
+	}	
+}
+
+int main()
+{
+	cin>>n>>m;
+	for(int i=0;i<n;i++)
+	{
+		for(int j=0;j<n;j++){
+			cin>>arr[i][j];
+			if(arr[i][j]==2)//치킨집이면,
+			{
+				chicken[cnt1][0]=i;
+				chicken[cnt1][1]=j;//좌표를 저장한다.
+				cnt1++;
+			}
+			else if(arr[i][j]==1)//집이라면
+			{
+				house[cnt2][0]=i;
+				house[cnt2][1]=j;
+				cnt2++;
+			}
+		}
+	}
+
+	dfs(0);//0번째 시도에 치킨 거리 값
+	cout<<ans<<endl;
+
+	return 0;
+}
