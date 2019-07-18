@@ -1,0 +1,61 @@
+#include <iostream>
+#include <queue>
+
+using namespace std;
+
+int n; //다녀올 경기의 수.
+int arr[12][12]; //항공료 값 저장.
+int sel[12];//모든 경기를 다녀올 수 있도록 저장.
+int ans=100000000; //초기 ans 값은 크게 준다.
+
+void dfs(int a, int b, int sum, int cnt)
+{
+	//가지치기. 이미 sum값이 크다면 더이상 계산하지 않는다.
+	if(sum>ans){
+		return;
+	}
+
+	if (cnt>=n)
+		return;
+
+	//마지막에는 집에 돌아가야 한다.
+	if(cnt == n-1)
+	{
+		if(arr[a][0]==0) return; //그런데 갈 수 있는 경로가 없으면 return.
+		sum+=arr[a][0];//마지막으로 집으로 돌아왔다.
+		
+		//그 값이 ans보다 작다면 갱신해준다.
+		if(sum<ans)
+			ans=sum;
+		return;
+	}
+
+	for(int i=1;i<n;i++)
+	{
+		//만약 내가 나로 가는 게 아니고(다른 경로로 가는 것이고) 항공로가 없다면
+		//다른 경로를 선택한다.
+		if(a!=i && arr[a][i]==0) continue;
+
+		//이미 다녀 온 경기라면 가지 않는다.
+		if(sel[i]) continue;
+		sel[i]=1;
+		
+		//그 위치로 날아간 거니까 row 값을 i로 바꿔야 한다.
+		//사실 b값은 아무 쓸모도 없는 거였다.
+		dfs(i, i, sum+arr[a][i], cnt+1);
+		sel[i]=0;
+	}
+}
+
+int main()
+{
+	cin>>n;
+	for(int i=0;i<n;i++)
+		for(int j=0;j<n;j++)
+			cin>>arr[i][j];
+
+	//집에서 날아가자.
+	dfs(0, 0, 0, 0);
+	cout<<ans<<endl;
+	return 0;
+}
