@@ -1,0 +1,89 @@
+#include <iostream>
+
+using namespace std;
+
+char arr[100][100];
+int check[100][100];
+int dir[4][2]={{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+int n;
+
+bool isinside(int y, int x)
+{
+	if(y>=0&&y<n&&x>=0&&x<n)
+		return true;
+	else
+		return false;
+}
+
+void dfs(int y, int x, char color)
+{
+	int i;
+	//방문 표시를 합니다.
+	check[y][x]=1;
+
+	//4방 탐색한다. 범위에 맞고 아직 가지 않았고 색이 동일하면 dfs 수행.
+	for(i=0;i<4;i++)
+	{
+		int ny=y+dir[i][0];
+		int nx=x+dir[i][1];
+
+		if(isinside(ny, nx)&&check[ny][nx]==0&&arr[ny][nx]==color)
+			dfs(ny, nx, color);
+	}
+}
+
+//check배열을 0으로 초기화해서 다시 쓴다.
+void clearcheck()
+{
+	int i, j;
+	for(i=0;i<n;i++)
+		for(j=0;j<n;j++)
+			check[i][j]=0;
+}
+
+int main(void)
+{ 
+	int i, j, ans1, ans2;
+	ans1=0, ans2=0;
+	scanf("%d", &n);
+	//for((i=0;i<n;i++)
+	//	for(j=0;j<n;j++)
+	//		scanf("%c", &arr[i][j]);
+
+	//char를 c로 받을 때 엔터 때문에 문제가 생겨서 
+	//string으로 받아주면 편합니다. 그리고 한 번만 돌려도 되네.
+	for(i=0;i<n;i++)
+		scanf("%s", arr[i]);
+
+	for(i=0;i<n;i++)
+		for(j=0;j<n;j++)
+		{
+			if(check[i][j]==0)
+			{
+				dfs(i, j, arr[i][j]);
+				ans1++;
+			}
+		}
+
+	//적록색맹을 가진 꿀꿀이들을 위해 G를 R로 바꿔준다.
+	for(i=0;i<n;i++)
+		for(j=0;j<n;j++)
+			if(arr[i][j]=='G')
+				arr[i][j]='R';
+
+	clearcheck();
+
+	for(i=0;i<n;i++)
+			for(j=0;j<n;j++)
+			{
+				if(check[i][j]==0)
+				{
+					dfs(i, j, arr[i][j]);
+					ans2++;
+				}
+			}
+
+	printf("%d %d\n", ans1, ans2);
+
+    return 0;
+}
