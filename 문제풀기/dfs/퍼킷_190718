@@ -1,0 +1,110 @@
+#include <iostream>
+#include <queue>
+
+using namespace std;
+
+int n;
+int s[10];
+int b[10];
+int ans=1000000;//맨 처음에 차이가 겁나 큰 것.
+int sel[10];
+
+int dfs(int depth, int sit, int bit)
+{
+	//뭐냐고..근데;; 인덱스 다 개망일텐데
+	//왜 되는지를 모르겠네요.. 진짜 짜증난다 ㅋㅋㅋ..
+	if(depth>n) return 0;
+
+	if(depth!=0)
+	{
+		int a=sit-bit;
+		if(a<0) a=-a;//음수면 양수로 만들어주고.
+		
+		//if(a>ans) return 0;//이미 크다면 그냥 잘라버리자.
+		if(a<ans) ans=a; //차이가 가장 큰 것을 해주기로 했으니..
+	}
+
+	//몇 개를 선택할지를 고르는 겁니다만.
+	//이것도 이분법적으로 생각할 수 있을까요??
+
+	for(int i=depth;i<n;i++)
+	{
+		if(sel[i]) continue;//선택이 된 애면 안한다는 거고
+		sel[i]=1;
+		dfs(depth+1, sit*s[i], bit+b[i]);
+		//if (a==0) return 0;
+		sel[i]=0;//다시 쓰기 위해서 0으로 바꿔주고요.
+	}
+
+	//비슷하게 생기게 짜면 이렇다는 말입니다.
+	//if(dfs(depth+1, sit*s[depth], bit+b[depth])==1) return 1;
+	//if(dfs(depth+1, sit, bit)==1) return 1;
+
+	return 0;
+}
+
+
+int main()
+{
+	//cout<<"아주 미친놈이구나.."<<endl;
+	cin>>n;
+
+	for(int i=0;i<n;i++)
+		cin>>s[i]>>b[i];
+
+	//신맛은 곱으로 쓴맛은 더하기로 하니까요.
+	dfs(0, 1, 0);
+
+	cout<<ans<<endl;
+
+	return 0;
+}
+
+
+/*
+int n, m;
+queue<pair<int, int>> q;//얘의 의미는 뭐나면
+//음...인덱스랑 중요도 넣어줄거야.
+//0부터 넣어서 중요도도 넣어주고 꺼낼 때
+//원래 찾고자 했던 idx인지를 비교해서 하면 됨.
+
+int main(void)
+{ 
+	cin>>n;
+	int number, idx;
+	
+	//전체 n번 수행하기.
+	for(int i=0;i<n;i++)
+	{
+		cin>>number>>idx;
+		for(int j=0;j<number;j++)
+		{
+			int a;//중요도.
+			cin>>a;
+			q.push(make_pair(j, a));
+		}
+		
+		//큐를 꺼내본다.
+		while(1)
+		{
+			int tmp = q.front().second;//중요도를 비교합니다.
+			for(int i=1;i<q.size();i++)
+				if(큐의 몇 번째 값을 알 수 있는 께 아닌데..ㅋㅋㅋ)
+					q.
+		
+
+
+		}
+
+
+		//내가 구하고자 하는 애가 다 꺼내지기 전에 나올 수가 있으니
+		//비워준다.
+		while(!q.empty())
+			q.pop();
+
+	}
+
+
+    return 0;
+}
+*/
