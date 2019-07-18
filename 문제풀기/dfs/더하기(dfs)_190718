@@ -1,0 +1,42 @@
+#include <stdio.h>
+
+int t;
+int n, k;
+int nums[20];
+int sel[20];
+
+int dfs(int depth, int sum)
+{
+	if(sum>k) return 0; //가지치기. 성능에 큰 영향을 미친다.
+	if(sum==k) return 1;
+	if(depth==n) return 0;
+
+	//수를 선택한 경우와 선택하지 않은 경우
+	if(dfs(depth+1, sum+nums[depth])==1) return 1;
+	if(dfs(depth+1, sum)==1) return 1;
+
+	return 0;
+}
+
+int main(void)
+{
+	int i, j;
+	int a;
+	scanf("%d", &t);
+	for(i=0;i<t;i++){
+		scanf("%d %d", &n, &k);
+		
+		//n개의 수를 입력받는다.
+		for(j=0;j<n;j++)
+		{
+			scanf("%d", &nums[j]);
+		}
+		a=dfs(0, 0);
+
+		if(a==1)
+			printf("YES\n");
+		else
+			printf("NO\n");
+	}
+    return 0;
+}
