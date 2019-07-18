@@ -1,0 +1,39 @@
+#include <iostream>
+#include <queue>
+
+using namespace std;
+
+int n;
+int s[10];
+int b[10];
+int sol=1000000;
+
+void dfs(int depth, int smul, int bsum)
+{
+	if(depth==n)
+	{
+		//아무것도 선택하지 않은 경우를 고려했기 때문이구나.
+		//건너뛰었다면, bsum이 0일 때 1이 제일 작겠지.
+		if(bsum==0) return; 
+		int temp=smul-bsum;
+		if(temp<0) temp=-temp;
+		if(temp<sol) sol=temp;
+		return;
+	}
+
+  //다음 단계로 넘어갈 때, 재료를 선택하는 경우와 선택하지 않는 경우.
+	dfs(depth+1, smul*s[depth], bsum+b[depth]);
+	dfs(depth+1, smul, bsum);
+}
+
+int main()
+{
+	cin>>n;
+	for(int i=0;i<n;i++)
+		cin>>s[i]>>b[i];
+
+	dfs(0, 1, 0);
+	cout<<sol<<endl;
+
+	return 0;
+}
