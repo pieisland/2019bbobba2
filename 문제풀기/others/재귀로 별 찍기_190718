@@ -1,0 +1,46 @@
+#include <stdio.h>
+
+int N=3;
+
+/*
+2019.07.17.수. 요일에 했지만 목요일에 적는다.
+재귀함수로 별찍기 만들기.
+재귀함수는 종료 조건과, 발전 부분이 중요하다.
+출력을 하는 위치도 중요하다.
+
+생각을 한 번 해 봅시다~
+*/
+
+//n개의 별을 찍는 함수.
+//n값 감소시키며 하나씩 찍고 0이 되면 종료한다.
+void print_star(int n)
+{
+	if(n==0)
+	{
+		printf("\n");
+		return;
+	}
+	printf("*");
+	print_star(n-1);
+}
+
+//이건.. 무슨 일을 하는 함수라고 해야되나..?
+//별을 a개부터 N개까지 늘렸다가 a개로 다시 줄이며 찍는 함수? ㅎㅎ.
+void print_line(int a)
+{
+	print_star(a); //a개의 별을 찍는다.
+	if(a==N) return; //제일 많이 찍어야 되는 별까지 찍었으면 return.
+	print_line(a+1); //다음 별도 찍으러 가자.
+	print_star(a); //리턴이 되니까 하나 작은 수가 출력이 되는 것.
+}
+
+int main(void)
+{
+	//int a;
+	//a=3;
+	//print_star(3);
+ 
+	print_line(1);
+
+    return 0;
+}
