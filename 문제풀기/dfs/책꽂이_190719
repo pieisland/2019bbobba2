@@ -7,21 +7,21 @@ int n;
 int b;
 int cow[20];
 int ans=987654321;
-//int sel[20];
 
-//뭐지 진짜 거지같이 되는데..
 int dfs(int depth, int sum)
 {
-	//책장 높이보다 높아졌다.
+	//책장 높이와 비교시 같거나 높아졌다면 비교한다.
 	if(sum>=b)
-	{
-		int	tmp=sum-b;
-
+	{	
+		//sum-b값을 기존 ans 값과 비교.
+		int tmp=sum-b;
+			
+		//더 작은 값이라면 ans로 해주고 return 1 해준다(더 더해봐야 작아질 수 없음).
 		if(tmp<ans){
 			ans=tmp;
 			return 1;
 		}
-		else //아니라면 그냥 보지 말자는 거죠..
+		else //아니라면 그냥 보지 말자는 것. 맞는지 모르겠네요.
 			return 0;
 	}
 
@@ -32,11 +32,16 @@ int dfs(int depth, int sum)
 	//if(sum>ans)
 	//	return; //그 합이..뭐 그렇다면 그래야죠
 
-	if(depth>=n)//모든 소를 해버렸다면 return이겠죠
+	//이것때문에 계속 틀렸다.. 종료 조건 너무 중요해.
+	//깊이가 n이 됐다는 건, 모든 소를 봤는데도 위에서 안 걸렸다는 건 결국 실패라는 뜻.
+	if(depth>=n)
 		return 0;
 
+	//그 인덱스의 소를 선택하는 경우와 선택하지 않는 경우로 dfs를 돌린다.
 	dfs(depth+1, sum+cow[depth]);
 	dfs(depth+1, sum);
+	
+	//진짜 궁금한게 이거 안되는 이유 아심..?
 	//소를 선택해야된다고 한다면
 	//for(int i=0;i<n;i++)
 	//{
@@ -63,6 +68,7 @@ int main()
 			cin>>cow[i];//소의 키를 받습니다.
 		}
 
+		//깊이 0, 합 0으로 dfs 시작.
 		dfs(0, 0);
 
 		cout<<ans<<endl;
