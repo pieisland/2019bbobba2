@@ -1,0 +1,72 @@
+#include <iostream>
+
+using namespace std;
+
+int t;
+int n;
+int b;
+int cow[20];
+int ans=987654321;
+//int sel[20];
+
+//뭐지 진짜 거지같이 되는데..
+int dfs(int depth, int sum)
+{
+	//책장 높이보다 높아졌다.
+	if(sum>=b)
+	{
+		int	tmp=sum-b;
+
+		if(tmp<ans){
+			ans=tmp;
+			return 1;
+		}
+		else //아니라면 그냥 보지 말자는 거죠..
+			return 0;
+	}
+
+	//가지치기 해주고 싶은데요. 음..
+	//그러면 신경써봐야 할 것은, 
+
+	//어떤 소를 선택할지..
+	//if(sum>ans)
+	//	return; //그 합이..뭐 그렇다면 그래야죠
+
+	if(depth>=n)//모든 소를 해버렸다면 return이겠죠
+		return 0;
+
+	dfs(depth+1, sum+cow[depth]);
+	dfs(depth+1, sum);
+	//소를 선택해야된다고 한다면
+	//for(int i=0;i<n;i++)
+	//{
+	//	if(sel[i]) continue;//이미 선택했으면 선택 안할겁니다.
+	//	sel[i]=1;
+	//	if(dfs(depth+1, sum+cow[i])) return 1;
+	//	sel[i]=0;
+	//}
+	return 0;
+}
+
+int main()
+{
+	cin>>t;
+	while(t--)
+	{
+		ans=987654321;
+		//소의 마리수랑 책꽃이 높이
+		cin>>n>>b;
+
+		//소의 키야.
+		for(int i=0;i<n;i++)
+		{
+			cin>>cow[i];//소의 키를 받습니다.
+		}
+
+		dfs(0, 0);
+
+		cout<<ans<<endl;
+	}
+
+	return 0;
+}
