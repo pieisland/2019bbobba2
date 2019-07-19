@@ -1,0 +1,91 @@
+#include <iostream>
+#include <queue>
+
+using namespace std;
+
+int L, R, C;
+char arr[30][30][30];
+int check[30][30][30];
+int dir[6][3]={{1, 0, 0}, {-1, 0, 0}, {0, 1, 0}, {0, -1, 0}, {0, 0, 1}, {0, 0, -1}};
+
+bool isinside(int z, int y, int x)
+{
+	if(z>=0&&z<L&&y>=0&&y<R&&x>0&&x<C)
+		return true;
+	else
+		return false;
+}
+
+
+void bfs(int z, int y, int x)
+{
+	int time=0;//탈출에 걸리는 시간.
+	queue<pair<pair<int, int>, int>> q;
+	q.push(make_pair(make_pair(z, y), x));
+	check[z][y][x]=1;//초기에 이렇게 해주고요.
+
+	//빌 때까지 갑니다.
+	while(!q.empty())
+	{
+		int cz, cy, cx;
+		cz=q.front().first.first;
+		cy=q.front().first.second;
+		cx=q.front().second;
+		q.pop();
+
+		if(arr[cz][cy][cx]=='E')
+		{
+			printf("Escaped in %d minute(s).\n", check[cz][cy][cx]-1);
+			return;
+		}
+
+		for(int i=0;i<6;i++)
+		{
+			int nz, ny, nx;
+			nz=cz+dir[i][0];
+			ny=cy+dir[i][1];
+			nx=cx+dir[i][2];
+
+			//갈 수 있습니다. 음... 그러면 어떻게 하지요.
+			if(isinside(nz, ny, nx)&&check[nz][ny][nx]==0&&arr[nz][ny][nx]!='#')
+			{
+				check[nz][ny][nx]=check[cz][cy][cx]+1;
+				q.push(make_pair(make_pair(nz, ny), nx));
+			}
+		}
+	}
+	printf("Trapped!\n");
+	return;
+
+}
+
+//토마토 3차원 문제랑 개똑같은듯.
+int main()
+{
+	while(1){
+		cin>>L>>R>>C;
+		if(L==0&&R==0&&C==0) break;//종료조건이구요.
+		
+		int sz, sy, sx;
+		for(int i=0;i<L;i++)
+			for(int j=0;j<R;j++)
+				for(int k=0;k<C;k++)
+				{
+					check[i][j][k]=0;//초기화를 해줘야 돼요
+					cin>>arr[i][j][k];//층이구요
+					//그리고 뭐냐.. 음.. y랑 x랑 이렇게 나옵니다.
+					if(arr[i][j][k]=='S')//시작위치라면
+					{
+						sz=i;
+						sy=j;
+						sx=k;
+						//저장을 해두고요.
+					}
+				}
+
+		//저장한 위치에서 bfs 하면 됩니다.
+		bfs(sz, sy, sx);
+
+	}
+	return 0;
+}
