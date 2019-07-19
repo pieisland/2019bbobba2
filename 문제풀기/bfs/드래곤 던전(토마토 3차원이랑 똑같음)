@@ -3,6 +3,11 @@
 
 using namespace std;
 
+/*
+19.07.19. 사실 3차원도 똑같다. 6방향으로 갈 뿐이지. 깊이만 두 번 더 따지면 된다.
+
+*/
+
 int L, R, C;
 char arr[30][30][30];
 int check[30][30][30];
@@ -16,10 +21,10 @@ bool isinside(int z, int y, int x)
 		return false;
 }
 
-
+//층수와 위치로 bfs.
 void bfs(int z, int y, int x)
 {
-	int time=0;//탈출에 걸리는 시간.
+	//int time=0;//탈출에 걸리는 시간.
 	queue<pair<pair<int, int>, int>> q;
 	q.push(make_pair(make_pair(z, y), x));
 	check[z][y][x]=1;//초기에 이렇게 해주고요.
@@ -33,12 +38,15 @@ void bfs(int z, int y, int x)
 		cx=q.front().second;
 		q.pop();
 
+		//마지막 위치에 도달했다면 종료한다. 이건 최단 경로 문제가 아니니까!
+		//어디에 도달하는 데 걸리는 시간 체크하는 거는 일반 bfs문제다. 헷갈리지 말자!! 비교 하세요.
 		if(arr[cz][cy][cx]=='E')
 		{
 			printf("Escaped in %d minute(s).\n", check[cz][cy][cx]-1);
 			return;
 		}
 
+		//6방향에 대해서 가봅시다.
 		for(int i=0;i<6;i++)
 		{
 			int nz, ny, nx;
@@ -46,34 +54,36 @@ void bfs(int z, int y, int x)
 			ny=cy+dir[i][1];
 			nx=cx+dir[i][2];
 
-			//갈 수 있습니다. 음... 그러면 어떻게 하지요.
+			//범위가 맞고, 아직 가지 않은 길이며, 벽이 아니라면
 			if(isinside(nz, ny, nx)&&check[nz][ny][nx]==0&&arr[nz][ny][nx]!='#')
-			{
+			{	
+				//check값 이전 값과 비교해 1 증가시켜 준 후 큐에 넣어준다.
 				check[nz][ny][nx]=check[cz][cy][cx]+1;
 				q.push(make_pair(make_pair(nz, ny), nx));
 			}
 		}
 	}
+	
+	//탈출을 못했다.
 	printf("Trapped!\n");
 	return;
-
 }
 
-//토마토 3차원 문제랑 개똑같은듯.
+//토마토 3차원 문제랑 완전 같다.
 int main()
 {
 	while(1){
 		cin>>L>>R>>C;
-		if(L==0&&R==0&&C==0) break;//종료조건이구요.
+		if(L==0&&R==0&&C==0) break;//종료조건.
 		
 		int sz, sy, sx;
 		for(int i=0;i<L;i++)
 			for(int j=0;j<R;j++)
 				for(int k=0;k<C;k++)
 				{
-					check[i][j][k]=0;//초기화를 해줘야 돼요
-					cin>>arr[i][j][k];//층이구요
-					//그리고 뭐냐.. 음.. y랑 x랑 이렇게 나옵니다.
+					check[i][j][k]=0;//여러 번 쓸 것이기 때문에 초기화.
+					cin>>arr[i][j][k];//값을 넣는다.
+					//그리고 y랑 x랑 이렇게 나옵니다.
 					if(arr[i][j][k]=='S')//시작위치라면
 					{
 						sz=i;
