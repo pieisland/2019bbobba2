@@ -1,0 +1,84 @@
+#include <iostream>
+
+using namespace std;
+
+int n;
+int sy, sx;
+int map[10+10][10+10];
+int sol;
+int con[4]={1, 0, 3, 2};
+
+//동서남북 방향을 저장합니다.
+int dir[4][2]={{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
+
+int pipe[][4] = {
+      {0,0,0,0},
+      {1,1,0,0},
+      {0,0,1,1},
+      {1,0,1,0},
+      {0,1,1,0},
+      {0,1,0,1},
+      {1,0,0,1},
+      {1,0,1,1},
+      {1,1,1,0},
+      {0,1,1,1},
+      {1,1,0,1},
+      {1,1,1,1}
+};
+
+//사실 그리 뭐.. 이해가 잘 되지는 않아요. flood fill이라 하긴 하는데
+void flood_fill(int y, int x)
+{	
+	int nx, ny, n;
+	int i;
+	int num, new_num;
+	sol++;
+	num=map[y][x];//어떤 파이프인지를 받는다.
+	map[y][x]=0;//이제 판단 안하려고 0으로 하는 거구나.
+	//비게 해주면 new_num값이 0이 디니까 파이프 배열의 0번째는 어차피 다 0이거든요.
+	//결국 안되게 해주는 거죠.
+	//허허/
+
+	//4방 탐색.
+	for(i=0;i<4;i++)
+	{
+		ny=y+dir[i][0];
+		nx=x+dir[i][1];
+
+		//그 위치의 파이프는?
+		new_num=map[ny][nx];
+		//둘 다 일인지를 물어요.
+		if(pipe[num][i]&&pipe[new_num][i^1])
+			flood_fill(ny, nx);
+
+		//배열을 사용하는 방법을 하고싶다면, 따로 만들어서
+		//pipe[num][i]&&pipe[new_num][con[i]] 로 판단해도 됩니다.
+		//이게 if else 쓰는 것보다 편하다는 거죠.
+		//생긴 모양을 좀 다르게 잡는다면 (i+2)%4 를 사용해서 할 수도 있습니다.
+		//서로의 관계를 좀 편하게 볼 수 있으면 좋겠지요.
+	}
+}
+
+int main()
+{
+	cin>>n;
+	cin>>sx>>sy;
+
+	int allpipe = 0;
+
+	for(int i=1;i<=n;i++)
+		for(int j=1;j<=n;j++)
+		{
+			//16진수 받아요. 그러면 알아서 int형 A B로 넣어집니다.
+			scanf("%1x", &map[i][j]);
+			//파이프 개수 세기
+			if(map[i][j]) allpipe++; 
+		}
+
+	//1부터 시작하려고 1을 더해준 듯.
+	flood_fill(sy+1, sx+1);
+	sol=allpipe-sol;
+	cout<<sol<<endl;
+
+	return 0;
+}
