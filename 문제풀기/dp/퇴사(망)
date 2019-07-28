@@ -1,0 +1,59 @@
+#include<cstdio>
+#include<iostream>
+#include<vector>
+#include<algorithm>
+#include<string>
+#include<cstring>
+#include<queue>
+#include<math.h>
+using namespace std;
+
+int n;
+int t[16];
+int p[16];
+int d[16];
+
+int main()
+{
+	ios_base::sync_with_stdio(0);
+	cin.tie(0);
+
+	cin >> n;
+	for (int i = 1; i <= n; i++) {
+		cin >> t[i] >> p[i];
+		d[i] = p[i];
+	}
+
+//	d[0] = p[0];
+	if (t[1] <= n)//아니 첫날만 고치면 안되냐고요
+		d[1] = p[1];
+	else
+		d[1] = 0;
+
+	for(int i=2;i<=n;i++)
+		for (int j = 1; j < i; j++)
+		{
+			if (i - j >= t[j]) //j날에 일하고 i날에도 일할 수 있는 경우
+			{
+				if (i + t[i] - 1 <= n) //i날에 일 할 수 있는 경우
+					d[i] = max(d[i], d[j] + p[i]);
+				else //i날에 일 못하는 경우
+					d[i] = 0; //그럼 뭐 가차없이 0 아니야..? d[i]가 i일에 일했을 때의 최대금액이니까.
+				//i에 일 못하면 끝이겠지 뭐..; 
+			}
+		}
+
+	//int answer=0;
+	//for (int i = 1; i <= n; i++)
+	//	if (i + t[i] <= n + 1)
+	//		if(answer<d[i])	
+	//			answer = d[i];// << endl;
+
+	//for(int i=1;i<)
+
+	sort(&d[1], &d[n+1]);
+	cout << d[n] << endl;
+	//cout << answer << endl;
+
+	return 0;
+}
