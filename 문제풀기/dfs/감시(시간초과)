@@ -1,0 +1,331 @@
+#include<cstdio>
+#include<iostream>
+#include<vector>
+#include<algorithm>
+#include<string>
+#include<cstring>
+#include<queue>
+#include<math.h>
+using namespace std;
+
+int n;
+int m;
+int arr[8][8]; //숫자 1부터 시작이니까 인덱스랑 동일하게 하려고 101개 만듦.
+int tmp[8][8];// 여기다 다시 할 것비낟.
+int cc1, cc2, cc3, cc4, cc5;
+
+typedef struct CCTV
+{
+	//몇 번인지 저장.
+	int y;
+	int x;
+	int dir;
+}cctv;
+
+cctv cctv1[8];
+cctv cctv2[8];
+cctv cctv3[8];
+cctv cctv4[8];
+cctv cctv5[8];
+
+int minarea=100000000;
+
+/*
+19.07.28.일.
+플로이드 와샬 알고리즘으로 푸는 문제.
+플로이드 와샬로 연결관계를 저장한 후
+1에 연결돼 있는 것들의 수를 센다.
+*/
+
+void right(int y, int x)
+{
+	for (int i = x + 1; i < m; i++)
+	{
+		if (tmp[y][i] == 6)//벽이라면
+		{
+			break;
+		}
+		else if (tmp[y][i] >= 1 && tmp[y][i] <= 5)//cctv라면
+			continue;//사실 그렇게까지 할 필요는 없을걸..
+		else//0이라면
+			tmp[y][i] = 9;//다른 수로 채워주자.
+	}
+}
+
+void left(int y, int x)
+{
+	for (int i = x - 1; i >= 0; i--)//내 바로 옆부터 봐야되니까..
+	{
+		if (tmp[y][i] == 6)//벽이라면
+		{
+			break;
+		}
+		else if (tmp[y][i] >= 1 && tmp[y][i] <= 5)//cctv라면
+			continue;//사실 그렇게까지 할 필요는 없을걸..
+		else//0이라면
+			tmp[y][i] = 9;//다른 수로 채워주자.
+	}
+}
+
+void up(int y, int x)
+{
+	for (int i = y - 1; i >= 0; i--)
+	{
+		if (tmp[i][x] == 6)//벽이라면
+		{
+			break;
+		}
+		else if (tmp[i][x] >= 1 && tmp[i][x] <= 5)//cctv라면
+			continue;//사실 그렇게까지 할 필요는 없을걸..
+		else//0이라면 그리고 다른 데가 봤어도 상관 없지. 이미 9라도.
+			tmp[i][x] = 9;//다른 수로 채워주자.
+	}
+}
+
+void down(int y, int x)
+{
+	for (int i = y + 1; i < n; i++)
+	{
+		if (tmp[i][x] == 6)//벽이라면
+		{
+			break;
+		}
+		else if (tmp[i][x] >= 1 && tmp[i][x] <= 5)//cctv라면
+			continue;//사실 그렇게까지 할 필요는 없을걸..
+		else//0이라면 그리고 다른 데가 봤어도 상관 없지. 이미 9라도.
+			tmp[i][x] = 9;//다른 수로 채워주자.
+	}
+}
+
+void spread1(int dir, int y, int x)
+{
+	if (dir == 0)//우
+	{
+		right(y, x);
+	}
+	else if (dir == 1)//좌
+	{
+		left(y, x);
+	}
+	else if (dir == 2)//상
+	{
+		up(y, x);
+	}
+	else//하
+	{
+		down(y, x);
+	}
+}
+
+void spread2(int dir, int y, int x)
+{
+	if (dir == 0)//좌우
+	{
+		right(y, x);
+		left(y, x);
+	}
+	else//상하라면
+	{
+		up(y, x);
+		down(y, x);
+	}
+}
+
+void spread3(int dir, int y, int x)
+{
+	if (dir == 0)//상 우
+	{
+		right(y, x);
+		up(y, x);
+	}
+	else if (dir == 1)
+	{
+		left(y, x);
+		up(y, x);
+	}
+	else if (dir == 2)
+	{
+		right(y, x);
+		down(y, x);
+	}
+	else
+	{
+		left(y, x);
+		down(y, x);
+	}
+
+}
+
+void spread4(int dir, int y, int x)
+{
+	if (dir == 0)
+	{
+		left(y, x);
+		up(y, x);
+		down(y, x);
+	}
+	else if (dir == 1)
+	{
+		right(y, x);
+		up(y, x);
+		down(y, x);
+	}
+	else if (dir == 2)
+	{
+		right(y, x);
+		left(y, x);
+		down(y, x);
+	}
+	else {
+		right(y, x);
+		left(y, x);
+		up(y, x);
+	}
+}
+
+void spread5(int y, int x)
+{
+	right(y, x);
+	left(y, x);
+	up(y, x);
+	down(y, x);
+}
+
+int looking()
+{
+	for (int i = 0; i < cc1; i++)
+	{
+		//1번의 dir에 맞게 spread
+		int d = cctv1[i].dir;
+		spread1(d, cctv1[i].y, cctv1[i].x);
+	}
+	for (int i = 0; i < cc2; i++)
+	{
+		int d = cctv2[i].dir;
+		spread2(d, cctv2[i].y, cctv2[i].x);
+	}
+	for (int i = 0; i < cc3; i++)
+	{
+		int d = cctv3[i].dir;
+		spread3(d, cctv3[i].y, cctv3[i].x);
+	}
+	for (int i = 0; i < cc4; i++)
+	{
+		int d = cctv4[i].dir;
+		spread4(d, cctv4[i].y, cctv4[i].x);
+	}
+	for (int i = 0; i < cc5; i++)
+	{
+		spread5(cctv5[i].y, cctv5[i].x);
+	}
+
+	int r=0;
+	//0의 개수 세기
+	for (int i = 0; i < n; i++)
+		for (int j = 0; j < m; j++)
+			if (tmp[i][j] == 0)
+				r++;
+
+	return r;
+}
+
+void dfs(int one, int two, int three, int four, int five)
+{
+	if (one + two + three + four + five == 0)
+	{
+		//tmp초기화도 해줘야될듯.
+		for (int i = 0; i < n; i++)
+			for (int j = 0; j < m; j++)
+				tmp[i][j] = arr[i][j];
+
+		//이제 저장된 걸로 한번 돌려본다.
+		int area = looking();
+		if (area < minarea)
+			minarea = area;
+	}
+
+	if (one > 0)
+	{
+		for (int i = 0; i < 4; i++)
+		{
+			cctv1[cc1 - one].dir = i;
+			dfs(one - 1, two, three, four, five);
+		}
+	}
+	if (two > 0)
+	{
+		for (int i = 0; i < 2; i++)
+		{
+			cctv2[cc2 - two].dir = i;
+			dfs(one, two-1, three, four, five);
+		}
+	}
+	if (three > 0)
+	{
+		for (int i = 0; i < 4; i++)
+		{
+			cctv3[cc3 - three].dir = i;
+			dfs(one, two, three-1, four, five);
+		}
+	}
+	if (four > 0)
+	{
+		for (int i = 0; i < 4; i++)
+		{
+			cctv4[cc4 - four].dir = i;
+			dfs(one, two, three, four-1, five);
+		}
+	}
+	if (five > 0)
+	{
+		cctv2[cc2 - two].dir=0;
+		dfs(one, two, three, four, five-1);
+	}
+}
+
+int main()
+{
+	cin >> n >> m;
+
+	for (int i = 0; i < n; i++)
+		for (int j = 0; j < m; j++) {
+			cin >> arr[i][j];
+			
+			if (arr[i][j] == 1)
+			{
+				cctv1[cc1].y = i;
+				cctv1[cc1].x = j;
+				cc1++;
+			}
+			else if(arr[i][j]==2)
+			{
+				cctv2[cc2].y = i;
+				cctv2[cc2].x = j;
+				cc2++;
+			}
+			else if (arr[i][j] == 3)
+			{
+				cctv3[cc3].y = i;
+				cctv3[cc3].x = j;
+				cc3++;
+			}
+			else if (arr[i][j] == 4)
+			{
+				cctv4[cc4].y = i;
+				cctv4[cc4].x = j;
+				cc4++;
+			}
+			else if (arr[i][j] == 5)
+			{
+				cctv5[cc5].y = i;
+				cctv5[cc5].x = j;
+				cc5++;
+			}
+		}
+
+	dfs(cc1, cc2, cc3, cc4, cc5);
+
+	cout << minarea << endl;
+
+	return 0;
+}
