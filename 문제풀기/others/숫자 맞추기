@@ -1,0 +1,41 @@
+#include<cstdio>
+#include<iostream>
+#include<vector>
+
+using namespace std;
+
+int n;
+int mat[200][3];
+int sum[200];
+
+int main()
+{
+	ios_base::sync_with_stdio(0);
+	cin.tie(0);
+
+	cin >> n;
+	for (int i = 0; i < n; i++)
+		for (int j = 0; j < 3; j++)
+			cin >> mat[i][j];
+
+	for(int i=0;i<n;i++) //첫 플레이어
+		for (int j = 0; j < 3; j++) //세 개의 수
+		{
+			int check = 0;
+			for (int k = 0; k < n; k++) //비교 플레이어
+			{
+				//cout << mat[i][j] << "와 " << mat[k][j] << "를 비교한다" << endl;
+
+				if (i == k) continue;
+				if (mat[i][j] == mat[k][j])
+					check = 1;
+			}
+			if (check == 0)
+				sum[i] += mat[i][j];
+		}
+
+	for (int i = 0; i < n; i++)
+		cout << sum[i] << endl;
+
+	return 0;
+}
