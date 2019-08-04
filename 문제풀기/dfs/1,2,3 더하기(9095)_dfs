@@ -1,0 +1,48 @@
+#include<cstdio>
+#include<iostream>
+#include<vector>
+#include<algorithm>
+#include<string>
+#include<cstring>
+#include<queue>
+#include<math.h>
+using namespace std;
+
+/*
+2019.08.05.월.
+1,2,3 더하기. dfs 재귀호출로 푸는데요.
+now 에 더하는 게 이해가 잘 안됐던 것 같아요.
+*/
+
+int t;
+
+int dfs(int num, int sum)
+{
+	if(sum>num)
+		return 0;
+	if(sum==num)
+		return 1;
+	
+	//이 부분이 중요..
+	int now=0;
+	for(int i=1;i<=3;i++)
+	{
+		now+=dfs(num, sum+i);
+	}
+	return now;
+}
+
+int main()
+{
+	cin.tie(0);
+	cin>>t;
+	while(t--)
+	{
+		int n;
+		cin>>n;
+
+		cout<<dfs(n, 0)<<endl;
+	}
+
+	return 0;
+}
