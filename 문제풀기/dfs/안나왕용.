@@ -1,0 +1,59 @@
+#include<cstdio>
+#include<iostream>
+#include<vector>
+#include<algorithm>
+#include<string>
+#include<cstring>
+#include<queue>
+#include<math.h>
+using namespace std;
+
+int n;
+int sel[15][15];
+int ans;
+
+//아루매도 중복되는 것 같다. 그래서 2개로 나눠야되나..?
+
+void dfs(int depth)
+{
+	if(depth==n)//마지막까지 도달했다면.
+	{
+		ans++;
+		//cout<<"왜 안 도달해요.."<<endl;
+		//return 1;
+	/*
+		for(int i=0;i<n;i++){
+			for(int j=0;j<n;j++)
+			{
+				if(sel[j])
+					cout<<1;
+				else cout<<0;
+			}
+			cout<<endl;
+		}
+		cout<<endl;*/
+	}
+
+
+	if(depth>n)
+		return;
+	
+	for(int i=0;i<n;i++)
+	{
+		if(sel[depth][i]) continue;
+		sel[depth][i]=1;
+		dfs(depth+1);
+		sel[depth][i]=0;
+	}
+}
+
+int main()
+{
+	cin.tie(0);
+	cin>>n;
+	dfs(0);
+
+	cout<<ans<<endl;
+
+	return 0;
+}
