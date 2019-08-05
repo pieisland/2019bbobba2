@@ -1,0 +1,166 @@
+#include<cstdio>
+#include<iostream>
+#include<vector>
+#include<queue>
+
+using namespace std;
+
+int m, n, h;
+int tomato[100][100][100];
+int check[100][100][100];
+int dir[6][3] = { {1, 0, 0}, {-1, 0, 0}, {0, 1, 0}, {0, -1, 0}, {0, 0, 1}, {0, 0, -1} };
+int nto;
+int ans;
+queue<pair<pair<int, int>, int>> q;
+vector<pair<pair<int, int>, int>> v;
+
+bool isinside(int y, int x, int z)
+{
+	if (y >= 0 && y < m&&x >= 0 && x < n&&z >= 0 && z < h)
+		return true;
+	else
+		return false;
+}
+
+void show()
+{
+	for (int k = 0; k < h; k++) {
+		for (int i = 0; i < m; i++) {
+			for (int j = 0; j < n; j++) {
+				cout << check[i][j][k];
+			}
+			cout << endl;
+		}
+		cout << endl;
+	}
+}
+
+//bfs 할 모든 토마토를 큐에 넣은 후에 합니다.
+void bfs()
+{
+	while (!q.empty())
+	{
+		//show();
+		int y=q.front().first.first;
+		int x=q.front().first.second;
+		int z=q.front().second;
+		q.pop();
+
+		if (ans < check[y][x][z])
+			ans = check[y][x][z];
+
+		for (int i = 0; i < 6; i++)
+		{
+			int ny, nx, nz;
+			ny = dir[i][0] + y;
+			nx = dir[i][1] + x;
+			nz = dir[i][2] + z;
+
+			if (isinside(ny, nx, nz) && tomato[ny][nx][nz] == 0 && check[ny][nx][nz] == 0)
+			{
+				check[ny][nx][nz] = check[y][x][z] + 1;//익힌다.
+				nto--;//안익은 토마토 수 감소.
+				tomato[ny][nx][nz] = 1;
+				q.push(make_pair(make_pair(ny, nx), nz));
+			}
+		}
+	}
+}
+
+//정녕 dfs도 가능하단 말입니까..??
+//dfs를 어떻게 같이 돌려요?
+void dfs(int y, int x, int z)
+{
+	for (int i = 0; i < 6; i++)
+	{
+		int ny, nx, nz;
+		ny = dir[i][0] + y;
+		nx = dir[i][1] + x;
+		nz = dir[i][2] + z;
+
+		//안익은 토마토를 익히는거죠.
+		//간 길이라도 덮을 수 있어야 되는건가..;근데 그래도 안될텐데.
+		if (isinside(ny, nx, nz) && tomato[ny][nx][nz] == 0 && (check[ny][nx][nz]==0||check[y][x][z]+1<=check[ny][nx][nz]))
+		{
+			check[ny][nx][nz] = check[y][x][z]+1;//익힌다.
+			//if (check[ny][nx][nz] > ans)//아니 이게 뭐야.. 그러니까 이걸 구할 수 있냐고 ㅋㅋㅋ...
+			//	ans = check[ny][nx][nz];
+			nto--;//안익은 토마토 수 감소.
+			//근데 이거 동시에 해야될텐데..?;;
+			//그래서 dfs로 안되는 거 아니야..?
+			//dfs를 어떻게 동시에 돌림..?
+			tomato[ny][nx][nz] = 1;
+
+			show();
+
+			dfs(ny, nx, nz);
+		}
+	}
+}
+
+int main()
+{
+	ios_base::sync_with_stdio(0);
+	cin.tie(0);
+
+	int to = 0;
+	int no = 0;
+	cin >> n >> m >> h;
+
+	//dfs그래도 해봐야지.
+	/*for (int k = 0; k < h; k++)
+		for (int i = 0; i < m; i++)
+			for (int j = 0; j < n; j++) {
+				cin >> tomato[i][j][k];
+				if (tomato[i][j][k] == 1)
+				{
+					to++;
+					check[i][j][k] = 1;
+					//좌표를 저장해야되지 않을까 마찬가지로?
+					v.push_back(make_pair(make_pair(i, j), k));
+				}
+				else if (tomato[i][j][k] == 0)//안 익었으면
+					nto++;//나중에 감소시켜줌.
+				else
+					no++;//없다면.
+			}*/
+
+	//모든 애를 다 했다면,.. 근데 안되는데? 애초에 dfs로 풀 수 있는 문제임..?
+	for (int i = 0; i < v.size(); i++)
+		dfs(v[i].first.first, v[i].first.second, v[i].second);
+
+	//bfs
+	for (int k = 0; k < h; k++)
+		for (int i = 0; i < m; i++)
+			for (int j = 0; j < n; j++) {
+				cin >> tomato[i][j][k];
+				
+				if (tomato[i][j][k] == 1) {//익었으면
+					to++;
+					//익은 자리에서 dfs 해줘야되지 않니?
+					check[i][j][k] = 1;
+					//dfs(i, j, k);//종료조건같은 건 뭘까.
+					q.push(make_pair(make_pair(i, j), k));
+				}
+				else if (tomato[i][j][k] == 0)//안 익었으면
+					nto++;//나중에 감소시켜줌.
+				else
+					no++;//없다면.
+			}
+
+	bfs();
+	//남은 토마토의 수를 센다.
+
+	if (to == m * n*h - no)//모두 익어있는 상태였다.
+		cout << 0 << endl;
+	else if (nto != 0) {//안익은 토마토가 한 개라도 있으면
+		cout << -1 << endl;
+	}
+	else
+	{
+		//며칠이 걸리는지.
+		cout << ans - 1 << endl;
+	}
+
+	return 0;
+}
