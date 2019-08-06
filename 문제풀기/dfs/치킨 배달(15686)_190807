@@ -1,0 +1,122 @@
+#include<cstdio>
+#include<stdio.h>
+#include<iostream>
+#include<vector>
+#include<queue>
+#include<string>
+
+using namespace std;
+
+/*
+2019.08.07.수요일.
+치킨치킨. dfs를 활용해서 모든 경우의 수(치킨집 선택)를 구했다.
+선택된 치킨집들에 대해 치킨거리를 구했고
+가장 짧은 치킨거리를 찾아 답으로 해주었다.
+*/
+
+int n, m;
+int arr[50][50]; //맵 저장
+int home[100][2]; //집 위치 저장
+int chicken[13][2]; //치킨집 위치 저장
+int sel[13]; //치킨집 선택됐는지 저장
+int a, h; //치킨집 개수와 집 개수
+int ans = 1000000;
+
+//치킨거리를 구한다.
+int chickdis()
+{
+	int sum = 0;
+	
+	//모든 집에 대해 치킨거리를 구한다.
+	for (int i = 0; i < h; i++)//모든 집
+	{
+		int temp = 1000000;
+
+		//전체 치킨집 중 선택된 치킨집과의 거리 구하기.
+		//해당 집과 가장 거리가 짧은 치킨집과의 거리를 구하면 된다.
+		for (int j = 0; j < a; j++)
+		{
+			int temp2 = 0;
+
+			//선택된 치킨집이라면
+			if (sel[j])
+			{
+				int t1, t2;
+			
+				t1 = home[i][0] - chicken[j][0];
+				t2 = home[i][1] - chicken[j][1];
+				if (t1 < 0) t1 = -t1;
+				if (t2 < 0) t2 = -t2;
+				temp2 = t1 + t2;
+
+				//가장 잛은 거리 찾기
+				if (temp2 < temp)
+					temp = temp2;
+			}
+		}
+		sum += temp;
+	}
+
+	return sum;
+}
+
+//cnt는 선택된 치킨집의 수이다.
+void dfs(int cnt)
+{
+	//m개의 치킨집을 모두 골랐다면
+	if (cnt == m)
+	{
+		//치킨거리를 구해서 더 작다면 값을 갱신해준다.
+		int tmp = chickdis();
+		if (tmp < ans)
+			ans = tmp;
+
+		return;
+	}
+
+	//치킨 집을 선택한다.
+	for (int i = 0; i < a; i++)
+	{
+		//이미 선택된 치킨집이라면 건너뛰고(와 근데 이거 return안하고 continue하면 시간초과네..)
+		if (sel[i]) return;
+		sel[i] = 1; //그 치킨집을 선택했다가
+		dfs(cnt + 1);
+		sel[i] = 0; //해제한다.
+	}
+}
+
+int main()
+{
+	ios_base::sync_with_stdio(0);
+	cin.tie(0);
+
+	cin >> n >> m;
+
+	for(int i=0;i<n;i++)
+		for (int j = 0; j < n; j++) {
+			cin >> arr[i][j];
+			
+			//집이라면 수를 세고 위치를 저장한다.
+			if (arr[i][j] == 1)
+			{
+				home[h][0] = i;
+				home[h][1] = j;
+				h++;
+			}
+
+			//치킨 집이라면 수를 세고 위치를 저장한다.
+			if (arr[i][j] == 2)
+			{
+				chicken[a][0] = i;
+				chicken[a][1] = j;
+				a++;
+			}
+		}
+
+	//치킨집 선택하기.
+	dfs(0);
+
+	cout << ans << endl;
+
+	return 0;
+}
