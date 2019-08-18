@@ -1,0 +1,97 @@
+#include<cstdio>
+#include<iostream>
+#include<vector>
+#include<algorithm>
+#include<string>
+#include<cstring>
+using namespace std;
+
+/*
+2019.08.18.일.
+아니..개짜증나는 게 진짜.
+어쩌라고 ㅋㅋㅋㅋ 10갤도 좀 보여줘라.
+니가 말하는 게 어쨌든 방향 바꿔서 가는데
+벽이랑 장애물 아니면 간다고 치고
+가는 중에 이미 간 길이면 멈추는 거 아니냐고요....
+근데 어쨌든, 니가 방향을 어떻게 잡냐에 따라
+달라질거고..; 벽에서 빙빙 돌다가 방향 잡았는데
+그 쪽으로 가보니까 갔던 길이면 어차피 못 가는 거 아니냐고
+그래서 멈춰야 되는 거 아니야...?;
+왜 90에서 멈추는데 ㅋㅋㅋㅋㅋ개자식아.
+존나 하라는대로 했는데 안나오니까 하기가 싫음.
+*/
+
+int n;
+int arr[10][10];
+int check[10][10];
+int dir[4][2] = { {1, 0}, {0, -1}, {-1, 0}, {0, 1} };
+//아래, 왼쪽, 위, 오른쪽
+int dir2[4];
+//예제처럼 했다면 {0, 3, 2, 1}이 들어있어서
+//그에 맞게 이동하게 할겁니다.
+//그러면 아래, 오른쪽, 위, 왼쪽 이렇게 움직이겠지.
+
+int isinside(int y, int x)
+{
+	if (y >= 0 && y < n&&x >= 0 && x < n)
+		return 1;
+	else 
+		return 0;
+}
+
+int main()
+{
+	cin >> n;
+	
+	//미로 만들기
+	for(int i=0;i<n;i++)
+		for (int j = 0; j < n; j++)
+			scanf("%1d", &arr[i][j]);
+
+	for (int i = 0; i < 4; i++)
+	{
+		//네 방향을 칩니다..
+		cin >> dir2[i];
+		dir2[i] -= 1;//방향을 0 1 2 3 으로 해서 1빼줘야 할 듯.
+	}
+
+	int cy = 0, cx = 0;//위치 잡아요.
+	int d = 0;
+	int cnt = 0;
+
+	//처음 위치 체크는 언제 해줘야 되나..?
+	check[0][0] = 1;
+	while (1)
+	{
+		int ny = cy + dir[dir2[d % 4]][0];
+		int nx = cx + dir[dir2[d % 4]][1];
+
+		if (check[ny][nx])
+			break;//이미 간 곳이라면 멈춘다.
+
+		//벽이거나 장애물이라면
+		if (isinside(ny, nx) == 0 || arr[ny][nx] == 1)
+		{
+			d++;
+			d %= 4;
+		}
+		else if (isinside(ny, nx) && arr[ny][nx] == 0 && check[ny][nx] == 0)
+		{
+			cnt++;
+			cy = ny;
+			cx = nx;
+			check[ny][nx] = 1;
+		}
+	}
+
+	cout << endl;
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < n; j++)
+			cout << check[i][j];
+		cout << endl;
+	}
+
+	cout << cnt << endl;
+
+	return 0;
+}
