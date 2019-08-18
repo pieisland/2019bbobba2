@@ -1,0 +1,123 @@
+#include<cstdio>
+#include<iostream>
+#include<vector>
+#include<algorithm>
+#include<string>
+#include<cstring>
+using namespace std;
+
+/*
+2019.08.18.일.
+그냥 또 stl 안쓰고 풀어본 저번에 푼 문제랑 같은 문제.
+*/
+
+int n; //크기
+int arr[100][100]; //원래 상태 저장
+int temp[100][100]; //잠긴 거 임시로 저장
+int check[100][100]; //갔는지 안갔는지 체크
+int dir[4][2] = { {0, 1}, {0, -1}, {1, 0}, {-1, 0} }; //방향
+int ans; //정답
+
+//범위에 맞나 체크
+int isinside(int y, int x)
+{
+	if (y >= 0 && y < n && x >= 0 && x < n)
+		return 1;
+	else
+		return 0;
+}
+
+//temp arr값으로 초기화
+void tempArr()
+{
+	for (int i = 0; i < n; i++)
+		for (int j = 0; j < n; j++)
+			temp[i][j] = arr[i][j];
+}
+
+//check 값 초기화
+void checkClear()
+{
+	for (int i = 0; i < n; i++)
+		for (int j = 0; j < n; j++)
+			check[i][j] = 0;
+}
+
+//안전영역 잡기
+void bfs(int y, int x)
+{
+	int result = 0;
+	int queue[10100][2] = {0,};
+
+	int front = 0, rear = 0;
+	int cy = y;
+	int cx = x;
+	queue[front][0] = cy;
+	queue[front++][1] = cx;
+
+	while (rear <= front)
+	{
+		cy = queue[rear][0];
+		cx = queue[rear++][1];
+
+		for (int i = 0; i < 4; i++)
+		{
+			int ny = cy + dir[i][0];
+			int nx = cx + dir[i][1];
+			
+			//범위에 맞고 아직 안 간 곳이고 잠기지 않은 곳이라면
+			if (isinside(ny, nx) && check[ny][nx] == 0 & temp[ny][nx] > 0)
+			{
+				queue[front][0] = ny;
+				queue[front++][1] = nx;
+				check[ny][nx] = 1;
+			}
+		}
+	}
+}
+
+int main()
+{
+	int height = 0;
+
+	cin >> n;
+	for (int i = 0; i < n; i++)
+		for (int j = 0; j < n; j++) {
+			cin >> arr[i][j];
+			if (arr[i][j] > height)
+				height = arr[i][j];//최대 높이
+		}
+
+	//최소 높이에서 최대 높이까지 물에 잠기도록
+	for (int a = 1; a <= height; a++)
+	{
+		//초기화 해준 다음에
+		tempArr();
+		checkClear();
+		for (int i = 0; i < n; i++)
+			for (int j = 0; j < n; j++) {
+				if (temp[i][j] <= a) //이하인 곳은
+					temp[i][j] = 0;//물에 잠김
+			}
+		
+		int szone = 0; //safezone
+		for(int i=0;i<n;i++)
+			for (int j = 0; j < n; j++)
+			{
+				//안잠겼고 아직 안 간 곳이라면
+				if (temp[i][j] != 0 && check[i][j] == 0)
+				{
+					bfs(i, j); //bfs를 통해서 같은 영역임을 표시해준다.
+					szone++;
+				}
+			}
+
+		//최대 안전영역의 개수를 구해야되니까
+		if (ans < szone)
+			ans = szone;
+	}
+
+	cout << ans << endl;
+
+	return 0;
+}
