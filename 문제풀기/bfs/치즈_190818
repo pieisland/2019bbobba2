@@ -1,0 +1,119 @@
+#include<cstdio>
+#include<iostream>
+#include<vector>
+#include<algorithm>
+#include<string>
+#include<cstring>
+using namespace std;
+
+/*
+2019.08.18.일.
+치즈. bfs를 사용하는데 좀 이상하게?? 색다르게 사용한다.
+바깥영역을 이용한다고 해야되나. 바깥영역에서 테두리만 이용해서
+그 부분을 지워나감.
+*/
+
+int n, m;
+int arr[100][100];
+int dir[4][2] = { {0, 1}, {0, -1}, {1, 0}, {-1, 0} };
+int check[100][100]; //갔던 곳인가
+int cheeze; //전체 치즈 개수
+
+//범위에 맞나 체크
+int isinside(int y, int x)
+{
+	if (y >= 0 && y < n && x >= 0 && x < m)
+		return 1;
+	else
+		return 0;
+}
+
+//계속 bfs를 해줘야되니까 check를 0으로 만들어줘야 한다.
+void checkClear()
+{
+	for (int i = 0; i < n; i++)
+		for (int j = 0; j < m; j++)
+			check[i][j] = 0;
+}
+
+//제 1영역을 찾자.
+int bfs(int y, int x)
+{
+	int result = 1; //종료조건에서 사용하기 위함. 치즈가 0개가 되면 멈춰야 되니까.
+	int queue[10100][2] = {0};
+	int cy = y;
+	int cx = x;
+	int front = 0, rear = 0;
+	queue[front][0] = cy;
+	queue[front++][1] = cx;
+	check[cy][cx] = 1;
+
+	while (rear<=front)
+	{
+		cy = queue[rear][0];
+		cx = queue[rear++][1];
+		
+		for (int i = 0; i < 4; i++)
+		{
+			int ny = cy + dir[i][0];
+			int nx = cx + dir[i][1];
+			if (isinside(ny, nx) && arr[ny][nx] == 0 && check[ny][nx] == 0)
+			{
+				check[ny][nx] = 1;
+				queue[front][0] = ny;
+				queue[front++][1] = nx;
+				result++;
+
+				//테두리를 찾자.
+				for (int i = 0; i < 4; i++)
+				{
+					//음. 첫번째 영역이면서 그 영역의 4방에서 처음 만나게 되는 애인 경우에 arr값을 0으로 해서 치즈를 없앤다.
+					if (isinside(ny + dir[i][0], nx + dir[i][1]) && arr[ny+dir[i][0]][nx+dir[i][1]] == 1 && check[ny+dir[i][0]][nx+dir[i][1]] == 0) {
+						check[ny + dir[i][0]][nx + dir[i][1]] = 9; //사실 이건 과정 보려고 넣은 수였고 큰 의미 없음. 어차피 재계산 해야되기도 하고.
+						arr[ny + dir[i][0]][nx + dir[i][1]] = 0;
+						cheeze--; //치즈 수 감소.
+					}
+				}
+			}
+		}
+	}
+	return result; //치즈가 없는 곳 개수
+}
+
+int main()
+{
+	cin >> n >> m;
+	for (int i = 0; i < n; i++) //y
+		for (int j = 0; j < m; j++) { //x
+			cin >> arr[i][j];
+			if (arr[i][j]) cheeze++;//처음 치즈 개수
+		}
+
+	int ans = 0;
+	int tcheeze;
+	while (1)
+	{
+		checkClear();
+		int tmp = bfs(0, 0);
+		ans++;
+		if (tmp == n * m) 
+			break;//다 지워졌으면 중단.
+
+		//check현황
+		/*for (int i = 0; i < n; i++) {
+			for (int j = 0; j < m; j++)
+				cout << check[i][j] << "  ";
+			cout << endl;
+		}
+		cout << endl;
+		*/
+
+		//이전 값은 0이 아닐 때를 기록하면 된다는 것.
+		if(cheeze!=0) tcheeze = cheeze;
+	}
+
+	cout << ans-1 << endl; //ans-1인 이유는.. 맨 처음에 그냥 영역 찾을 때 bfs를 한 번 썼기 때문이다.
+	cout << tcheeze << endl;
+
+	return 0;
+}
