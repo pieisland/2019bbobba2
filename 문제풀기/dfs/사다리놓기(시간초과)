@@ -1,0 +1,213 @@
+#include<cstdio>
+#include<iostream>
+#include<vector>
+#include<algorithm>
+#include<string>
+#include<cstring>
+using namespace std;
+
+//n개의 세로선과 m개의 가로선, 가로선 놓을 수 있는
+//위치의 개수 h개
+int n, m, h;
+//int link[31][10]; //이거는 가로선 정보이고
+//뒤에거 세로선과 세로선+1을 연결했느데 앞에거 점선 위치에서 연결했다
+//라고 하면 됩니다. 근데 배고파서 집가고 싶다.
+//앞 번째에 선을 추가할건데, 어디랑 연결되냐.
+
+//너무 헷갈리기 때문에 다시 짤 것입니다.
+int link[11][31];
+int ans;
+//11이라는 수가 세로선 10개를 의미하고
+//31이 가로선 놓을 수 있는 위치 30개를 말합니다.
+
+/*
+개같은 문제.
+왜 맨날 dfs에서 시간초과 해결을 못하는지 병신같은..
+*/
+
+//i번째 목적지가 모두 i째라면 return 1, 아니면 return 0
+int sadari()
+{
+	for (int line = 1; line <= n; line++)
+	{
+		int ho = 0;
+		int dest = line;//원래 내 위치 넣어주고요
+		int t1 = -1, t2 = -1; //왼쪽 오른쪽으로 가게 되면
+							  //어느 라인에서 걸리는지를 확인함.
+
+							  //cout << line << endl;
+		do {
+			if (dest != 1)
+			{
+				if (ho + 1 > h)
+					t1 = -1;
+				for (int i = ho + 1; i <= h; i++)
+				{
+					if (link[dest - 1][i])
+					{
+						t1 = i;
+						break;
+					}
+					else
+						t1 = -1;
+				}
+			}
+			else
+				t1 = -1;//어차피 왼쪽으로 못가니까요
+
+			if (dest != n)
+			{
+				if (ho + 1 > h)
+					t2 = -1;
+				for (int i = ho + 1; i <= h; i++)
+				{
+					if (link[dest][i])
+					{
+						t2 = i;
+						break;
+					}
+					else
+						t2 = -1;
+				}
+			}
+			else
+				t2 = -1;
+
+			//둘 다 -1이 아니면 비교해주고.
+			if (t1 > 0 && t2 > 0)
+			{
+				if (t1 < t2) {
+					dest = dest - 1;
+					ho = t1;
+				}
+				else if (t1 > t2) {
+					dest = dest + 1;
+					ho = t2;
+				}
+			}
+			else if (t1 < 0) //하나가 -1이면 비교..
+			{
+				if (t2 > 0)
+				{
+					dest = dest + 1;
+					ho = t2;
+				}
+			}
+			else if (t2 < 0)
+			{
+				if (t1 > 0)
+				{
+					dest = dest - 1;
+					ho = t1;
+				}
+			}
+			//else //t1과 t2가 -1이라는 의미.. 사실 안해도 되는 부분인거지?
+			//	dest = dest;//변함 없음
+
+			//cout << t1 << " " << t2 <<" 호라이즌 "<<ho<< endl;
+			//cout << "목적지" << dest << endl;
+
+		} while (t1 != -1 || t2 != -1); //둘 중 하나는 -1이 아닐 때까지.
+
+										//cout << line << " RbfRbf " << dest << endl;
+
+		if (line != dest) return 0;
+	}
+
+	//저기서 안걸렸으면 1인거죠.
+	return 1;
+}
+
+// dfs 같은걸로 선택해야 되는 거 아니에요.?
+// 나는 이게 왜 시간초과 되는지 모르겠다.
+// 모든 경우의 수는 dfs니까요.
+void dfs(int num)
+{
+	//이미 값이 나왔구요, num이 더 큰 값이면 더 볼 필요가 없어서 자름.
+	//근데 답은 나오는데 시간초과 각이다.
+	if (ans != 0 && num > ans)
+		return;
+	//cout << "몇 개 그었냐 "<<num << endl;
+	// 확인 계속 해야될텐데..
+	// 근데 최대 3개라고 했지요.
+	if (num > 3) {
+		//cout << "너도 안되는 것 같다" << endl;
+		//ans = -1;
+		return; //-1로 해줘야되긴 한데 일단 각만 잡아둘게요.
+	}
+	if (sadari())
+	{
+		//cout << "ㅎㅎㅎㅎ" << endl;
+		//cout << num << endl;
+		//cout << "도대체 무슨 일이 일어나는건데" << endl;
+		//어차피 최솟값을 구해야 되니까.
+		if (ans == 0)
+			ans = num;
+		else
+		{
+			if (num < ans)
+				ans = num;
+		}
+		/*if (ans >= 0 && ans > num) {
+		ans = num;
+		//cout << "이거 안되는거지..?" << endl;
+		}
+		else //-1이라고 됐을 떄라면
+		ans = num;
+		*/
+		//cout << "갸아아앙" << endl;
+		return;
+	}
+
+	//cout << "돌긴 하니" << endl;
+	for (int i = 1; i <= n - 1; i++) //어차피 마지막 줄에 추가 못함.
+	{
+		for (int j = 1; j <= h; j++) //이거는 가로선 위치
+		{
+			if (link[i - 1][j] || link[i + 1][j] || link[i][j]) //양 옆으로 이미 연결돼 있는 곳이라면 안된단다. 내 자체가 이미 돼있는 곳도 안됨.
+				continue; //근데 return해야 됐던 것도 있었던 것 같고.. 좀 짜증나네야..ㅋㅋㅋㅋ
+			link[i][j] = 1;
+			//cout << i << " " << j << "에 선 그어 봄" << endl;
+			dfs(num + 1);
+			link[i][j] = 0; //다시 풀어주고요.
+		}
+	}
+
+	return;
+}
+
+int main()
+{
+	cin >> n >> m >> h;
+
+	int a, b;
+	for (int i = 0; i < m; i++)
+	{
+		cin >> a >> b;
+		//link[a][b] = 1; //연결했습니다.
+		//근데 이렇게 해도 되는건가..;
+
+		link[b][a] = 1;
+		//b세로선 a위치에 b와 b+1을 연결함을 의미
+	}
+
+	dfs(0); //일단 처음에는 추가한 애 없잖아요.
+
+			//sadari();
+
+			//모든 사다리의 목적지를 찾는 코드는 완성했습니다..흐유..
+			//근데 그러면 최대 세 개의 위치를 골라가지고 사다리를 만들어봐야 된다는 말이죠..?
+
+			//얘를 함수로 만들어야 될 것 같아요.
+	if (m == 0)
+		cout << 0 << endl;
+	else
+	{
+		if (!ans)
+			cout << -1 << endl;
+		else
+			cout << ans << endl;
+	}
+
+	return 0;
+}
