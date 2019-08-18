@@ -1,0 +1,60 @@
+#include<cstdio>
+#include<iostream>
+#include<vector>
+#include<algorithm>
+#include<string>
+#include<cstring>
+using namespace std;
+
+/*
+2019.08.18.일.
+회전초밥 문제.
+연속한 초밥을 먹을 때 어떻게 하면
+다양한 초밥을 먹을 수 있을까. 쿠폰 포함시켜서.
+*/
+
+//접시 수, 가짓 수, 연속 접시 수, 쿠폰 번호
+int n, d, k, c;
+int plate1[30001]; //개수 셀 때 씁니다.
+int plate2[30001]; //회전초밥 벨트에 있는 초밥 상태
+int ans = 0;
+
+int main()
+{
+	int num;
+	cin >> n >> d >> k >> c;
+	//..아니 근데 그러면 이거 모든 위치에서 확인해야 되는거에요..?
+	for (int i = 0; i < n; i++)
+	{
+		cin >> num;
+		plate2[i] = num;
+	}
+
+	for (int i = 0; i < n ; i++)
+	{
+		int cnt = 0;
+		//cout << "k개 돌아요" << endl;
+		for (int j = 0; j < k; j++)
+		{
+			//cout << (i + j) % k << endl;
+			//cout << plate2[(i + j) % n] << endl;
+			if (plate1[plate2[(i + j) % n]] == 0)
+			{
+				cnt++;
+				plate1[plate2[(i + j) % n]] = 1;
+			}
+		}
+		if (plate1[c] == 0) cnt++;
+
+		//cout << "이 경우에 " << cnt << "개 먹는다" << endl;
+
+		if (ans < cnt)ans = cnt;//최대값으로 해줘야 되니까.
+
+		//초기화 다시 시켜주고요
+		memset(plate1, 0, sizeof(plate1));
+	}
+
+	cout << ans << endl;
+
+	return 0;
+}
