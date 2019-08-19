@@ -1,0 +1,51 @@
+#include<cstdio>
+#include<iostream>
+#include<vector>
+#include<algorithm>
+#include<string>
+#include<cstring>
+using namespace std;
+
+/*
+2019.08.19.월.
+1, 2, 3 더하기.
+이게 그렇게 되는 이유는
+뒤에 1을 붙이고
+2를 붙이고
+3을 붙이면 되기 때문이지. 다이나믹 프로그래밍 진짜 너무 싫다. ^.^
+*/
+
+int d[12];
+
+//아니 10007을 어디서 나눠야 한다는 것인가??
+int dp(int num)
+{
+	if (num == 1 || num == 0)
+	{
+		d[num] = 1; //솔직히 이해 안된다.
+		return d[num];
+	}
+	if (num == 2) {
+		d[num] = 2;
+		return d[num];
+	}
+	if (d[num] > 0)
+		return d[num];
+
+	d[num] = dp(num-1)+dp(num-2) + dp(num-3);
+	return d[num];
+}
+
+int main()
+{
+	int n, num;
+	cin >> n;
+
+	for (int i = 0; i < n; i++)
+	{
+		cin >> num;
+		cout << dp(num) << endl;
+	}
+
+	return 0;
+}
