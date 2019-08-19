@@ -1,0 +1,62 @@
+#include<cstdio>
+#include<iostream>
+#include<vector>
+#include<algorithm>
+#include<string>
+#include<cstring>
+using namespace std;
+
+/*
+2019.08.20.화.
+마지막 숫자가 0이 오냐, 1이 오냐에 따라 그 전값이 결정이 된다.
+n자리 이친수를 구할 때, 마지막 숫자가 0이라면 앞에는 1, 0 둘 다 올 수 있다.
+그래서 d[n-1]를 더한다.
+마지막 숫자가 1이라면 그 앞의 수는 반드시 0이어야 하고 0의 앞의 수가 1, 0 둘 다 올 수 있다.
+그래서 d[n-2]가 된다.
+식은 d[n] = d[n-1] + d[n-2] 가 된다.
+
+진짜 어이가 없는 게 long long 을 안해서 두 번이나 틀렸다.
+*/
+
+long long int d[91];
+long long int arr[90];
+
+long long int dp(int num)
+{
+	if (num == 1)
+	{
+		d[num] = 1;
+		return d[num];
+	}
+	if (num == 2)
+	{
+		d[num] = 1;
+		return d[num];
+	}
+	if (d[num] > 0) return d[num];
+
+	d[num] = dp(num - 1) + dp(num - 2);
+	return d[num];
+}
+
+int main()
+{
+	int n;
+	cin >> n;
+	cout << dp(n) << endl;
+
+	int n2;
+	cin >> n2;
+	arr[0] = 1;
+	arr[1] = 1;
+
+	//이렇게 간편하게 풀 수도 있다.
+	for (int i = 2; i < n2; i++)
+	{
+		arr[i] = arr[i - 1] + arr[i - 2];
+	}
+
+	cout << arr[n - 1] << endl;
+
+	return 0;
+}
