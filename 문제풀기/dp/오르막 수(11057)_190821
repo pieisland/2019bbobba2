@@ -1,0 +1,46 @@
+#include<cstdio>
+#include<iostream>
+#include<vector>
+#include<algorithm>
+#include<string>
+#include<cstring>
+using namespace std;
+
+/*
+2019.08.20.화.
+
+*/
+
+long long int d[1001][1001];
+int mod = 10007;
+
+int main()
+{
+	int n;
+	cin >> n;
+
+//이 문제는 0부터 되니까 0도 더해줌.
+	for (int i = 0; i <= 9; i++)
+		d[1][i] = 1;
+
+	for (int i = 2; i <= n; i++)
+	{
+		for (int j = 0; j <= 9; j++)
+		{
+    //이전 수들은 지금 하려는 수보다 작아야 되니까 0부터 j까지.
+			for (int k = 0; k <= j; k++) {
+				d[i][j] += d[i - 1][k];
+				d[i][j] %= mod; //솔직히 어디서 나눠야되는지를 모르겠지만.
+			}
+		}
+	}
+
+	long long int ans = 0;
+	for (int i = 0; i <= 9; i++)
+		ans += d[n][i];
+
+	ans %= mod;
+	cout << ans << endl;
+
+	return 0;
+}
