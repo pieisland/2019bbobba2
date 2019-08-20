@@ -1,0 +1,43 @@
+#include<iostream>
+using namespace std;
+
+int sticker[3][100001];
+int dp[3][100001];
+int n;
+
+int main()
+{
+	int t;
+	cin>>t;
+	while(t--)
+	{
+		cin>>n;
+		//memset(sticker, 0, sizeof(sticker));
+		
+		for(int j=1;j<=2;j++){
+			for(int i=0;i<n;i++)
+			{
+				cin>>sticker[j][i];
+			}
+		}
+
+		//초기 상태로 스티커 안 쓰는 부분, 1번 줄 스티커 쓰기, 2번줄 스티커 쓰기
+		dp[0][0]=0, dp[1][0]=sticker[1][0], dp[2][0]=sticker[2][0];
+		
+		//나머지 n-1개에 대해서
+		for(int i=1;i<n;i++)
+		{
+			//스티커를 안 쓰는 경우에는 앞에 세 경우에서 제일 큰 경우를 찾아야 되고
+			dp[0][i]=max(max(dp[0][i-1], dp[1][i-1]), dp[2][i-1]);
+			//1번줄 스티커를 쓰는 경우에는 앞에서 안쓰는 경우, 두번째줄 스티커 쓰는 경우 + 내 스티커 
+			dp[1][i]=max(dp[0][i-1], dp[2][i-1])+sticker[1][i];
+			//2번줄 스티커를 쓰는 경우에는 앞에서 안쓰는 경우, 첫번째줄 스티커 쓰는 경우 + 내 스티커
+			dp[2][i]=max(dp[0][i-1], dp[1][i-1])+sticker[2][i];
+		}
+
+		//정답은 이렇게 찾은 거에서 마자믹에 제일 큰 값이 된다.
+		cout<<max(max(dp[0][n-1], dp[1][n-1]), dp[2][n-1])<<endl;
+	}
+
+	return 0;
+}
