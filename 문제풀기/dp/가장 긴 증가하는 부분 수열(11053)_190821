@@ -1,0 +1,43 @@
+#include<iostream>
+using namespace std;
+
+/*
+19.08.21.수.
+중요한 건, i값과 i보다 앞에 있는 값들인 j값들에 대해서
+증가하는 수열이기 때문에 값이 더 커야하며
+d[j]+1값도 d[i] 값보다 커야 된다는 거죠.
+
+정말.. 제발 혼자서 생각할 수 있을지가 의문이네.
+*/
+
+int main()
+{
+	int n;
+	int num[1000];
+	int d[1000];
+	int ans=0;
+
+	cin>>n;
+
+	for(int i=0;i<n;i++)
+		cin>>num[i];
+
+	for(int i=0;i<n;i++)
+	{
+		d[i]=1;
+		for(int j=0;j<i;j++)
+		{
+			//i번째 값이 j번째 값보다 크고, d[j]+1(i번째를 더한 것)이 원래 d[i]보다 크다면
+			if(num[j]<num[i] && d[i] < d[j]+1)					
+				d[i]=d[j]+1;
+		}
+	}
+
+	for(int i=0;i<n;i++)
+		if(d[i]>ans)
+			ans=d[i];
+
+	cout<<ans<<endl;
+
+	return 0;
+}
