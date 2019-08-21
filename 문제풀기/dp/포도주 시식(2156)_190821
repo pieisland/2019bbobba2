@@ -1,0 +1,56 @@
+#include<iostream>
+using namespace std;
+
+int n;
+int podo[10001];
+int d[10001]; //n번째 포도주를 마셨을 때 최대 마신 양..? 하지만 n번째를 안마셔도 된다는거.
+int d1[10001][3];
+
+int main()
+{
+	cin>>n;
+	
+	for(int i=1;i<=n;i++)
+		cin >> podo[i];
+
+	d[1] = podo[1];
+	d[2] = podo[1] + podo[2];
+	//d[3] = max(podo[1] + podo[2], podo[1]+podo[3]);
+
+	for(int i=3;i<=n;i++)
+	{
+		d[i]=d[i-1]; //0번 연속 마셨으면 i-1번은 마셔도 안마셔도 돼.
+		if(d[i]<d[i-2] + podo[i])//1번 연속 마셨다면 n-1번째는 안마셔야되고 n-2번째에다가 내가 마신 걸 넣어주면 된다.
+			d[i]=d[n-2]+podo[i];
+		if(d[i]<d[i-3]+podo[i-1]+podo[i])//2번 연속 마셨다면 n-1번째와 n-2번째는 건너뛰고 n-3번째 마시거나 안마시거나 한 뒤에 내꺼랑 내 전 것을 마신다.
+			d[i]=d[i-3]+podo[i-1]+podo[i];
+	}
+	
+	cout<<d[n]<<endl;
+
+	/*
+	2차원으로 풀 때 의미는?
+	d[n][num] = n번째 포도주를 마시는 게 num번 연속 마시는 것일 때.
+	그래서 num이 0이면 자신의 포도주를 마시지 않는다.
+	num이 1이면 num-1번은 0번 연속으로 마셨어야 하고 내 포도주를 마신다.
+	num이 2이면 num-1번은 1번 연속으로 마셨어야 하고 내 포도주를 마신다.
+	그래서 밑과 같이 식이 되는 겁니다.
+	*/
+
+	d1[1][0]=0;
+	d1[1][1]=podo[1];
+	d1[1][2]=podo[1]; //한잔 있는데 당연히 두 잔 연석으로 마실 수 없겠죠.
+
+	for(int i=2;i<=n;i++)
+	{
+		d1[i][0]=max(d1[i-1][0], max(d1[i-1][1], d1[i-1][2]));
+		d1[i][1]=d1[i-1][0]+podo[i];
+		d1[i][2]=d1[i-1][1]+podo[i];
+	}
+
+	int ans=0;
+	ans=max(d1[n][0], max(d1[n][1], d1[n][2]));
+	//cout<<ans<<endl;
+
+	return 0;
+}
