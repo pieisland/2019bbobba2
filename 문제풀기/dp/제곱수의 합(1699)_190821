@@ -1,0 +1,27 @@
+#include<iostream>
+using namespace std;
+
+int d[100001];
+int main()
+{
+	int n;
+	cin>>n;
+
+    //d[n] = d[n - i*i] + 1 //가장 작은 값을 찾아야 된다는 거였다.
+
+  //j*j가 i보다 작다고 표현가능한 게 신기하다.
+	for(int i=1;i<=n;i++)
+	{
+		d[i]=i;
+		for(int j=1; j*j<=i; j++){
+			//cout<<i<<" "<<d[i] <<" "<<d[i-j*j]+1<<endl;
+			d[i] = min(d[i], d[i-j*j]+1);
+		}
+	}
+
+	cout<<d[n]<<endl;
+
+	//system("pause");
+
+	return 0;
+}
