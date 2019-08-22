@@ -1,0 +1,58 @@
+#include<iostream>
+#include<algorithm>
+#include<string>
+using namespace std;
+
+/*
+19.08.22.목.
+
+*/
+
+int n, m;
+int miro[1001][1001];
+int d[1001][1001];
+
+// 이 문제를 dp 재귀로 풀려면 어떻게 해야 되는가?
+// 들어갈 수 있는 값이 사실 0이상의 값이라서 0도 포함을 시켜야 된다고 했던 것 같다.
+// 그런 후에 1, 1 처음 위치면 저장된 값을 리턴을 해주는 거고 갈 수 없는 위치면 0을 리턴해준다.
+// 그리고 우리가 아까부터 알게 됐지만 어차피 대각선은 고려를 안해도 되기 때문에.. ㅎ.ㅎ??
+// 그 이전에서 오는 것만 따지는 거잖아. 그래서 저거를 따져서 더 큰 값을 저장해주고 리턴을 해준다고 하는데
+// 이해가 가는지 모르겠네요.
+int dp(int i, int j)
+{
+	if (d[i][j] >= 0) //음수면 더해봤자 작아지기만 하니까..??
+		return d[i][j];
+
+	if (i == 1 && j == 1) return miro[1][1];
+	if (i < 1 || j < 1) return 0;
+	
+	d[i][j] = dp(i - 1, j) + miro[i][j];
+	int temp = dp(i, j - 1) + miro[i][j];
+	if (d[i][j] < temp)
+		d[i][j] = temp;
+
+	return d[i][j];
+}
+
+int main()
+{
+	cin >> n >> m;
+	for (int i = 0; i < n; i++)
+		for (int j = 0; j < m; j++) {
+			cin >> miro[i + 1][j + 1];
+			d[i+1][j+1] = -1; // 저거를 하려면 초기화를 해줘야 된다.
+		}
+
+	//이렇게 푸는 경우는 대각선 고려 안하고 그 값 중에서 큰 값을 찾아서 내 사탕을 더해서 구하는 문제풀이방법이다.
+	/*for(int i=1;i<=n;i++)
+		for (int j = 1; j <= m; j++)
+		{
+			d[i][j] = max(d[i - 1][j], d[i][j - 1]) + miro[i][j];
+		}*/
+	
+	dp(n, m);
+
+	cout << d[n][m] << endl;
+
+	return 0;
+}
