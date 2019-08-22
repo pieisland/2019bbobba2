@@ -1,0 +1,77 @@
+#include<iostream>
+#include<algorithm>
+#include<string>
+using namespace std;
+
+/*
+19.08.22.목.
+1890 점프.
+오른쪽이나 아래로 갈 수 있는 점프 횟수가 적힌 배열이 있을 때
+(1,1) 에서 (n,n)으로 갈 수 있는 경로가 몇 번이 있는지 구하는 문제.
+
+이것도 초깃값을 (1,1)로 갈 수 있는 경로의 수를 1로 해줬네요.
+안 가는 방법 한 개가 있어서 1로 해주는건가..;;
+
+map에다가 값을 넣어놨는데
+원하는 칸이 (i, j)칸일 때
+k라는 x좌표에서 map(i, k)값을 더해서 j가 나온다면 갈 수 있게 되는거죠.
+그래서 그게 가능한 모든 k일 경우에 (i, j) 경우라고 해서 넣어준다.
+
+하는 게 문제풀이 방법입니다.
+근데 이걸 생각할 수 있을까 나혼자서...
+
+이게 뭔가. 초기 값을 1로 준다는 것도 그렇고
+그 값이 나오는 모든 k값이라는 게 그렇게 막 와닿는 게 아니라서.
+
+k+map[i][k]==j
+k+map[k][j]==i
+모든 가능한 k값을 준다.
+
+
+
+*/
+
+int n;
+int map[101][101];
+long long int d[101][101];
+
+int main()
+{
+	cin >> n;
+	for (int i = 1; i <= n; i++)
+		for (int j = 1; j <= n; j++)
+			cin >> map[i][j];
+
+	d[1][1] = 1;
+	/*for(int i=1;i<=n;i++)
+		for (int j = 1; j <= n; j++)
+		{
+			//k의 범위가 맞는지는 모르겠다.
+			for (int k = 1; k < j; k++) {
+				if (map[i][k] + k == j)
+					d[i][j] += d[i][k];
+			}
+
+			for (int k = 1; k < i; k++)
+				if (map[k][j] + k == i)
+					d[i][j] += d[k][j];
+		}*/
+
+	//시간 복잡도 O(n*n)으로 풀 수 있는 방법?
+	for(int i=1;i<=n;i++)
+		for (int j = 1; j <= n; j++)
+		{
+			if (map[i][j] == 0) continue;
+
+			if (i + map[i][j] <= n)
+				d[i + map[i][j]][j] += d[i][j];
+			if (j + map[i][j] <= n)
+				d[i][j + map[i][j]] += d[i][j];
+		}
+
+	cout << d[n][n]<<endl;
+
+	//d[i][j] +=d[i][k]// k+map[i][k]==j
+
+	return 0;
+}
