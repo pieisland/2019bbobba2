@@ -1,0 +1,53 @@
+#include<cstdio>
+#include<iostream>
+#include<vector>
+#include<algorithm>
+#include<string>
+#include<cstring>
+#include<math.h>
+using namespace std;
+ 
+/*
+2019.08.23.금.
+ 
+*/
+ 
+int n;
+int queen[16];
+int ans;
+ 
+int possible(int i)
+{
+    for (int a = 1; a < i; a++)
+    {
+        if (queen[i] == queen[a] || i - a == abs(queen[i] - queen[a]))
+            return 0;
+    }
+    return 1;
+}
+ 
+void dfs(int i)
+{
+    if (i == n + 1)
+    {
+        ans++;
+        return;
+    }
+ 
+    for (int j = 1; j <= n; j++)
+    {
+        queen[i] = j;
+        if (possible(i))
+            dfs(i + 1);
+    }
+}
+ 
+int main()
+{
+    scanf("%d", &n);
+    dfs(1);
+ 
+    printf("%d\n", ans);
+ 
+    return 0;
+}
