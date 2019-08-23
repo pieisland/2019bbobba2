@@ -1,0 +1,95 @@
+#include<cstdio>
+#include<iostream>
+#include<vector>
+#include<algorithm>
+#include<string>
+#include<cstring>
+#include<math.h>
+using namespace std;
+
+/*
+2019.08.23.금.
+
+*/
+int n;
+int weight[20];
+int d[20][2];
+int ans;
+
+int possible(int w1, int w2)
+{
+	//cout << w1 << w2 << endl;
+
+	int ww1 = w1;
+	int ww2 = w2;
+	while (1)
+	{
+		if (ww1 == 0 && ww2 == 0) break;
+		
+		int a = ww1 % 10;
+		int b = ww2 % 10;
+
+		if (a + b > 9) return 0;
+		ww1 = ww1 / 10;
+		ww2 = ww2 / 10;
+	}
+
+	return 1;
+}
+
+//인덱스, 보트에 태운 소들 무게합, 보트 태운 소들 수
+void dfs(int idx, int sum, int cnt)
+{
+	//인덱스는 n-1이 마지막이니까 마지막 소까지 확인했고
+	//이제 끝났다는 거고 ans값을 갱신해주고 끝낸다.
+	if (idx >= n) {
+		if (ans < cnt) ans = cnt;
+		return;
+	}
+	//남은 것 다 합해도 어차피 작은 경우 더 할 필요 없어서
+	//남은 것의 개수가 n-1 - idx +1 이라서 n-idx가 되는 것이다.
+	if (ans >= cnt + (n - idx)) return;
+	if (possible(sum, weight[idx]))
+	{
+		dfs(idx + 1, sum + weight[idx], cnt + 1); //태우는 경우
+	}
+	dfs(idx + 1, sum, cnt); //안 태우는 경우
+}
+
+int main()
+{
+	scanf("%d", &n);
+	for (int i = 0; i < n; i++)
+		scanf("%d", &weight[i]);
+	//어떻게 해야되지..??
+
+	/*string a;
+	a = 9 + '0';
+	cout << a << endl;*/
+
+	dfs(0, 0, 0);
+	cout << ans << endl;
+
+	/*for (int i = 0; i < n; i++)
+	{
+		d[i][0] = weight[i];
+		d[i][1] = 1;
+		for (int j = 0; j < i; j++)
+		{
+			if (possible(d[i][0], d[j][0]) && d[i][1] < d[j][1] + 1) {
+				d[i][0] += d[j][0];
+				d[i][1] = d[j][1] + 1;
+			}
+		}
+	}*/
+
+	//아오.. 생각이 잘못됐나봐요... ;;
+	/*int ans = d[0][1];
+	for (int i = 1; i < n; i++)
+		if (ans < d[i][1])
+			ans = d[i][1];
+
+	cout << ans << endl;
+	*/
+	return 0;
+}
