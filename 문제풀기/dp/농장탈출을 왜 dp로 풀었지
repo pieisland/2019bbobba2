@@ -1,0 +1,72 @@
+#include<cstdio>
+#include<iostream>
+#include<vector>
+#include<algorithm>
+#include<string>
+#include<cstring>
+#include<math.h>
+using namespace std;
+
+/*
+2019.08.23.금.
+
+*/
+int n;
+int weight[20];
+int d[20][2];
+
+int possible(int w1, int w2)
+{
+	cout << w1 << w2 << endl;
+
+	int ww1 = w1;
+	int ww2 = w2;
+	while (1)
+	{
+		if (ww1 == 0 && ww2 == 0) break;
+		
+		int a = ww1 % 10;
+		int b = ww2 % 10;
+
+		if (a + b > 9) return 0;
+		ww1 = ww1 / 10;
+		ww2 = ww2 / 10;
+	}
+
+	return 1;
+}
+
+int main()
+{
+	scanf("%d", &n);
+	for (int i = 0; i < n; i++)
+		scanf("%d", &weight[i]);
+	//어떻게 해야되지..??
+
+	/*string a;
+	a = 9 + '0';
+	cout << a << endl;*/
+
+	for (int i = 0; i < n; i++)
+	{
+		d[i][0] = weight[i];
+		d[i][1] = 1;
+		for (int j = 0; j < i; j++)
+		{
+			if (possible(d[i][0], d[j][0]) && d[i][1] < d[j][1] + 1) {
+				d[i][0] += d[j][0];
+				d[i][1] = d[j][1] + 1;
+			}
+		}
+	}
+
+	//아오.. 생각이 잘못됐나봐요... ;;
+	int ans = d[0][1];
+	for (int i = 1; i < n; i++)
+		if (ans < d[i][1])
+			ans = d[i][1];
+
+	cout << ans << endl;
+
+	return 0;
+}
