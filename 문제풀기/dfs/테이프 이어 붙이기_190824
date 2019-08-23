@@ -1,0 +1,92 @@
+#include<cstdio>
+#include<iostream>
+#include<vector>
+#include<algorithm>
+#include<string>
+#include<cstring>
+#include<math.h>
+using namespace std;
+
+/*
+2019.08.23.금.
+*/
+
+int n;
+int tape[501];
+int sel[501];
+int all; //미리 합을 구해둔다.
+int ans = 10000000;
+
+void dfs(int cnt, int sum)
+{
+	if (ans <= 2 * sum - all) {
+		//cout << sum << " jumping" << endl;
+		return;
+	}
+
+	//근데 이래도 되나..?? 애매하네.
+	if (sum >= all / 2) {
+		//cout << sum << "already big" << endl;
+		return;
+	}
+
+	if (cnt >= n / 2)//반 개를 다 골랐을 때
+	{
+		//cout << sum << endl;
+		int tmp = abs(sum - all);
+		//cout << sum <<" "<<tmp<< endl;
+		if (ans > abs(tmp-sum))
+			ans = abs(tmp - sum);
+		return;
+	}
+
+	//아니 n개를 딱 반으로 나눈다고 했기 때문에
+	//그 전에 차이 최소라고 해서 끝내면 안된단 말이죠;
+	//이런 조건이면 어차피 더 더해봐야 커지기만 하니까..??
+	//아닌데..;
+	//끝까지 해보기 전까지는 모르는 거 아니에요..?
+	//이미 작으면..??? 아니근데 이상하네 ㅋㅋㅋ
+	//if (ans < abs(sum - abs(sum - all)))
+	//	return;
+
+	//이렇게 이미 n/2가 안됐는데 sum값이 너무 커서 
+
+
+	//아직 n/2개 하기 전인데 합이 반보다 더 크면
+	//멈춰야지..! 안그럼..?? 이게 안될 이유가 있나..?
+	
+
+	//ans랑 비교해야 할 수도 있어.
+
+	//아니 이거 왜 안돼..?
+	for (int i = 1; i <= n; i++)
+	{
+		if (sel[i]) continue;
+		sel[i] = 1;
+		dfs(cnt + 1, sum + tape[i]);
+		sel[i] = 0;
+	}
+	//dfs(cnt, sum);
+	//dfs(cnt+1, sum)//개수라서 하지도 못하는데 ㅋㅋㅋㅋㅋ;
+
+	return;
+}
+
+int main()
+{
+	scanf("%d", &n);
+	for (int i = 1; i <= n; i++) {
+		scanf("%d", &tape[i]);
+		all += tape[i];
+	}
+	
+	//이제 선택을 해야되는데 어떻게 해야되는거지..?
+
+	//몇 개가 선택됐는지와 더한 결과값
+	sel[1] = 1;
+	dfs(1, tape[1]);
+
+	cout << ans << endl;
+	
+	return 0;
+}
