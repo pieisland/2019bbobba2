@@ -1,0 +1,42 @@
+#include<iostream>
+using namespace std;
+
+//n행의 어떤 열에 체스가 놓아져있는가를 묻는 배열.
+int arr[16];
+int ans;
+int n;
+
+int possible(int row)
+{
+	for (int i = 1; i < row; i++)
+	{
+		if(arr[i]==arr[row] || arr[])
+	}
+}
+
+void dfs(int row)
+{
+	if (row == n + 1)
+	{	
+		ans++;
+		return;
+	}
+
+	for (int i = 1; i <= n; i++)
+	{
+		arr[row] = i;
+		if (possible(row))
+			dfs(row + 1);
+	}
+}
+
+int main()
+{
+	cin >> n; //전형적인 백트래킹 문제라고 하는데 존나 어렵다 미친.
+
+	dfs(1);
+
+	system("pause");
+
+	return 0;
+}
