@@ -1,0 +1,116 @@
+#include<cstdio>
+#include<iostream>
+#include<vector>
+#include<algorithm>
+#include<string>
+#include<cstring>
+using namespace std;
+
+/*
+19.08.31.토.
+주사위의 상, 하, 좌, 우 값이 정해져 있는 게 아니라서
+그것떄문에 시간만 낭비. 결국 혼자 못풀었고.
+괜히 look up table로 다 저장해두고 꺼내 쓰려고 했더만
+그게 아닌거..임..
+
+그림에서 주어진 주사위의 형태에 따라
+가고자 하는 방향이 주어졌을 때 값을 바꿔주는
+change_dice 함수가 제일 중요.
+
+알고리즘 개망쓰.
+*/
+
+int n, m, posx, posy, k;
+int map[21][21];
+int dir[5][2] = { {0, 0}, {0, 1}, {0, -1}, {-1, 0}, {1, 0} };
+int dice[7];
+
+void change_dice(int d)
+{
+	int temp[7];
+
+	//주사위 값을 일단 저장한다.
+	for (int i = 0; i < 7; i++)
+		temp[i] = dice[i];
+
+	//방향에따라 주사위 값이 변경된다.
+	switch (d)
+	{
+	case 1: //동쪽으로
+		dice[3] = temp[1];
+		dice[1] = temp[4];
+		dice[4] = temp[6];
+		dice[6] = temp[3];
+		break;
+	case 2: //서쪽으로
+		dice[4] = temp[1];
+		dice[1] = temp[3];
+		dice[3] = temp[6];
+		dice[6] = temp[4];
+		break;
+	case 3: //북쪽으로
+		dice[2] = temp[1];
+		dice[1] = temp[5];
+		dice[5] = temp[6];
+		dice[6] = temp[2];
+		break;
+	case 4: //남쪽으로
+		dice[1] = temp[2];
+		dice[5] = temp[1];
+		dice[6] = temp[5];
+		dice[2] = temp[6];
+		break;
+	default:
+		break;
+	}
+}
+
+int main()
+{
+	cin >> n >> m >> posy >> posx >> k;
+	for (int i = 0; i < n; i++)
+		for (int j = 0; j < m; j++)
+			cin >> map[i][j];
+
+	int num;
+	int cy = posy;
+	int cx = posx;
+
+	for (int i = 0; i < k; i++)
+	{
+		cin >> num;
+
+		int ny = cy + dir[num][0];
+		int nx = cx + dir[num][1];
+		
+		//범위가 맞다면.
+		if (ny >= 0 && ny < n && nx >= 0 && nx < m)
+		{
+			cy = ny;
+			cx = nx;
+
+			//1이 윗면 6이 지도와 맞닿는 면
+			change_dice(num);
+
+			//0 값이라면 주사위에 적혀있는 값을 준다.
+			if (map[ny][nx] == 0)
+			{
+				map[ny][nx] = dice[6];
+			}
+			else //값이 적혀있다면 
+			{
+				//복사가 되고 맵 값이 0이 된다.
+				dice[6] = map[ny][nx];
+				map[ny][nx] = 0;
+			}
+
+			//윗 값 출력
+			cout << dice[1] << endl;
+		}
+		else {
+			continue; //아니면 안본다.
+		}
+	}
+	
+	return 0;
+}
