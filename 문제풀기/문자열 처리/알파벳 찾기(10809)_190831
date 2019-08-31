@@ -1,0 +1,37 @@
+#include<cstdio>
+#include<iostream>
+#include<vector>
+#include<algorithm>
+#include<string>
+#include<cstring>
+using namespace std;
+
+/*
+19.08.31.토.
+알파벳 찾기.
+알파벳 - 97(소문자의 경우) 하면 숫자 나오는 것만 기억하면 될 듯.
+이미 찾았다면 continue 하고 아니라면 바꿔준다.
+*/
+
+int alpha[26];
+
+int main()
+{
+	string s;
+	cin >> s;
+
+	memset(alpha, -1, sizeof(alpha));
+
+	for (int i = 0; i < s.size(); i++)
+	{
+		int tmp = s[i] - 97;
+		
+		if (alpha[tmp] != -1) continue;
+		alpha[tmp] = i;
+	}
+
+	for (int i = 0; i < 26; i++)
+		cout << alpha[i] << " ";
+
+	return 0;
+}
