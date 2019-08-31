@@ -1,0 +1,97 @@
+#include<cstdio>
+#include<iostream>
+#include<vector>
+#include<algorithm>
+#include<string>
+#include<cstring>
+#include<queue>
+using namespace std;
+
+/*
+19.08.31.토.
+드래곤 커브. 는 사실 규칙성을 찾는 문제였다.
+방향의 규칙성이 있는 거였구나.
+근데 막 뒤집어서 다시 넣어주고 하는 거 그거 찾기도 어려운 것 같은데..
+정답률이 왜이렇게 높은건지 모르겠다. 그냥 내가 x신인건지.
+살싫.
+
+출처 :https://jaejin89.tistory.com/100
+*/ 
+
+int n;
+int x, y, d, g;
+int map[101][101];
+int dir[4][2] = { {0, 1}, {-1, 0}, {0, -1}, {1, 0} };
+vector<int> list; //방향 정보를 넣는다.
+
+//정사각형 개수 구하는 함수
+int rec()
+{
+	int ans = 0;
+	for (int i = 0; i < 100; i++)
+	{
+		for (int j = 0; j < 100; j++)
+		{
+			//정사각형이 된다면 값 증가
+			if (map[i][j] && map[i + 1][j] && map[i][j + 1] && map[i + 1][j + 1])
+				ans++;
+		}
+	}
+
+	return ans;
+}
+
+void showList()
+{
+	//cout << "show" << endl;
+	for (int i = 0; i < list.size(); i++)
+		cout << list[i] << " ";
+	cout << endl;
+}
+
+int main()
+{
+	cin >> n;
+
+	// n개의 드래곤 커브 입력.
+	for (int i = 0; i < n; i++)
+	{
+		//cout << "dragon curve" << endl;
+
+		cin >> x >> y >> d >> g;
+		list.push_back(d); // 0번 세대의 방향 정보를 넣었다.
+		
+		// g 값이 0보다 크다면, 뒤에 애들에 대해서 넣어준다.
+		for (int a = 0; a < g; a++)
+		{
+			int s = list.size() - 1; //리스트의 마지막에 접근해서 반대로 넣어주려고 한다.
+			for (int b = s; b >= 0; b--)
+			{
+				// 90도 회전한 것은 그 방향에 1을 더한거에다가 %4를 하면 나오는 값이다.
+				// 사실 이건 직접 적어봐야 눈에 보인다. 허헛.
+				list.push_back((list[b] + 1) % 4);
+			}
+		}
+
+		//showList();
+
+		//맨 처음 시작 점을 찍는다.
+		//cout << y << " " << x << endl;
+		map[y][x] = 1;
+		//이어준다.
+		for (int k = 0; k < list.size(); k++)
+		{
+			y = y + dir[list[k]][0];
+			x = x + dir[list[k]][1];
+			map[y][x] = 1;//점을 콕 찍어주기.
+			//cout << y << " " << x << endl;
+		}
+
+		list.clear();
+	}
+
+	// 모든 주어진 드래곤 커브를 그렸다면 정사각형이 몇 개가 되는지를 이제 구해보자.
+	cout << rec() << endl;
+
+	return 0;
+}
