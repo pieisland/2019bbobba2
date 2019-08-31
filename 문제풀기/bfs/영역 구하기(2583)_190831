@@ -1,0 +1,108 @@
+#include<cstdio>
+#include<iostream>
+#include<vector>
+#include<algorithm>
+#include<string>
+#include<cstring>
+#include<queue>
+using namespace std;
+
+/*
+19.08.31.토.
+진짜 짜증나는게.. 왜 큐를 배열로 써서 구하려고 하면 안되는건데..
+그 부분만 stl 큐로 바꾸니까 정답 뜨네.
+ㅎㅎㅎ이유라도 알면 고치지 그냥 냅다 틀렸다고만 말하니까
+내가 뭘 알겠냐.. 
+*/
+
+int m, n, k;
+int map[101][101];
+int dir[4][2] = { {1, 0}, {-1, 0}, {0, 1}, {0, -1} };
+int check[101][101];
+vector<int> ans;
+
+int isinside(int y, int x)
+{
+	if (y >= 0 && y < m && x >= 0 && x < n) return 1;
+	else return 0;
+}
+
+void bfs(int y, int x)
+{
+	queue<pair<int, int>> q;
+	
+	q.push(make_pair(y, x));
+	//int queue[10000 + 100][2] = {0};
+	int cnt = 1;
+	check[y][x] = 1;
+	int front = 0, rear = 0;
+
+	//queue[front][0] = y;
+	//queue[front++][1] = x;
+
+	while (!q.empty())//rear <= front)
+	{
+		int cy = q.front().first;// queue[rear][0];
+		int cx = q.front().second;// queue[rear++][1];
+		q.pop();
+
+		for (int i = 0; i < 4; i++)
+		{
+			int ny = cy + dir[i][0];
+			int nx = cx + dir[i][1];
+
+			if (isinside(ny, nx) && map[ny][nx] == 0 && check[ny][nx] == 0)
+			{
+				check[ny][nx] = 1;
+				q.push(make_pair(ny, nx));
+				//queue[front][0] = ny;
+				//queue[front++][1] = nx;
+				cnt++;
+			}
+		}
+	}
+
+	ans.push_back(cnt);
+}
+
+int main()
+{
+	scanf("%d %d %d", &m, &n, &k);
+	
+	int x1, y1, x2, y2;
+	for (int i = 0; i < k; i++)
+	{
+		scanf("%d %d %d %d", &x1, &y1, &x2, &y2);
+
+		for(int y=y1; y<y2;y++)
+			for (int x = x1; x < x2; x++)
+			{
+				map[y][x] = 1;
+			}
+	}
+
+	/*for (int i = 0; i < m; i++) {
+		for (int j = 0; j < n; j++)
+			cout << map[i][j] << " ";
+		cout << endl;
+	}*/
+
+	int cnt = 0;
+	for(int i=0;i<m;i++)
+		for (int j = 0; j < n; j++)
+		{
+			if (map[i][j] == 0 && check[i][j] == 0)
+			{
+				cnt++;
+				bfs(i, j);
+			}
+		}
+	
+	sort(ans.begin(), ans.end());
+	cout << cnt << endl;
+	for (int i = 0; i < ans.size(); i++)
+		cout << ans[i] << " ";
+
+
+	return 0;
+}
