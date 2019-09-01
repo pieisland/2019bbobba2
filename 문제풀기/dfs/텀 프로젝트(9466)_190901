@@ -1,0 +1,87 @@
+#include<cstdio>
+#include<iostream>
+#include<vector>
+#include<algorithm>
+#include<string>
+#include<cstring>
+#include<queue>
+using namespace std;
+
+/*
+19.09.01.일.
+사이클 문제가 이렇게 어려운 거였나.
+참 기록을 해야할 것들이 많은 것 같다. 인생 눈물나네.
+방문을 한 애는 더이상 보지 않아야 시간 초과가 안나니까 visited가 필요하고
+cycle은 깊이 계산 쉽게 하려고 필요하다. 우리가 사이클 시작한 애에서 깊이가 다시 1로 카운트 되고
+어차피 next로 나온 애가 되니까 cycle을 초기화 해 줄 필요가 없는거다.
+done이라는 게 진짜 중요한 역할을 하는데, 주어진 예시에서 보면
+1이 3으로 갔는데 3으로 가서 끝났음 그래서 3이랑 1값이 done 이 됐는데
+2라는 애가 1로 가려고 하는거. 그 때 1이 done이기 때문에 또 카운트가 안되는 거다.
+그래서 그냥 얘는 보지도 못하고 done 된다.
+*/
+
+int arr[100001]; //노드가 어느 방향으로 가고싶어하는지 저장.
+int visited[100001]; //방문한 노드인지 저장.
+int cycle[100001]; //몇 번째로 방문한 애인지 저장. 생각해보니 그냥 visited에 값을 저장해도 될 듯.
+int done[100001]; //더이상 안봐도 되는 애인지 저장.
+int ans;  //사이클이 만들어진 노드 개수.
+
+//시작 노드, 현재 노드, 몇 번쨰로 온건지
+void dfs(int start, int cur, int depth)
+{
+	visited[cur] = 1; //방문했다
+	cycle[cur] = depth; //현재 노드는 몇 번째로 왔다.
+	int next = arr[cur]; //다음 노드
+
+	if (visited[next]) //다음 노드가 이미 방문한 노드였다면
+	{
+		//끝난 애에 대해서는 하면 안되기 때문에 done이라는 게 필요하다.
+		if (!done[next]) //끝나지 않은 애라면
+		{
+			if (start == next) { //시작부터 지금 노드까지 동글동글이라면
+				//cout << "same " << depth << endl;
+				ans += depth; //현재 깊이를 더해줌. 모든 노드들.
+			}
+			else { //시작부터가 아니라 가는 도중에 있던 다른 노드랑 사이클이라면
+				//cout << "diff " << depth - cycle[next] + 1 << endl;
+				ans += depth - cycle[next] + 1; 
+				//cycle[next]가 마지막으로 사이클 된 곳의 depth인데 지금의 dpeth에서 그거를 뺴고 1을 더하면 몇 개의 원소들이
+				//속하는지를 알 수 있다.
+			}
+		}		
+	}
+	else //아직 방문 안했으면 그냥 가면 된다.
+		dfs(start, next, depth + 1);
+
+	//나는 끝났으니 더이상 보지 마시게나.
+	done[cur] = 1;
+}
+
+int main()
+{
+	int t;
+	cin >> t;
+	for (int i = 0; i < t; i++)
+	{
+		memset(arr, 0, sizeof(arr));
+		memset(visited, 0, sizeof(visited));
+		memset(cycle, 0, sizeof(cycle));
+		memset(done, 0, sizeof(done));
+		ans = 0;
+		int n;
+		cin >> n;
+		for (int j = 0; j < n; j++)
+			cin >> arr[j + 1];
+
+		for (int a = 1; a <= n; a++)
+		{
+			if (visited[a] != 0) //방문 안 한 애만 볼거다. 이미 방문한 애는 처리 다 됐거든.
+				continue;
+			dfs(a, a, 1); //깊이는 처음에 나도 포함시켜서 1로 줘야한다.
+		}
+		
+		cout << n - ans << endl;
+	}
+
+	return 0;
+}
