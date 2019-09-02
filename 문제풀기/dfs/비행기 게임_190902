@@ -1,0 +1,125 @@
+#include<cstdio>
+#include<iostream>
+#include<vector>
+#include<algorithm>
+#include<string>
+#include<cstring>
+#include<queue>
+using namespace std;
+
+/*
+19.09.02.월.
+비행기 게임. 폭탄 어떻게 하나 애먹었는데 어차피 시간을 5초나 줘서 ㅋㅋㅋ
+그냥 노가다 형식으로도 가능한 느낌. 맵이 작기도 하고.
+모든 경로를 다 가봐야하는 거라서 dfs를 사용하는 것 같다.
+근데 헷갈림.
+*/
+
+char map[13][5];
+char tmap[13][5];
+int dir[3][2] = { {-1, 0}, {-1, -1}, {-1, 1} };
+int ans=-10000000;
+int bam;
+
+void mapcpy()
+{
+	for (int i = 0; i < 13; i++)
+		for (int j = 0; j < 5; j++)
+			tmap[i][j] = map[i][j];
+}
+
+void mapcpy2()
+{
+	for (int i = 0; i < 13; i++)
+		for (int j = 0; j < 5; j++)
+			map[i][j] = tmap[i][j];
+}
+
+int isinside(int y, int x)
+{
+	if (y >= 0 && y < 13 && x >= 0 && x < 5) return 1;
+	else return 0;
+}
+
+void bomb(int y) //y 위치에서 폭탄을 터뜨리기
+{
+	//만약에 나를 포함한 게 아니라면 뭐.. i를 1부터 시작하면 되겠지.
+	for (int i = 0; i < 5; i++)//나를 포함해서인지 아닌지는 모르겠다
+	{
+		for (int j = 0; j < 5; j++)
+		{
+			//폭탄이면 없애버린다. 위로 올라가면서.
+			if(isinside(y-i, j))//이상하게 침범하지 말라고 한 번 넣어주고
+				if (map[y - i][j] == 'X') map[y - i][j] = '0';
+		}
+	}
+}
+
+void dfs(int y, int x, int sum)
+{
+	//x는 어쨋든 간에 y가 0이라면 멈춰야되거든요.
+	if (y == 0)
+	{
+		//cout << "arrive" << endl;
+		if (ans < sum) ans = sum;
+		return;
+	}
+
+	//아니라면 
+	for (int i = 0; i < 3; i++)
+	{
+		int ny = y + dir[i][0];
+		int nx = x + dir[i][1];
+		int sum2 = sum; //이것때문에 아까 틀림. 매개변수를 바꾸면 어떠하냐.
+
+		//그냥 범위에만 있으면
+		if (isinside(ny, nx))
+		{
+			if (map[ny][nx] == 'X')//폭탄이라면
+				sum2 = sum - 7;
+			else if (map[ny][nx] == '*') {
+				//cout << "*! " << ny << " " << nx << endl;
+				sum2 = sum + 10;
+			}
+
+			//빈공간은 어차피 바뀌지 않으니까.
+			//bomb(11);
+			dfs(ny, nx, sum2);
+		}
+	}
+}
+
+int main()
+{
+	//근데 이건 진짜 dfs로 하면 될 것같은데.
+	//모든 경우의 수라면.
+	int t;
+	cin >> t;
+	while (t--)
+	{
+		//맵 구성
+		for (int i = 0; i < 13; i++)
+		{
+			for (int j = 0; j < 5; j++)
+			{
+				cin >> map[i][j];
+			}
+		}
+
+		mapcpy();
+		ans = -10000000;
+
+		//dfs(12, 2, 0);
+    //폭탄을 어디서 터뜰야 될지 모르겠어서 폭탄을 일단 터뜨리고 시작하는 형태로 구성함.
+		for (int i = 0; i < 13; i++)
+		{
+			bomb(i); //폭탄이 터진다.
+			dfs(12, 2, 0);
+			mapcpy2();//폭탄 터뜨렸던 거 다시 원상복구
+		}
+
+		cout << ans << endl;
+	}
+
+	return 0;
+}
