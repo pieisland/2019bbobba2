@@ -1,0 +1,77 @@
+#include<cstdio>
+#include<iostream>
+#include<vector>
+#include<algorithm>
+#include<string>
+#include<cstring>
+#include<queue>
+using namespace std;
+
+/*
+19.09.02.월.
+
+*/
+
+//아니. 왜 안나오는지 이해도 안되고... 어떻게 간거냐고 ㅋㅋㅋㅋ 거리 뺐잖아 개자식아.;
+
+int maxdis;
+int n;
+int jung[50]; //정비소를 영어로 몰라서 정이라고 씀;;
+int dis[51]; //이건 거리임
+//i번째 정비소로 가는 거리가 dfs[i] 라고 하면 되나
+//어쩄든 정비소 수보다 1이 많음.
+int ans = 100000000;
+
+void dfs(int resdis, int idx, int time)
+{
+	if (resdis < 0) return;
+
+	//5근데 이게 5가 됐는데 저지랄이면 안되지 않나 싶어서..
+	//일단 확인부터 함. 솔직히 존나 짜증나긴하네;;
+	cout << idx << " : " << resdis <<"  "<< time << endl;
+
+	//아니 도대체 뭐가 되길래 이게 되는건데....
+	if (idx == n) //마지막까지 도달했다.
+	{
+		//일단 정비소는 다 지났음.
+		//마지막 가는 길 가는데 못가면 안되니까
+		if (resdis - dis[idx] < 0) return;
+		else //갈 수 있으면 이제 판단
+		{
+			cout << time << endl;
+			//음수인 거는 앞에서 걸렀으니까 안봐도 되겠지
+			if (time < ans)
+				ans = time;
+			return;
+		}
+	}
+
+	//정비소를 들른 경우
+	dfs(resdis - dis[idx] + maxdis, idx + 1, time + jung[idx]);
+
+	//정비소를 들르지 않은 경우
+	dfs(resdis - dis[idx], idx + 1, time);
+	
+	return;
+}
+
+int main()
+{
+	cin >> maxdis;
+	cin >> n;
+	//이거는 가는 거리고
+	for (int i = 0; i <= n; i++)
+		cin >> dis[i];
+
+	//이거는 정비소 걸리는 시간이고
+	for (int i = 0; i < n; i++)
+		cin >> jung[i];
+
+	//가려고 하는 정비소가 두 번째이고 내가 지금 들러서 걸린 시간이 세 번째라면
+	//그리고 지금 갈 수 있는 거리잖아요... 근데 왜 안나오지 ㅋㅋㅋㅋ
+	dfs(maxdis, 0, 0);
+
+	cout << ans << endl;
+
+	return 0;
+}
