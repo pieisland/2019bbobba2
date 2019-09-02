@@ -1,0 +1,111 @@
+#include<cstdio>
+#include<iostream>
+#include<vector>
+#include<algorithm>
+#include<string>
+#include<cstring>
+#include<queue>
+using namespace std;
+
+/*
+19.09.02.월.
+아니... 코드 개 잘 짠 것 같은데
+틀렸습니다 뭐야.. ^.^
+이게 아니면 뭘 어떻게 풀어.
+잘만 나오잖아!!!으아아아아..
+*/
+
+int n;
+int dice[1000][6];
+int dice_sel[1000][6];
+int para[6] = { 5, 3, 4, 1, 2, 0 };
+
+//주사위 번호와 밑면의 인덱스
+void dfs(int d_id, int idx)
+{
+	int u_idx = para[idx];
+	int num = dice[d_id][u_idx];
+	dice_sel[d_id][idx] = -1;
+	dice_sel[d_id][u_idx] = -1;
+	
+	//아직 마지막 주사위가 아니라면
+	if (d_id + 1 < n)
+	{
+		for (int i = 0; i < 6; i++)
+		{
+			if (num == dice[d_id + 1][i])
+			{
+				dfs(d_id + 1, i);
+				break;
+			}
+		}
+	}
+}
+
+//주사위 옆면 가장 큰 값들
+//근데 어차피 음.. 가장 큰 수를 찾으면 되는거거든요
+int sideSum()
+{
+	int ans = 0;
+	//모든 주사위에 대해서
+	for (int i = 0; i < n; i++)
+	{
+		int bignum = 0;
+		//모든 사이드에 대해
+		for (int j = 0; j < 6; j++) //r가장 큰 수를 찾는다.
+		{
+			if (dice_sel[i][j] == -1) continue; //음.. 못 볼 애면 뭐 바이고
+			if (dice[i][j] > bignum)
+				bignum = dice[i][j];
+		}
+		ans += bignum;
+	}
+
+	return ans;
+}
+
+void showDiceSel()
+{
+	for (int i = 0; i < n; i++)
+	{
+		for (int j = 0; j < 6; j++)
+		{
+			cout << dice_sel[i][j] << "(" << dice[i][j] << ") ";
+		}
+		cout << endl;
+	}
+}
+
+int main()
+{
+	cin >> n;
+	for (int i = 0; i < n; i++)
+	{
+		for (int j = 0; j < 6; j++)
+		{
+			cin >> dice[i][j];
+		}
+	}
+
+	int ans = 0; 
+	for (int i = 0; i < 6; i++)
+	{
+		memset(dice_sel, 0, sizeof(dice_sel));
+		dfs(0, i);
+
+		//showDiceSel();
+
+		//이제 모든 주사위에 대해서 같은 것들은 -1 처리가 됐기 때문에
+		//옆의 값들만 좀 보면 되는데
+		//옆의 값들은 어떻게 보나?
+		int tmp = sideSum();
+
+		//cout << tmp << endl;
+
+		if (tmp > ans) ans = tmp;
+	}
+
+	cout << ans << endl;
+
+	return 0;
+}
