@@ -1,0 +1,81 @@
+#include<cstdio>
+#include<iostream>
+#include<vector>
+#include<algorithm>
+#include<string>
+#include<cstring>
+#include<queue>
+using namespace std;
+
+/*
+19.09.03.화.
+아예 누적시간을 구해놓고 풀었네.
+그리고 인덱스를 1부터 해서 덜 헷갈리게 했고.
+1부터 했는데 dfs 시작할 때는 0에서 줬다.
+헷갈려 죽을 것 같다.
+
+그. 정비소에 도착한 걸로 하면 도착했다고 정비소 값 더해줌.
+사실 마지막 N+1일 때 dfs를 부르는 곳에서
+jung[N+1]값은 없다.정비소는 거리보다는 하나 더 적게 있으니까.
+
+*/
+
+int L;
+int N;
+int dis[52]; //index 1부터 시작할거고 마지막에 도착으로 가는 거리가 하나 더 있으니까
+int jung[51]; //정비소에서 걸리는 시간
+int visit[52];
+int ans = 100000000;
+
+//visit을 쓰는 문제랑 안 쓰는 문제의 차이가 뭐야..?
+
+//n번째 정비소에 있고 시간은 얼마나 걸렸어.
+void dfs(int n, int time)
+{
+	if (n == N + 1) //마지막에 도달했다.
+	{
+		if (time < ans) ans = time;
+		return;
+	}
+
+	if (time >= ans) return;
+
+	//난 어차피 그 이후부터 구하면 될 것 같아서 이렇게 일단 적는다.
+	for (int i = n + 1; i <= N + 1; i++)
+	{
+		//if (visit[i] == 1) continue;
+
+		if (dis[i] - dis[n] <= L) {
+			//visit[i] = 1;
+			dfs(i, time + jung[i]); //이게 현재의 위치를 넘겨준 것 같다.
+			//visit[i] = 0;
+		}
+	}
+
+	return;
+}
+
+int main()
+{
+	cin >> L; //한 번에 갈 수 있는 최대 거리
+	cin >> N; //정비소의 개수
+
+	for (int i = 1; i <= N+1; i++) //dis를 저장한다
+	{
+		cin >> dis[i];
+		dis[i] += dis[i - 1]; //근데 누적거리로 저장한다
+		//내가 이걸 혼자 할 수 있을까 ..
+	}
+
+	// 정비소에서 걸리는 시간을 저장
+	for (int i = 1; i <= N; i++)
+	{
+		cin >> jung[i];
+	}
+
+	dfs(0, 0);
+
+	cout << ans << endl;
+
+	return 0;
+}
