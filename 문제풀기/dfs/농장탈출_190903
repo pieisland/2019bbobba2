@@ -1,0 +1,66 @@
+#include<cstdio>
+#include<iostream>
+#include<vector>
+#include<algorithm>
+#include<string>
+#include<cstring>
+#include<queue>
+#include<math.h>
+using namespace std;
+
+/*
+19.09.03.화.
+
+*/
+
+int N;
+int cow[21];
+int ans;
+
+int possible(int sum, int w)
+{
+	int a = sum, b = w;
+	
+	while (1)
+	{
+		//예전에는 둘 다 0이 되면 이제 그만봐도 된다고 했는데
+		//생각해보니까 하나만 0이 되어도 나머지 애는 어차피 혼자서 9를 넘지는 않잖아.
+		if (a == 0 || b == 0) break;
+
+		if (a % 10 + b % 10 > 9) return 0;
+		a = a / 10;
+		b = b / 10;
+	}
+	return 1;
+}
+
+//이것의 의미는 idx 번째 소가 가능한지를 봐줘. 라는 의미.
+//idx이전 소들에 대해서 sum과 cnt를 구해왔는데, 이 값들로 이제 idx번째 소가 가능한지 판단해줘.
+void dfs(int idx, int sum, int cnt)
+{
+  //n번째 소까지 다 봤다는 의미. 이제 판단만 하면 된다.
+	if (idx == N + 1)
+	{
+		if (ans < cnt)
+			ans = cnt;
+		return;
+	}
+
+	if (possible(sum, cow[idx])) //더하기 가능하면 더한 상태로 다음 단계
+		dfs(idx + 1, sum + cow[idx], cnt + 1);
+	dfs(idx + 1, sum, cnt); //선택 안함
+}
+
+int main()
+{
+	cin >> N;
+
+	for (int i = 1; i <= N; i++)
+		cin >> cow[i];
+
+	dfs(1, 0, 0);
+
+	cout << ans << endl;
+
+	return 0;
+}
