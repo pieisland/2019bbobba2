@@ -1,0 +1,60 @@
+#include<cstdio>
+#include<iostream>
+#include<vector>
+#include<algorithm>
+#include<string>
+#include<cstring>
+#include<queue>
+#include<math.h>
+using namespace std;
+
+/*
+19.09.03.화.
+다시풀어보는 n queen.
+기본적인 dfs 문제인 걸로 알고있는데. 다시 풀어보는 거임에도 불구하고 아무 생각이 나지 않았다. ^.^
+정말 개노답 아니냐 인생 왜 이렇게 사나 ㅎㅎ.
+다음번에는 좀 풀 수 있으면 좋겠다.
+*/
+
+int n;
+int queen[11];//최대 10개라고 해서. queen[a] =b 는 a행 b열에 체스를 놓았다는 것을 의미.
+int ans;
+
+int possible(int row)
+{
+	for (int i = 1; i < row; i++)
+	{
+		// 동일한 열에 위치했거나 대각선에 위치했다면 안되는 거고
+		if (queen[i] == queen[row] || row - i == abs(queen[i] - queen[row]))
+			return 0;
+	}
+	return 1; //아니면 되는거다.
+}
+
+void dfs(int row)
+{
+	// 마지막 행까지 무사히 와서 넘어갔다면 퀸을 잘 놓을 수 있다는 의미니까.
+	if (row == n + 1)
+	{
+		ans++;
+		return;
+	}
+
+	//어떤 열에 놓을지 결정
+	for (int i = 1; i <= n; i++)
+	{
+		queen[row] = i;
+		if (possible(row))
+			dfs(row + 1);
+	}
+}
+
+int main()
+{
+	cin >> n;
+	dfs(1);
+	
+	cout << ans << endl;
+
+	return 0;
+}
