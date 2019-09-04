@@ -1,0 +1,84 @@
+#include<cstdio>
+#include<iostream>
+#include<vector>
+#include<algorithm>
+#include<string>
+#include<cstring>
+#include<queue>
+#include<math.h>
+using namespace std;
+
+/*
+19.09.03.화.
+퇴사 문제를 풀고있는데.. 이렇게 풀면 안되나보네 ㅋㅋㅋ...
+
+https://suriisurii.tistory.com/8
+아니 왜 이사람이 푼대로 했는데도 안되는데
+
+*/
+
+int N;
+int T[16];
+int P[16];
+int ans;
+
+void dfs2(int day, int work, int sum)
+{
+	if (day < work) return;//오래걸려서 내 일을 못한다.
+
+	if (day >= N + 1)
+	{
+		if (ans < sum) ans = sum;
+		return;
+	}
+
+	//day날에 일을 한 경우
+	dfs2(day + 1, day + T[day], sum + P[day]);
+	dfs2(day + 1, work, sum);//day날에 일을 안해서 이전 work랑 비교함.
+}
+
+void dfs_(int day, int sum)
+{
+	if (day >= N + 1)
+	{
+		if (ans < sum) ans = sum;
+		return;
+	}
+
+	//근데 이게 N까지 되는거면 마지막 날은
+	//일은 못하는 거 아니야?? ㅠㅠㅠ
+	if (day + T[day] < N+1)
+		dfs_(day + T[day], sum + P[day]);
+	dfs_(day + 1, sum);
+}
+
+void dfs(int day, int sum)
+{
+	if (day >= N + 1)
+	{
+		if (ans < sum) ans = sum;
+		return;
+	}
+	
+	//dfs(day+1, sum + P)
+	//아 개노답이라고... 어떡하라고 ㅋㅋㅋㅋㅋ
+	//진짜 dfs 나를 왜 못잡아먹어서 안달이냐...
+	if (day + T[day] <= day + 1)
+		dfs(day + 1, sum + P[day]);
+	//for (int i = day + T[day]; i <= N; i++)
+	//	dfs(i, sum + P[day]);
+	dfs(day + 1, sum);
+}
+
+int main()
+{
+	cin >> N;
+	for (int i = 1; i <= N; i++)
+		cin >> T[i] >> P[i];
+
+	dfs_(1, 0);
+
+	cout << ans << endl;
+
+	return 0;
+}
