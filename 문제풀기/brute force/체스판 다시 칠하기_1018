@@ -1,0 +1,98 @@
+#include<cstdio>
+#include<iostream>
+#include<vector>
+#include<algorithm>
+#include<string>
+#include<cstring>
+#include<queue>
+#include<math.h>
+using namespace std;
+
+/*
+19.09.05.목.
+체스판 다시 칠하기.
+이건 진짜 그냥.. 모두 해보는 문제네.
+정답과 비교해서 개수를 세면 되는 문제.
+조금 헷갈린 부분이라면, 어느부분까지 시작점을 잡아야 하는지를 찾는 거.
+
+*/
+
+int m, n;
+char chess[50][50];
+//W가 시작으로 들어간 체스판
+char w[8][8] = { 
+	'W', 'B', 'W', 'B', 'W', 'B', 'W', 'B',
+	'B', 'W', 'B', 'W', 'B', 'W', 'B', 'W',
+	'W', 'B', 'W', 'B', 'W', 'B', 'W', 'B', 
+	'B', 'W', 'B', 'W', 'B', 'W', 'B', 'W',
+	'W', 'B', 'W', 'B', 'W', 'B', 'W', 'B',
+	'B', 'W', 'B', 'W', 'B', 'W', 'B', 'W',
+	'W', 'B', 'W', 'B', 'W', 'B', 'W', 'B',
+	'B', 'W', 'B', 'W', 'B', 'W', 'B', 'W' };
+
+char b[8][8] = {
+	'B', 'W', 'B', 'W', 'B', 'W', 'B', 'W',
+	'W', 'B', 'W', 'B', 'W', 'B', 'W', 'B',
+	'B', 'W', 'B', 'W', 'B', 'W', 'B', 'W',
+	'W', 'B', 'W', 'B', 'W', 'B', 'W', 'B',
+	'B', 'W', 'B', 'W', 'B', 'W', 'B', 'W',
+	'W', 'B', 'W', 'B', 'W', 'B', 'W', 'B',
+	'B', 'W', 'B', 'W', 'B', 'W', 'B', 'W',
+	'W', 'B', 'W', 'B', 'W', 'B', 'W', 'B'
+};
+
+int ans = 1000000000;
+
+int wCount(int y, int x)
+{
+	int cnt = 0;
+	for (int i = y; i < y + 8; i++)
+	{
+		for (int j = x; j < x + 8; j++)
+		{
+			if (chess[i][j] != w[i - y][j - x]) cnt++;
+		}
+	}
+
+	return cnt;
+}
+
+int bCount(int y, int x)
+{
+	int cnt = 0;
+	for (int i = y; i < y + 8; i++)
+	{
+		for (int j = x; j < x + 8; j++)
+		{
+			if (chess[i][j] != b[i - y][j - x]) cnt++;
+		}
+	}
+
+	return cnt;
+}
+
+int main()
+{
+	cin >> m >> n;
+
+	for (int i = 0; i < m; i++)
+		for (int j = 0; j < n; j++)
+			cin >> chess[i][j];
+
+	//체스..가능한 경우와 모두 확인
+	for (int i = 0; i + 7 < m; i++) //이게 헷갈렸다.
+	{
+		for (int j = 0; j + 7 < n; j++)
+		{
+			int t1 = wCount(i, j);
+			int t2 = bCount(i, j);
+
+			int t = t1 < t2 ? t1 : t2;
+			if (t < ans) ans = t;
+		}
+	}
+
+	cout << ans << endl;
+
+	return 0;
+}
