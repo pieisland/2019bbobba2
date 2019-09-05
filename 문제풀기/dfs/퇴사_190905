@@ -1,0 +1,56 @@
+#include<cstdio>
+#include<iostream>
+#include<vector>
+#include<algorithm>
+#include<string>
+#include<cstring>
+#include<queue>
+#include<math.h>
+using namespace std;
+
+/*
+19.09.05.목.
+퇴사문제를 dfs로 풀었다.
+dp는 이해하기 힘들었는데 이건 좀 괜찮은 듯.
+0을 호출을 한다는 게 꼭 그 때 일을 한다는 걸 의미하는 게 아니었다.
+이 날에 일을 할건지 안할건지는 dfs문 안에서 상황에 맞게 결정을 하는 거였네.
+다음 dfs로 넘어가는 부분에서 주의할 건, 일을 하면 day+t[day]로 가야 된다는 거.
+일을 안하면 그냥 다음날을 살펴보는 거고.
+
+그래도 조오금이라도 감이 생긴 것 같아서 다행이다.
+*/
+
+int n;
+int t[15];
+int p[15];
+int ans;
+
+//문제에 마지막 날에 일하게 되는 그런 경우가 없어서
+//그런 거 아닐까 하는 추측을 해본다.
+void dfs(int day, int sum)
+{
+	if (day == n)
+	{
+		if (ans < sum) ans = sum;
+		return;
+	}
+
+	if (day + t[day] < n + 1) //참고했던 블로그 사람은 n으로 적었었다. 하지만 마지막 날을 일하는 것도 가능학 때문에 n+1이 맞는 것 같음.
+		dfs(day + t[day], sum + p[day]);
+	dfs(day + 1, sum);
+
+	return;
+}
+
+int main()
+{
+	cin >> n;
+	for (int i = 0; i < n; i++)
+		cin >> t[i] >> p[i];
+	
+	dfs(0, 0);
+
+	cout << ans << endl;
+
+	return 0;
+}
