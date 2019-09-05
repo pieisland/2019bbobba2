@@ -1,0 +1,55 @@
+#include<cstdio>
+#include<iostream>
+#include<vector>
+#include<algorithm>
+#include<string>
+#include<cstring>
+#include<queue>
+#include<math.h>
+using namespace std;
+
+/*
+19.09.05.목.
+부분수열의 합 문제.
+0이 포함되는 부분수열 때문에 헤맸다.
+처음에 sum에서 return을 안하게 하려고 했는데
+그러니까 포함 안한 상태로 넘어온 애들도 sum이 동일한까 잘못 세어지더라.
+그래서 그 수를 포함을 했는지 안했는지를 표시를 해야했다.
+
+**dfs는 매개변수로 넘기는 값이 이제 idx 번쨰를 봐주세요. 이런 거라는 걸
+기억해야될 것 같다. 계속 헷갈림..
+*/
+
+int n, s;
+int nums[20];
+int ans;
+
+void dfs(int idx, int sum, int in)
+{
+	if (sum == s && in == 1) //합이 원하는 값이면서 그 멤버를 포함한 경우
+	{
+		//cout << idx << endl;
+		ans++;
+		//return;
+	}
+
+	if (idx == n) return; //마지막까지 왔는데 위에서 안걸러진 경우..;
+
+	dfs(idx + 1, sum + nums[idx], 1); //포함
+	dfs(idx + 1, sum, 0); //미포함
+
+	return;
+}
+
+int main()
+{
+	cin >> n >> s;
+	for (int i = 0; i < n; i++)
+		cin >> nums[i];
+
+	dfs(0, 0, 0); //0번쨰는 봐주세요. 마지막 in 값은 0이어도 1이어도 상관 없다
+	//지금 아무것도 포함이 안 됐거든..
+	cout << ans << endl;
+
+	return 0;
+}
