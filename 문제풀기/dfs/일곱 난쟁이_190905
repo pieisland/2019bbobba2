@@ -1,0 +1,57 @@
+#include<cstdio>
+#include<iostream>
+#include<vector>
+#include<algorithm>
+#include<string>
+#include<cstring>
+#include<queue>
+#include<math.h>
+using namespace std;
+
+/*
+19.09.05.목.
+일곱 난쟁이. 마지막 종료조건에서 헷갈려서 헤맸다.
+언제 종료 되는지를 제대로 생각하자.
+이 문제는 n값이 9가 됐다고 해도 그 상태에서 정답이 나올 수 있다
+(앞의 9명을 다 보고 넘겨진 값이므로 그 값을 확인해야 되는 것)
+
+조심.
+*/
+
+int dwarf[9];
+vector<int> height;
+int flag = 0; //한 번만 출력하게 하기 위해 flag를 설정.
+
+void dfs(int idx, int sum, int cnt)
+{
+	if (flag) return;
+
+	if (sum == 100)
+	{	
+		if (cnt == 7) { //7명이어야 출력
+			flag = 1;
+			sort(height.begin(), height.end());
+			for (int i = 0; i < height.size(); i++)
+				cout << height[i] << endl;
+		}
+		//아무리 100이 되어도 7명이 안되면 불가.
+		return;
+	}
+
+	if (idx == 9) return; //위에서 안걸러졌으면 마지막까지 봤는데도 결국 못 찾은 거.
+
+	height.push_back(dwarf[idx]); //넣고
+	dfs(idx + 1, sum + dwarf[idx], cnt+1); //포함
+	height.pop_back(); //백트래킹 가능하게 뺌.
+	dfs(idx + 1, sum, cnt); //비포함
+}
+
+int main()
+{
+	for (int i = 0; i < 9; i++)
+		cin >> dwarf[i];
+
+	dfs(0, 0, 0);
+
+	return 0;
+}
