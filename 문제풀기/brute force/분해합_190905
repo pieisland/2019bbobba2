@@ -1,0 +1,50 @@
+#include<cstdio>
+#include<iostream>
+#include<vector>
+#include<algorithm>
+#include<string>
+#include<cstring>
+#include<queue>
+#include<math.h>
+using namespace std;
+
+/*
+19.09.05.목.
+분해합.
+그냥 하라는 대로 하면 되는 문제.
+*/
+
+int n;
+
+int main()
+{
+	cin >> n;
+	int flag = 0; //찾았으면 1을 줘서 마지막에 못 찾은 경우 0 출력할 수 있게 함.
+
+	//주어지는 수보다 작은 데서 당연히 생성자가 나오겠지.
+	for (int i = 1; i <= n; i++)
+	{
+		int tmp = i;
+		int sum = 0;
+		while (1)
+		{
+			if (tmp == 0) break;
+			int num = tmp % 10; //마지막 자리수를 구한다.
+			tmp /= 10; //다음 자리수를 구하기 위해 10으로 나눔
+			sum += num; //자리수를 더한다.
+		}
+		sum += i; //원래 내 수를 더한다
+		if (sum == n) //만약에 n과 같다면 생성자가 된다.
+		{
+			cout << i << endl; //출력하고
+			flag = 1; //플래그를 1로준다.
+			break;
+		}
+	}
+	 
+	//1이 아니라면 못 찾은 것이므로 0을 출력한다.
+	if (flag == 0)
+		cout << 0 << endl;
+	
+	return 0;
+}
