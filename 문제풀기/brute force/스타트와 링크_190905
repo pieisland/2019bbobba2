@@ -1,0 +1,83 @@
+#include<cstdio>
+#include<iostream>
+#include<vector>
+#include<algorithm>
+#include<string>
+#include<cstring>
+#include<queue>
+#include<math.h>
+using namespace std;
+
+/*
+19.09.05.목.
+스타트와 링크.
+그냥. 간단한데 sel 사용할 때 약간 생각을 해야했던 문제.
+저걸 어떻게 하더라. 했었다.
+반 개를 선택하는데 선택한 애들을 1로 주고 안선택한 애들을 0으로 줘서
+각각 더해주면 되는 문제.
+*/
+
+int n;
+int n2;
+int s[20][20];
+int sel[20];
+int ans = 1000000000;
+
+int sumAbs()
+{
+	int sum1 = 0;
+	int sum2 = 0;
+
+	for (int i = 0; i < n; i++)
+	{
+		for (int j = 0; j < n; j++)
+		{
+			if (i == j) continue; //어차피 안해도 되기는 함. 
+			if (sel[i] == 1 && sel[j] == 1) //같이 1인 경우 
+				sum1 += s[i][j];
+			if (sel[i] == 0 && sel[j] == 0) //같이 0인 경우
+				sum2 += s[i][j];
+		}
+	}
+
+	int res = abs(sum1 - sum2);
+	return res;
+}
+
+void dfs(int idx, int cnt)
+{
+	if (cnt == n2) //반끼리 나눴으면
+	{
+		//0인 애들 1인 애들끼리 더하기.
+
+		int abs_ = sumAbs();
+		if (abs_ < ans)
+			ans = abs_;
+
+		return;
+	}
+
+	if (idx == n) return; //나누지 못했는데 마지막에 도달한 경우
+
+	sel[idx] = 1; //선택 했다가
+	dfs(idx + 1, cnt + 1); //얘 선택
+	sel[idx] = 0; //다시 해제
+	dfs(idx + 1, cnt); //선택 안함.
+
+	return;
+}
+int main()
+{
+	cin >> n;
+	for (int i = 0; i < n; i++)
+		for (int j = 0; j < n; j++)
+			cin >> s[i][j];
+
+	n2 = n / 2;
+
+	dfs(0, 0);
+
+	cout << ans << endl;
+
+	return 0;
+}
