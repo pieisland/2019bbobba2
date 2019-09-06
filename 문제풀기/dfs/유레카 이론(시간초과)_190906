@@ -1,0 +1,55 @@
+#include<cstdio>
+#include<iostream>
+#include<vector>
+#include<algorithm>
+#include<string>
+#include<cstring>
+#include<queue>
+#include<math.h>
+using namespace std;
+
+/*
+19.09.06.금.
+*/
+
+int n;
+int flag;
+
+//만들려는 수, 삼각수 만들 수, 합
+void dfs(int num, int n, int sum, int cnt)
+{
+	//cout << "ddfdfa" << endl;
+
+	int tri = n * (n + 1) / 2;
+	if (num < tri) return;
+
+	if (sum > num) return;
+
+	if (sum == num)
+	{
+		if (cnt == 3) flag = 1;
+		return;
+	}
+	
+	dfs(num, n + 1, sum, cnt); //n으로 만든 삼각수 비포함
+	dfs(num, n + 1, sum + tri, cnt + 1); //n으로 만든 삼각수 포함
+
+	return;
+}
+
+int main()
+{
+	int t;
+	cin >> t;
+	int num;
+	while (t--)
+	{
+		flag = 0;
+		cin >> num;
+		dfs(num, 1, 0, 0);
+		cout << flag << endl;
+	}
+	
+
+	return 0;
+}
