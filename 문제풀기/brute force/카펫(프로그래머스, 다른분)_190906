@@ -1,0 +1,35 @@
+#include <string>
+#include <vector>
+#include <iostream>
+#include <math.h>
+
+using namespace std;
+
+/*
+도대체 어떻게 하면 이런 생각을 할 수 있는가 ㅎ.ㅎ
+출처: https://swjeong.tistory.com/74
+*/
+
+vector<int> solution(int brown, int red) {
+    vector<int> answer;
+
+    int sum= brown+red;
+    int limit= sqrt(sum); //세로의 길이의 limit값을 구할 수 있다는 게 참..
+    
+    //세로길이
+    for(int i=3;i<=limit;i++)
+    {
+        if(sum%i==0)
+        {
+            int tmp= sum/i; //가로길이
+            if((tmp-2)*(i-2)==red)
+            {
+                answer.push_back(tmp);
+                answer.push_back(i);
+                break;
+            }
+        }
+    }
+    
+    return answer;
+}
