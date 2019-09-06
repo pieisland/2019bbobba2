@@ -1,0 +1,66 @@
+#include <string>
+#include <vector>
+#include <iostream>
+
+using namespace std;
+
+int sel[10];
+vector<int> selnum;
+int ans;
+
+void dfs(int cnt, vector<int> &sels, vector<vector<int>>& baseball)
+{
+    if(cnt==3) //만든 세 자리 수는 sels에 저장돼있다.
+    {
+        for(int i=0;i<baseball.size();i++) //모든 baseball 정보에 대해서
+        {
+            int strike=0; //스트라이크 개수
+            int ball=0; //볼 개수
+            
+            int tmpnum=baseball[i][0]; //주어진 수를 compare에 한자씩 나눠 저장
+            int compare[3];
+            int idx=2;
+            while(tmpnum!=0)
+            {
+                compare[idx--] = tmpnum%10;
+                tmpnum/=10;
+            }
+            
+            for(int j=0;j<3; j++) //위치와 값이 동일하다면 스트라이크
+            {
+                if(compare[j]==sels[j]) strike++;
+            }
+            
+            for(int j=0;j<3;j++) //위치는 다르지만 값은 같다면 볼(어차피 중복 수가 없기 때문에 가능)
+                for(int k=0;k<3;k++)
+                {
+                    if(j==k) continue;
+                    if(compare[j]==sels[k]) ball++;
+                }
+            
+            //하나라도 다르다면 안된다. return한다.
+            if(baseball[i][1]!=strike || baseball[i][2]!=ball)
+                return;
+        }
+        ans++; //앞에서 return이 되지 않았으므로 원하는 수다.
+        return;
+    }
+    
+    //9자리 수에서 3개를 선택하기
+    for (int i = 1; i <= 9; i++)
+	  {
+		  if (sel[i] == 1) continue; //이미 선택한 수는 안 선택
+		  sel[i] = 1;
+		  sels.push_back(i);
+		  dfs(cnt + 1, sels, baseball);
+		  sel[i] = 0; 
+		  sels.pop_back(); //벡터 넣는거는 이렇게 빼주기도 해야된다는 점..
+	}
+}
+
+int solution(vector<vector<int>> baseball) {
+    
+    dfs(0, selnum, baseball);
+    
+    return ans;
+}
