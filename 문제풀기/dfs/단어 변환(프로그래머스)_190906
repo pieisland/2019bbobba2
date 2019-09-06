@@ -31,7 +31,6 @@ void dfs(string begin, string target, vector<string> words, int idx, int cnt)
         }
         if(diffcnt==1)
         {
-            cout<<"whatatw"<<endl;
             sel[i]=1;
             dfs(words[i], target, words, i, cnt+1);
             sel[i]=0;
