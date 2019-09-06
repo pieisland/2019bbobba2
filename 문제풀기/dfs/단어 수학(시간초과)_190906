@@ -1,0 +1,106 @@
+#include<cstdio>
+#include<iostream>
+#include<vector>
+#include<algorithm>
+#include<string>
+#include<cstring>
+#include<queue>
+#include<math.h>
+using namespace std;
+
+int n;
+string s[10];
+int alpha[26];
+int alnum[26];
+int sel[10];
+int ans;
+
+int func()
+{
+	int sum = 0;
+
+	for (int i = 0; i < n; i++)
+	{
+		string st;
+		for (int j = 0; j < s[i].length(); j++)
+		{
+			int tmp = s[i][j] - 65;
+			int tmp2 = alnum[tmp];
+			st += tmp2 + '0';//숫자로 바꿔서 저장
+		}
+		sum += atoi(st.c_str());
+	}
+
+	return sum;
+}
+
+
+void dfs(int idx)
+{
+	//별 탈 없이 끝까지 감
+	if (idx == 26)
+	{
+		int tans = func();
+		if (tans > ans) ans = tans;
+		return;
+	}
+
+	if (alpha[idx] == 0) dfs(idx + 1);
+
+	//0부터 9까지 숫자를 선택함.
+	
+	if (alpha[idx] == 1) {
+		for (int i = 0; i < 10; i++)
+		{
+			if (sel[i] == 1) continue;
+			sel[i] = 1;
+			alnum[idx] = i;
+			dfs(idx + 1);
+			alnum[idx] = 0;
+			sel[i] = 0;
+		}
+	}
+	return;
+}
+
+int main()
+{
+	cin >> n;
+	for (int i = 0; i < n; i++)
+	{
+		cin >> s[i];
+	}
+
+	//있는 문자 체크함.
+	for (int i = 0; i < n; i++)
+	{
+		for (int j = 0; j < s[i].length(); j++)
+		{
+			int tmp = s[i][j] - 65;
+			alpha[tmp] = 1;
+		}
+	}
+
+	dfs(0);
+
+	cout << ans << endl;
+
+	/*string s;
+	cin >> s;
+
+	string st;
+	for (int i = 0; i < s.length(); i++)
+	{
+		int tmp = s[i] - 65;
+		cout << tmp << endl;
+
+		st += tmp + '0';//다시 문자로 만들어줌
+
+		//되기는 하는데요. 저걸 다시 숫자로 어떻게 만드냐..
+	}
+
+	//string -> char * -> int 0으로 시작해도 가능하네.
+	cout << atoi(st.c_str()) << endl;
+	*/
+	return 0;
+}
