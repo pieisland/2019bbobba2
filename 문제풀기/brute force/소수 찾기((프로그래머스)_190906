@@ -1,0 +1,64 @@
+#include <string>
+#include <vector>
+#include <iostream>
+
+using namespace std;
+int ans=0;
+int sel[7]; //수 선택하는지 안하는지.
+int madenum[10000000]; //이미 만들었던 수인지 아닌지를 표기한다.
+int isPrime[10000000]; //소수인지 아닌지를 미리 저장해둔다. 룩업테이블의 느낌이다.
+
+//에라토스 너무 기억이 안나서..
+//핵심은 일단은 2부터 소수라고 가정하고 배수인 것들은 다 삭제해나감
+//0이면 건너뛰니까 편해지는 그런 이야기. 뭐. 아마도.
+void eratostenes()
+{
+    //처음 다 1을 한 다음에 0으로 하지 않음?
+    for(int i=2;i<10000000;i++)
+        isPrime[i]=1;
+    
+    for(int i=2;i<10000000;i++)
+    {
+        if(isPrime[i]==0) continue;
+        
+        for(int j=i+i;j<10000000;j+=i)
+            isPrime[j]=0;
+    }
+}
+
+void dfs(int cnt, string tmp, string numbers)
+{
+    int numtmp=atoi(tmp.c_str());//-'0';
+    
+    cout<<numtmp<< " : "<<isPrime[numtmp]<<endl;//뭐가 제대로 안되는 듯
+    
+    //소수이고 만든 적 없는 수라면
+    if(isPrime[numtmp]==1 && madenum[numtmp]==0)
+    {
+        ans++;
+        madenum[numtmp]=1;
+    }
+    
+    if(cnt==numbers.length()) return; //확인 끝이다.
+    
+    for(int i=0;i<numbers.length();i++)
+    {
+        if(sel[i]==1) continue;
+        sel[i]=1;
+        dfs(cnt+1, tmp + numbers[i], numbers);
+        sel[i]=0;
+    }
+}
+
+int solution(string numbers) {
+    int answer = 0;
+    
+    eratostenes();
+    
+    string tmp;
+    dfs(0, tmp, numbers);
+    
+    cout<<ans<<endl;
+    
+    return ans;
+}
