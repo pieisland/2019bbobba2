@@ -1,0 +1,50 @@
+#include <string>
+#include <vector>
+#include <iostream>
+
+using namespace std;
+
+int ans = 10000000;
+int sel[50];//최대 50개의 단어가 있다고 해.
+
+void dfs(string begin, string target, vector<string> words, int idx, int cnt)
+{
+    if(begin.compare(target)==0)
+    {
+        if(ans>cnt) ans=cnt; 
+        return;
+    }
+
+    if(cnt>=words.size())//다 돌았는데 없음
+        return;
+
+    //i번째 단어를 선택할 것인가 안할 것인가.
+    for(int i=0;i<words.size();i++)
+    {
+        if(sel[i]==1) continue; //이미 선택한 애임
+        int diffcnt=0;
+        for(int j=0;j<words[i].length();j++)
+        {
+            if(begin[j]!=words[i][j]){
+                diffcnt++;
+            }
+        }
+        if(diffcnt==1)
+        {
+            cout<<"whatatw"<<endl;
+            sel[i]=1;
+            dfs(words[i], target, words, i, cnt+1);
+            sel[i]=0;
+        }
+    }
+    return;
+}
+
+int solution(string begin, string target, vector<string> words) {
+    dfs(begin, target, words, 0, 0);
+    
+    if(ans==10000000) //변하지 않은 경우
+        return 0;
+    else return ans;
+}
+
