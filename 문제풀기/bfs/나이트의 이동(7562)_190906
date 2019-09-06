@@ -1,0 +1,83 @@
+#include<cstdio>
+#include<iostream>
+#include<vector>
+#include<algorithm>
+#include<string>
+#include<cstring>
+#include<queue>
+#include<math.h>
+using namespace std;
+
+/*
+19.09.06.금.
+아무래도. 체스를 잘 모르니까 안풀고 있었던 것 같은데.
+그냥 전형적인, 그것도 엄청 쉬운 bfs 문제였다.
+맵도 주어지는 것도 없어서.. 편함..;
+*/
+
+int n;
+int oy, ox;
+int dir[8][2] = { {-2, -1}, {-2, 1}, {-1, -2}, {-1, 2}, {1, -2}, {1, 2}, {2, -1}, {2, 1} };
+int check[300][300];//갔던 길은 안가기 위함.
+
+int isinside(int y, int x)
+{
+	if (y >= 0 && y < n && x >= 0 && x < n) return 1;
+	else return 0;
+}
+
+void bfs(int y, int x)
+{
+	queue<pair<int, int>> q;
+	q.push(make_pair(y, x));
+	check[y][x] = 1;
+
+	while (!q.empty())
+	{
+		int cy = q.front().first;
+		int cx = q.front().second;
+		q.pop();
+
+		//목적지 도착
+		if (cy == oy && cx == ox)
+		{
+			//몇 번만에 왔는지를 출력해야되는데.
+			//그값을 check에 저장을 하자 그러면
+			cout << check[cy][cx] - 1 << endl;
+			return;
+		}
+
+		for (int i = 0; i < 8; i++)
+		{
+			int ny = cy + dir[i][0];
+			int nx = cx + dir[i][1];
+
+			//범위에 맞고 갔던 길이 아니라면
+			if (isinside(ny, nx) && check[ny][nx] == 0)
+			{
+				check[ny][nx] = check[cy][cx] + 1;
+				q.push(make_pair(ny, nx));
+			}
+		}
+	}
+
+	return;
+}
+
+int main()
+{
+	int t;
+	cin >> t;
+
+	int y, x;
+	while (t--)
+	{
+		memset(check, 0, sizeof(check));
+		cin >> n;
+		cin >> y >> x; //현재 있는 칸
+		cin >> oy >> ox; //가려고 하는 칸
+		bfs(y, x);
+	}
+
+	return 0;
+}
