@@ -1,0 +1,95 @@
+#include<cstdio>
+#include<iostream>
+#include<vector>
+#include<algorithm>
+#include<string>
+#include<cstring>
+#include<queue>
+#include<math.h>
+using namespace std;
+
+//아니.. 너무 잘나오는데 도대체 어디서 문제가 생긴다는 건지 모르겠네..;;
+int sel[10000]; //공항 수가 이렇게 다 되지는 않을텐데.
+vector<string> ans;
+
+vector<vector<string>> tick = { {"ICN", "JFK"},  {"HND", "IAD"}, {"JFK", "HND"} };
+vector<vector<string>> tick2 =
+{ {"ICN", "SFO"}, {"ICN", "ATL"}, {"SFO", "ATL"}, {"ATL", "ICN"}, {"ATL", "SFO"} };
+
+//시작할 때는 시작 공항이 airport에 오는 거고
+//넘길 때는 찾은 공항이 오는 거에요.
+void dfs(vector<vector<string>> tickets, string airport, int cnt)
+{
+	ans.push_back(airport);
+
+	//그럼 종료조건은 어떻게 되려나.
+	if (cnt == tickets.size())
+	{
+		return;
+	}
+
+	vector<int> idxList; //선택된 애들 인덱스 값을 저장
+	vector<string> destList; //선택된 애들 공항이름 저장
+
+	//여기서 아무것도 없을 리가 없어요. 마지막까지 갈때까지 있는데..;
+	//아니네 아무것도 없을 수가 있네 ^.^
+	for (int i = 0; i<tickets.size(); i++)
+	{
+		if (sel[i] == 1) continue; //근데 어디를 해야되지..
+		if (tickets[i][0].compare(airport) == 0)
+		{
+			cout <<"same"<< i << endl;
+
+			idxList.push_back(i);
+			destList.push_back(tickets[i][1]);
+		}
+	}
+
+	if (idxList.size() == 0)
+	{
+		//아무것도 없다.
+	}
+
+	//어.. 근데 선택한 표시를 해야되기 때문에 idx도 가지고 있어야 된다.
+	int goidx = idxList[0];
+	int go = 0;
+	for (int i = 1; i<destList.size(); i++)
+	{
+		//알파벳순으로 가장 앞선 것을 찾는다.
+		if (destList[go]>destList[i]) {
+			goidx = idxList[i];
+			go = i;
+		}
+	}
+
+	cout << "go: " << go << " goidx: " << goidx << endl;
+	cout << destList[go] << endl;
+
+	sel[goidx] = 1;
+
+	dfs(tickets, destList[go], cnt + 1);
+	//sel[goidx]=0; 생각해보니 다시 선택하는 경우가 없어요. 하나만 하거든..
+}
+
+vector<string> solution(vector<vector<string>> tickets) {
+
+	for (int i = 0; i<tickets.size(); i++)
+	{
+		if (tickets[i][0].compare("ICN") == 0)
+			cout << tickets[i][1] << endl;
+	}
+
+	dfs(tickets, "ICN", 0);
+
+	for (int i = 0; i<ans.size(); i++)
+		cout << ans[i] << " ";
+
+	return ans;
+}
+
+int main()
+{
+	solution(tick2);
+
+	return 0;
+}
