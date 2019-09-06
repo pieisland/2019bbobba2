@@ -1,0 +1,8 @@
+string s;
+s.substr(a, b);
+a부터 시작해서 b개를 가져오기.
+
+string a, b;
+a.compare(b);
+0값이면 둘이 동일함을 의미.
+-1이면 다른 값임을 의미.
