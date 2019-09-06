@@ -1,0 +1,72 @@
+#include<cstdio>
+#include<iostream>
+#include<vector>
+#include<algorithm>
+#include<string>
+#include<cstring>
+#include<queue>
+#include<math.h>
+using namespace std;
+
+/*
+19.09.06.금.
+https://suriisurii.tistory.com/17
+이분이 제일 쉽게 설명해두신 것 같다.
+다른 분들 건 못알아듣겠다...;
+
+substr이라는 함수를 이용하는데.
+string s가 있고
+s.substr(a, b);
+라고 하면 a 위치부터 b개를 뽑아온다.
+
+string을 비교할 때는 compare를 사용하는데
+string a, b가 있고
+a.compare(b)라고 할 때 0 값이 나오면 동일하다는 의미다.
+
+안쓰던 걸 알아가네.
+처음에는 이게 받은 문자열의 처음부터 끝까지 볼 수 있는 게 아니라서
+저래도 확인이 되나? 했는데 아무래도
+문자가 하나 추가될 때마다 확인을 하기 때문에 가능한 것 같기는 하다.
+정확한건지는 모르겠음. 하여간 맞는 것 가틈.
+*/
+
+int n;
+int finish;
+int ok(string s)
+{
+	int len = s.length();
+	int start = len - 1;
+
+	for (int i = 1; i <= len / 2; i++)
+	{
+		string a = s.substr(start - i, i);
+		string b = s.substr(start, i);
+		if (a.compare(b) == 0) return 0;
+		--start;
+	}
+	return 1;
+}
+
+void dfs(int len, string s)
+{
+	if (finish) return;
+	if (!ok(s)) return;
+	if (len == n)
+	{
+		finish = true;
+		cout << s << endl;
+		return;
+	}
+
+	dfs(len + 1, s + "1");
+	dfs(len + 1, s + "2");
+	dfs(len + 1, s + "3");
+}
+
+int main()
+{
+	cin >> n;
+	dfs(1, "1");
+
+	return 0;
+}
