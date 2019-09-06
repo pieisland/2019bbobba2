@@ -1,0 +1,56 @@
+#include <string>
+#include <vector>
+#include <iostream>
+#include <algorithm>
+
+/*
+https://dailyheumsi.tistory.com/22
+이 분이 푸신 거다. 어떻게 이렇게 깔끔하게 풀지..
+일단 정렬을 해서 사서고생 안한다는 것 부터가 좋은 듯.
+근데 솔직히 내가 이렇게 풀 수 있을지는 의문이다. 못 풀 것 같은데.
+허헛.
+*/
+
+using namespace std;
+
+//참조자로 다 받아왔다. temp는 최종 답인 answer를 만들기 전에 임시로 담아두는 곳이다.
+//조건을 충족하지 못할 경우 빼낸다.
+int dfs(string from, vector<vector<string>>& tickets, vector<int>& visit, vector<string>& temp, vector<string>& answer, int cnt)
+{
+    temp.push_back(from);
+    
+    //모두 찾았으면 answer에 temp를 복사하고 끝냄.
+    if(cnt==tickets.size())
+    {
+        answer=temp;
+        return 1;
+    }
+    
+    for(int i=0;i<tickets.size();i++)
+    {
+        //경가는 경로를 발겨 했으면 일단 간다고 해두고
+        if(tickets[i][0]==from && visit[i]==0)
+        {
+            visit[i]=1;
+            
+            //dfs를 호출해서 끝까지 가는지를 확인한다. 끝까지 가야 그 경로로 가는 게 맞는 것이다.
+            int success=dfs(tickets[i][1], tickets, visit, temp, answer, cnt+1);
+            if(success) return 1; //성공성공.
+            visit[i]=0; //다시 해제는.. 해줘야되는건가..?
+        }
+    }
+    
+    //for문 안에서 내가 가는 경로가 없어서 마지막까지 못갔으면 0을 리턴해준다.
+    temp.pop_back();
+    return 0;
+}
+
+vector<string> solution(vector<vector<string>> tickets) {
+    vector<string> answer, temp;
+    vector<int> visit(tickets.size(), 0);
+    
+    sort(tickets.begin(), tickets.end()); //정렬. 정렬하면 문자 그 순서대로 되는 거 신기하네.
+    dfs("ICN", tickets, visit, temp, answer, 0);
+
+    return answer;
+}
