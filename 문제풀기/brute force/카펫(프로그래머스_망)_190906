@@ -1,0 +1,39 @@
+#include <string>
+#include <vector>
+#include <iostream>
+
+using namespace std;
+
+void dfs(int row, int col, int brown, int red)
+{
+	//cout << row << " " << col << endl;
+
+	int r = (row - 2)*(col - 2);
+	int b = row * col - r;
+
+	if (b > 5000 || r > 2000000) return;
+
+	if (row < col) return;
+
+	if ((row - 2)*(col - 2) == red && row*col == brown+red)
+	{
+		cout << row << " " << col << endl;
+		return;
+	}
+
+	dfs(row + 1, col, brown, red);
+	dfs(row, col + 1, brown, red);
+	dfs(row + 1, col + 1, brown, red);
+
+	return;
+}
+
+//뻗어서 안나오는 거였구만.. 그만하라고 해줘야되는데 ㅋㅋㅋ 그걸 잡아주는 게 없어가지고.
+int main()
+{
+	int brown = 24;
+	int red = 24;
+	dfs(3, 3, brown, red);
+
+	return 0;
+}
