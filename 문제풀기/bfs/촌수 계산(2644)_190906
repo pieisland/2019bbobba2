@@ -1,0 +1,76 @@
+#include<cstdio>
+#include<iostream>
+#include<vector>
+#include<algorithm>
+#include<string>
+#include<cstring>
+#include<queue>
+#include<math.h>
+using namespace std;
+
+/*
+19.09.06.금.
+촌수 계산.
+내가 자신 있는 bfs 문제랑 비교해서 생긴 게 좀 달라서 당황했던 문제.
+graph로 풀어야 되나 했는데.. vector로 서로 넣어두고 풀면 되는 문제였다.
+다른 사람들은 어떻게 풀었으려나.
+*/
+
+int n;
+int a, b;
+vector<int> v[101]; //벡터 이렇게 할 수 있음!
+int check[101]; //갔던 곳은 안간다.
+
+//매개변수가 그리 필요한 것 같긴 않음..
+int bfs()
+{
+	queue<int> q;
+	q.push(a); //시작 지점 넣고
+	check[a] = 1;
+
+	while (!q.empty())
+	{
+		int start = q.front();
+		q.pop();
+
+		if (start == b) //찾고싶은 값을 찾았으면
+		{
+			cout << check[start] - 1 << endl;
+			return 1;
+		}
+
+		//그 값이랑 연결돼있는 값들에 대해서 찾는다.
+		for (int i = 0; i < v[start].size(); i++)
+		{
+			int t = v[start][i];//연결된 값에 대해서
+			if (check[t] == 0) //아직 안 간 곳이라면
+			{
+				check[t] = check[start] +1 ;
+				q.push(t);
+			}
+		}
+	}
+
+	return 0;
+}
+
+int main()
+{
+	cin >> n;
+	cin >> a >> b;
+	int rel;
+	cin >> rel;
+
+	int p, c;
+	for (int i = 0; i < rel; i++)
+	{
+		cin >> p >> c;
+		v[p].push_back(c);
+		v[c].push_back(p);//서로 연결된 정보를 그냥 저장합니다.
+	}
+
+	if (bfs() == 0)//못찾았다면 -1을 출력한다.
+		cout << -1 << endl;
+
+	return 0;
+}
