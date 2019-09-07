@@ -1,0 +1,199 @@
+#include <string>
+#include <vector>
+#include <iostream>
+#include <queue>
+
+using namespace std;
+
+/*
+19.09.07.토.
+미세먼지 안녕.
+이 문제에서 중요한 건, 동시다발적 확산이 일어나기 위해서는
+맵을 카피해야 된다는 거였다.
+카피 안하면, 덮어쓰기 되면서 원래 값이 아니라 덮어써진 값으로 변경이 된다.
+간과하고있었다...
+
+그리고 ㅋㅋㅋ 공기청정기 돌아가는 거 구현하는거
+아무생각 없이 하려고 했는데
+방향을 미리 설정을 해서 그것에 맞게 다음 위치를 찾은 다음에
+다음 위치가 맞으면 그 위치에 내 위치 값 넣어주면 순환이 되는 걸 표현할 수 있다.
+내 위치가 갱신이 되는 건 다음 위치가 맞을 경우이기 때문에 문제 없이
+표현이 되는 거고. 공기 청정기가 처음으로 밀게되는 위치는 어차피 값이 0이 되기 때문에
+0으로 주고 그 값 이후부터 보면 되는 거다.
+
+진짜 dir1, dir2 너무 중요하다 ㅠ.ㅠ
+*/
+
+
+int r, c, t;//맵의 크기와 몇 초가 지났는지.
+int map[50][50];
+queue < pair<int, int>> q;//미세먼지가 있는 부분을 담는다.
+int dir[4][2] = { {1, 0}, {-1, 0}, {0, 1}, {0, -1} }; //남, 북, 동, 서. 방향을 나타내고 확산할 때와 이동할 떄 사용.
+int dir1[4] = {2, 1, 3 ,0}; //위쪽 공기청정기 이동방향. 동 북 서 남.
+int dir2[4] = {2, 0, 3, 1}; //아래쪽 공기청정기 이동방향. 동 남 서 북
+
+vector<int> airCleaner; //공기청정기 위치
+
+//범위 맞는가.
+bool isinside(int y, int x)
+{
+	if (y >= 0 && y < r && x >= 0 && x < c)	return true;
+	else return false;
+}
+
+//미세먼지를 확산시키는 bfs
+void bfs()
+{
+	int tmap[50][50];
+	//현재 맵 상태를 복사해야 동시다발적 확산 가능
+	for (int i = 0; i < r; i++)
+		for (int j = 0; j < c; j++)
+			tmap[i][j] = map[i][j];
+
+	//얘는 이때까지 했던 거랑은 좀 다른 게 확산을 [하는 거라서 push 하는 게 없음.
+	//그냥 큐에 들어가 있는 위치에 대해서 하면 됨.
+	while (!q.empty())
+	{
+		int cy = q.front().first;
+		int cx = q.front().second;
+
+		q.pop();
+
+		//이 값을 구할 때 tmap이 사용되는 거고
+		int spread = tmap[cy][cx] / 5; //더해지고 빼질 값
+
+		//4방향으로 미세먼지를 확산시킨다.
+		for (int i = 0; i < 4; i++)
+		{
+			int ny = cy + dir[i][0];
+			int nx = cx + dir[i][1];
+
+			if (isinside(ny, nx) && tmap[ny][nx]!=-1)//범위가 맞고 공기청정기가 아닌 경우
+			{
+				//실제 값 변경은 map에서 됩니다. 이미 복사를 했기 때문에 그냥 변경만 해주면 된다.
+				map[ny][nx] += spread; //조건을 만족하면 확산.
+				map[cy][cx] -= spread;//내 위치 미세먼지에서 제거.
+			}
+		}
+	}
+}
+
+//공기청정기 가동
+void airClear()
+{
+	int tmap[50][50];
+	//현재 맵 값을 저장해둬서 편리하게.
+	for (int i = 0; i < r; i++)
+		for (int j = 0; j < c; j++)
+			tmap[i][j] = map[i][j];
+
+	//공기청정기의 위치
+	int upY = airCleaner[0];
+	int upX = airCleaner[1];
+	int downY = airCleaner[2];
+	int downX = airCleaner[3];
+
+	int y = upY;
+	int x = upX + 1;
+
+	map[y][x] = 0; //바람에 밀려 지워지는 부분
+
+	//동 북 서 남으로 바람 순환
+	for (int i = 0; i < 4; i++)
+	{
+		while (1)
+		{
+			//새로 찾은 위치
+			int nextY = y + dir[dir1[i]][0];
+			int nextX = x + dir[dir1[i]][1];
+
+			if (nextY == upY && nextX == upX) break; //마지막 i가 3일 때 도착한 경우
+
+			//범위를 벗어나게되면
+			if (!(0 <= nextY && nextY < r && 0 <= nextX && nextX < c)) break;
+			
+			//다음 위치에 현재값을 복사한 후
+			map[nextY][nextX] = tmap[y][x];
+			y = nextY;
+			x = nextX;//문제가 없으면 업데이트
+		}
+	}
+
+	y = downY;
+	x = downX+1;
+	map[y][x] = 0;
+	for (int i=0;i<4;i++)
+	{
+		while (1)
+		{
+			int nextY = y + dir[dir2[i]][0];
+			int nextX = x + dir[dir2[i]][1];
+
+			if (nextY == downY && nextX == downX) break;
+
+			if (!(0 <= nextY && nextY < r && 0 <= nextX && nextX < c)) break;
+
+			map[nextY][nextX] = tmap[y][x];
+			y = nextY;
+			x = nextX;
+		}
+	}
+}
+
+//미세먼지 수를 센다.
+void dustCnt()
+{
+	int res = 0;
+	for (int i = 0; i < r; i++)
+		for (int j = 0; j < c; j++)
+			if (map[i][j] > 0) res += map[i][j];
+
+	cout << res << endl;
+}
+
+int main()
+{
+	cin >> r >> c >> t;
+	for (int i = 0; i < r; i++)
+	{
+		for (int j = 0; j < c; j++)
+		{
+			cin >> map[i][j];
+
+			//여기서 파악 가능
+			if (map[i][j] == -1)//이게 공기청정기라면
+			{
+				airCleaner.push_back(i);
+				airCleaner.push_back(j);
+			}
+			//어차피 두 개 밖에 없기 때문에 위쪽은 0 1 번 쓰면 되고 아래쪽은 2 3 번 쓰면 됨.
+		}
+	}
+
+	while (t--) //1초씩 큐에 넣어가지고 하면 되는거냐.
+	{
+		for (int i = 0; i < r; i++)
+		{
+			for (int j = 0; j < c; j++)
+			{
+				//미세먼지라면
+				if (map[i][j] > 0)//음수는 공기청정기 위치이기 때문에
+				{
+					q.push(make_pair(i, j));
+				}
+			}
+		}
+
+		//큐에 다 집어넣은 후 bfs를 돌린다.
+		bfs();//그냥 큐에 넣은거에 대해서 돌리면 되는거지.
+		//어차피 bfs를 하고 나면 큐가 비기 때문에 클리어 안해줘도 된다.
+
+		//이제 공기청정기를 가동하면 된다.
+		airClear();
+	}
+
+	dustCnt();
+
+
+	return 0;
+}
