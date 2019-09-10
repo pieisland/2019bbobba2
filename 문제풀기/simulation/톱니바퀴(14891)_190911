@@ -1,0 +1,165 @@
+#include <string>
+#include <vector>
+#include <iostream>
+#include <queue>
+#include <stdio.h>
+#include <cstring> //memset 사용을 위함
+#include <math.h> //pow 사용을 위함
+
+using namespace std;
+
+/*
+19.09.11.수.
+톱니바퀴 문제.
+회전할 때 %를 사용해서 시계방향, 반시계 방향을 표현하는 것.
+값에 따라서 돌아갈지 돌아가지 않을지를 판단해서 1번, 4번까지 변경이 되는 것.
+돌아가는 방향을 메모해서 마지막에 돌도록 하는 것.
+
+생각이 가장 많이 필요했던 부분은
+연쇄적으로 돌아가게 되는 것을 어떻게 하냐였다.
+그래서 for 문을 두 개를 사용을 하기로 했고
+하나가 돌아가면 반대로 돌아가기 때문에 -를 붙여서 방향을 변경했다.
+
+말을 하기 좀 어렵긴 한데.. 호호.
+*/
+
+int top[5][8];
+int move_[5];
+
+void show()
+{
+	cout << "show result" << endl;
+
+	for (int i = 1; i <= 4; i++)
+	{
+		for (int j = 0; j < 8; j++)
+		{
+			cout << top[i][j] << " ";
+		}
+		cout << endl;
+	}
+
+	cout << "move" << endl;
+	for (int i = 1; i <= 4; i++)
+		cout << move_[i] << " ";
+	cout << endl;
+}
+
+//시계방향 회전
+void clockWise(int idx)
+{
+	int tmp[8];
+
+	//시계방향으로 회전한 결과를 임시적으로 저장을 한 후에 넣어준다.
+	for (int i = 0; i < 8; i++)
+		tmp[(i + 1) % 8] = top[idx][i];
+	for (int i = 0; i < 8; i++)
+		top[idx][i] = tmp[i];
+}
+
+
+//반시계방향 회전
+void counterClockWise(int idx)
+{
+	int tmp[8];
+	for (int i = 0; i < 8; i++)
+		tmp[(i + 7) % 8] = top[idx][i];
+	for (int i = 0; i < 8; i++)
+		top[idx][i] = tmp[i];
+}
+
+//실제로 회전을 하는 함수.
+void rotation()
+{
+	for (int i = 1; i <=4; i++)
+	{
+		switch (move_[i])
+		{
+		case 1: //시계방향 회전
+			clockWise(i);
+			break;
+		case -1: //반시계방향 회전
+			counterClockWise(i);
+			break;
+		default: //회전하지 않음
+			break;
+		}
+	}
+}
+
+//톱니바퀴를 연쇄적으로 회전하는 함수
+void rotateTop(int idx, int rot)
+{
+	//회전하고자 한 톱니바퀴는 어쨌던 간에 회전.
+	move_[idx] = rot;
+
+	int nidx = idx;
+	int nrot = rot;
+
+	//왼쪽으로
+	//cout << "to the left" << endl;
+	//나의 왼쪽에 있는 값들은 나의 6번과 상대의 2번을 비교한다.
+	for (int i = idx - 1; i >= 1; i--)
+	{
+		//cout << nidx << " " << i << endl;
+
+		if (top[nidx][6] == top[i][2])
+			break;
+		move_[i] = -nrot;
+		//move[i] = 1;// !nrot;
+		nidx = i; //다음으로 넘어가면 i값이 내 값이 된다
+		nrot = -nrot; //회전은 이제 반대로 돌게 된다.
+	}
+	nidx = idx; //다시 초기화.
+	nrot = rot;
+
+	//오른쪽으로
+	//cout << "to the right" << endl;
+	for (int i = idx + 1; i <= 4; i++)
+	{
+		//cout << nidx << " " << i << endl;
+
+		if (top[nidx][2] == top[i][6]) break;
+		move_[i] = -nrot;
+		//move[i] = 1;// !nrot;
+		nidx = i;
+		nrot = -nrot;
+	}
+
+	rotation();
+	
+	//show();
+	
+	//회전 정보를 초기화
+	memset(move_, 0, sizeof(move_));
+}
+
+int main()
+{
+	for (int i = 1; i <= 4; i++)
+		for (int j = 0; j < 8; j++)
+			scanf("%1d", &top[i][j]);
+
+	int t, idx, rot;
+	cin >> t;
+	while (t--)
+	{
+		cin >> idx >> rot;
+		rotateTop(idx, rot);
+	}
+
+	int ans = 0;
+	for (int i = 1; i <= 4; i++)
+	{
+		if (top[i][0] == 1) {
+
+//			cout << pow(2, i - 1) << endl;
+
+			ans += pow(2, i - 1);
+		}
+	}
+
+	cout << ans << endl;
+
+	return 0;
+}
