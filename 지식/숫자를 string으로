@@ -1,0 +1,3 @@
+to_string(숫자) 해주면 됨
+
+ex) string s= to_string(45);
