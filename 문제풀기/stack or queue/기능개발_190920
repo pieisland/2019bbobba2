@@ -1,0 +1,68 @@
+#include <string>
+#include <vector>
+#include <iostream>
+
+using namespace std;
+
+//190920 
+
+vector<int> solution(vector<int> progresses, vector<int> speeds) {
+    vector<int> days;
+    
+    vector<int> answer;
+    
+    for(int i=0;i<progresses.size(); i++)
+    {
+        int temp = progresses[i]; //처음으로 작업 완료하는 날을 찾음
+        int day=0; //며칠 지났는지 
+        
+        while(1)
+        {
+            temp +=speeds[i];
+            day++;
+            if(temp>=100) break;
+        }
+        days.push_back(day);
+    }
+    
+    for(int i=0;i<days.size();i++)
+    {
+        cout<<days[i]<<" ";
+    }
+    
+    int idx=0;
+    int check=0;
+    while(1) //그럼 언제멈추지...
+    {
+        int num=days[idx];
+        int cnt=1;
+        check=idx;
+        for(int i=idx+1;i<days.size();i++)
+        {
+            if(num>=days[i]) {
+                cnt++;
+                check=i;
+            }
+            else
+            {
+                idx=i;
+                
+                //더 큰 애가 나왔을 때 멈춰야되는데
+                //마지막 애라면 위에서 넣을거니까 아닌 경우만.
+                if(check!=days.size()-1)
+                    answer.push_back(cnt);
+                
+                break;
+            }
+        }
+        
+        //마지막 애라면 넣어주고 끝
+        if(check==days.size()-1) 
+        {
+            answer.push_back(cnt);
+            break;
+        }
+    }
+    
+    return answer;
+}
