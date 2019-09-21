@@ -1,0 +1,95 @@
+#include <string>
+#include <vector>
+#include <iostream>
+#include <queue>
+#include <stdio.h>
+#include <cstring> //memset 사용을 위함
+#include <math.h> //pow 사용을 위함
+
+using namespace std;
+
+/*
+190922 일. 멀티탭스케줄링.
+이전에 풀었던 문제인데. 옛날에 알고리즘 더 잘했던 것 같네 ㅋㅋㅋ..
+이 문제에서 핵심인 건
+이미 꽂아둔 것 중에 어떤 걸 빼느냐를 선택하는 거다.
+이미 꽂은 애가 더이상 안 쓰이는 애면 그 애를 먼저 빼는 거고
+이미 꽂은 애 중 더이상 안 쓰는 애가 없으면 꽂은 애 중에
+제일 뒤에 쓰이는 애를 뺀다는 아이디어.
+그걸 또 표현하기 위해서 쓰는 저장 공간인 c..
+이런 거 ㅠ.ㅠ
+*/
+
+int n;
+int k;
+int arr[101];
+int c[101];
+
+//idx를 넘겨서 그 이후에 필요로 하는 애들 중
+//어떤 애를 뺼건지를 정한다.
+void popPlug(int idx)
+{
+	for (int i = idx + 1; i <= k; i++)
+	{
+		//꽂혀있다면
+		if (c[arr[i]] == 1)
+		{
+			c[arr[i]] = i;//가장 최근에 다시 쓰이는 위치
+		}
+	}
+
+	//c에서 하면 됩니다.
+	int max = 0; int pos;
+	for (int i = 1; i <= k; i++)
+	{
+		if (c[i] == 0) continue;
+
+		if (c[i] == 1) //1이면 다시 안 쓰이는 애라서 바로 뺌.
+		{
+			pos = i;
+			break;
+		}
+		if (max < c[i]) //가장 멀리 있는 애를 찾아서 뺌
+		{
+			max = c[i];
+			pos = i;
+		}
+		c[i] = 1; //이제 확인 됐으면 다시 1로
+	}
+	c[pos] = 0;
+}
+
+int main()
+{
+	int ans = 0;
+
+	cin >> n;
+	cin >> k;
+	
+	for (int i = 1; i <= k; i++)
+	{
+		cin >> arr[i];
+	}
+
+	int in = 0;
+	for (int i = 1; i <= k; i++)
+	{
+		//아직 안들어갔다.
+		if (c[arr[i]] == 0)
+		{
+			if (in == n) //하나 빼야됨.
+			{
+				popPlug(i);
+				ans++; //뺸 횟수 증가
+				in--; //하나를 뺀다.
+			}
+
+			in++; //다시 넣음
+			c[arr[i]] = 1; //넣었으니 표시
+		}
+	}
+
+	cout << ans << endl;
+
+	return 0;
+}
