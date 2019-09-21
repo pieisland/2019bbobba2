@@ -1,0 +1,72 @@
+#include <string>
+#include <vector>
+#include <iostream>
+#include <queue>
+#include <stdio.h>
+#include <cstring> //memset 사용을 위함
+#include <math.h> //pow 사용을 위함
+
+using namespace std;
+
+/*
+190921 토요일
+Run Length Encoding을 구현하자.
+원래 이렇게 더럽게 되는건지는 모르겠다만.
+아무튼 정승원 교수님 수업시간 과제로 했던 기억이 있다.
+*/
+
+int main()
+{
+	string s;
+	//s = "wwwwwwwwwbwwwwwbbbbbwwwwwbb";
+	s = "abababbbc";
+	
+	int idx = 0;//맨 처음부터 해야지...
+	string ans; //답 스트링이구요
+
+	int pos = 0;
+	while (1)
+	{
+		int cnt = 1;//수를 세야합니다.
+		char c = s[idx];//일단 나의 알파벳은 다음과 같다.
+
+		//cout << idx << endl;
+		//cout << c << endl;
+
+		for (int i = idx + 1; i < s.size(); i++)
+		{
+			if (c == s[i]) {
+				pos = i;
+				cnt++; //나랑 같으면 개수를 늘린다.
+			}
+			else //나랑 다르다면 
+			{
+				pos = i;
+				idx = i;//다른 위치를 저장하고 그 다음부터 비교함.
+				break;
+			}
+		}
+
+		if (cnt==1)//나만 있었다면
+		{
+			ans += c;//그냥 나만 더하고. 숫자는 필요없다.
+		}
+		else //2개 이상이었다면
+		{
+			ans+=to_string(cnt); //숫자는 문자열로 바꿔서 더해주고
+			ans += c; //나도 붙여준다.
+		}
+
+		//다른 애라면 break 하면 안돼.
+		//같아야 break이야.
+		//마지막에서 문제가 생겨서 추가해줬다.
+		//마지막 위치까지 다다랐는데, 같은 애로 다다랐으면 그만이다만
+		//다른 애로 됐으면 그 애까지 처리해줘야되니까 break은 일단 하면 안되잖아.
+		if (pos == s.size() - 1 && c == s[pos] ) //마지막에 다다르면
+			break;
+	}
+
+	cout << ans << endl;
+
+	return 0;
+}
