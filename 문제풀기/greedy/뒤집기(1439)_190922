@@ -1,0 +1,55 @@
+#include <string>
+#include <vector>
+#include <iostream>
+#include <queue>
+#include <stdio.h>
+#include <cstring> //memset 사용을 위함
+#include <math.h> //pow 사용을 위함
+
+using namespace std;
+
+/*
+190922 일. 뒤집기.
+RLE 문제같은 느낌.
+같은 수는 압축해서 세고
+적게 나온 걸 출력하면 됨.
+*/
+
+int main()
+{
+	string s;
+	int who[2] = { 0, 0 };
+	
+	cin >> s;
+	int i = 0;
+	int yet = 0;
+	while (1)
+	{
+		//cout << "i val: " << i << endl;
+		int num = s[i] - '0';
+
+		//cout << "what is num: " << num << endl;
+
+		yet = 0;
+		who[num]++;
+		for (int j = i + 1; j < s.size(); j++)
+		{
+			if (s[j]-'0' != num)
+			{
+				//cout << "j val " << j << endl;
+
+				i = j;
+				yet = 1;
+				break;
+			}
+			if (j == s.size() - 1) i = j;
+		}
+		if (yet == 0 && i == s.size() - 1)
+			break;
+	}
+
+	if (who[0] < who[1]) cout << who[0] << endl;
+	else cout << who[1] << endl;
+
+	return 0;
+}
