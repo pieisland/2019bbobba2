@@ -1,0 +1,67 @@
+#include <string>
+#include <vector>
+#include <iostream>
+#include <queue>
+#include <stdio.h>
+#include <cstring> //memset 사용을 위함
+#include <math.h> //pow 사용을 위함
+
+using namespace std;
+
+int n;
+int alpha[26];
+
+int main()
+{
+	cin >> n;
+	string s;
+	int ans = 0;
+	for (int i = 0; i < n; i++)
+	{
+		//할 떄마다 리셋을 해줘야지.
+		memset(alpha, 0, sizeof(alpha));
+		cin >> s;
+
+		int j = 0;
+
+		while(1)
+		{
+			int yet = 0; //마지막 문자가 다를 때 체크함.
+			
+			int idx = s[j] - 'a'; //인덱스 값을 구함
+
+			//이미 존재하는 경우에는 그룹 단어가 아닙니다.
+			if (alpha[idx] > 0) {
+				break;
+			}
+			else alpha[idx] = 1; //맨 처음에 본거라면 하나는 있다고 해줘야지.
+
+			for (int k = j + 1; k < s.size(); k++)
+			{
+				if (idx != s[k] - 'a')
+				{
+					j = k; //다르다면 다른 위치를 저장한다.
+					if (k == s.size() - 1)
+						yet = 1;
+					break;
+				}
+				else
+				{
+					alpha[idx]++;
+					if (k == s.size() - 1)//동일하게 마지막이라면
+						j = k;
+				}
+			}
+
+			//마지막 문자를 확인하지 못했으면 끝내면 안된다.
+			if (yet==0 && j == s.size() - 1) {
+				ans++;
+				break;
+			}
+		}
+	}
+
+	cout << ans << endl;
+
+	return 0;
+}
