@@ -1,0 +1,99 @@
+#include <string>
+#include <vector>
+#include <iostream>
+#include <queue>
+#include <stdio.h>
+#include <cstring> //memset 사용을 위함
+#include <math.h> //pow 사용을 위함
+
+using namespace std;
+
+//일단 이렇게 될거임..
+int solution(vector<string> emails)
+{
+	int ans = 0;
+
+	//모든 이메일에 대해
+	for (int i = 0; i < emails.size(); i++)
+	{
+		//1. @이 한 개만 있는지 파악
+		int gol = 0;
+		int golidx;
+		for (int j = 0; j < emails[i].size(); j++)
+		{
+			if (emails[i][j] == '@') {
+				gol++;
+				golidx = j;//마지막 골뱅이 인덱스를 저장한다.
+			}
+		}
+		if (gol != 1) {
+			cout << "golbang error" << endl;
+			continue; //하나가 아니면 틀린 주소
+
+		}
+		//2. 골뱅이 전까지의 문자가 .이나 알파벳이어야 한다.
+		int pos = 1;
+		for (int j = 0; j < golidx; j++)
+		{
+			cout << emails[i][j] << " ";
+			if (!(emails[i][j] == '.' || (emails[i][j] >= 'a' &&emails[i][j] <= 'z')))
+				pos = 0;
+		}
+		if (pos == 0) {
+			cout << "name error" << endl;
+			continue;//이름 조건 만족 못함
+		}
+
+		//3. 도메인 이름이 영문 소문자로만 구성
+		int dotidx;
+		for (int j = golidx + 1; emails[i][j]!='.'; j++)
+		{
+			//.이 없어서 에러가 나는 경우가 있지.
+			if (j >= emails[i].size()) break;
+
+			dotidx = j;//마지막에 .이 아닌 경우까지 니까 .앞까지는 보기 떄문에.
+			if (!(emails[i][j] >= 'a' && emails[i][j] <= 'z'))
+				pos = 0;
+		}
+		if (pos == 0) {
+			cout << "domail name error" << endl;
+			continue;
+		}
+
+		dotidx += 1; //점 위치는 사실 구한 데서 1을 더해야 됩니다.
+		//4. 탑레벨 도메인을 확인한다.
+		string toplev;
+		for (int j = dotidx + 1; j < emails[i].size(); j++)
+		{
+			toplev += emails[i][j]; //문자열을 만들구.
+		}
+
+		//하나라도 맞으면 되는 거잖아요
+		if (strcmp(toplev.c_str(), "com") == 0 || strcmp(toplev.c_str(), "net") == 0 || strcmp(toplev.c_str(), "org") == 0)
+		{
+			cout << "check" << endl;
+			ans++;
+		}
+	}
+	return ans;
+}
+
+//일단 나오기는 해요..
+int main()
+{
+	vector<string> email;
+
+	email.push_back("d@co@m.com");
+	email.push_back("a@abc.com");
+	email.push_back("b@edf.com");
+	email.push_back("c@ghi.net");
+	email.push_back("abc.def@x.com");
+	email.push_back("abc");
+	email.push_back("abc@defx");
+	email.push_back("abc@defx.xyz");
+	email.push_back("piiesland@naver.com");
+
+	cout << solution(email) << endl;
+
+	return 0;
+}
