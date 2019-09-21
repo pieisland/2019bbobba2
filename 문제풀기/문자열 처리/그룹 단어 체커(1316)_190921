@@ -11,6 +11,12 @@ using namespace std;
 int n;
 int alpha[26];
 
+/*
+190921 토요일
+그룹단어체커. 문자열 문제인데.
+이렇게 더럽게 푸는 게 맞는건지가..;
+*/
+
 int main()
 {
 	cin >> n;
