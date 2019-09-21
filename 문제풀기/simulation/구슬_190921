@@ -1,0 +1,68 @@
+#include <string>
+#include <vector>
+#include <iostream>
+#include <queue>
+#include <stdio.h>
+#include <cstring> //memset 사용을 위함
+#include <math.h> //pow 사용을 위함
+
+using namespace std;
+
+int solution(vector<string> drum)
+{
+	int answer=0;
+	
+	//시작 구슬 떨어뜨리는 시작 위치에 따라서 
+	for (int k = 0; k < drum[0].size(); k++) //열입니다.
+	{
+		int star = 0;
+		int j = k;
+		int i = 0; //행입니다
+		while (1) //행에 따라서 움직입니다.
+		{
+			//이거라면 밑으로 내려가야 되니까 i값을 증가해야겠지요
+			if (drum[i][j] == '#')
+			{
+				i++;
+			}
+			else if (drum[i][j] == '>')
+			{
+				j++; //넘어가는 경우 없으니 괜찮다.
+			}
+			else if (drum[i][j] == '<')
+			{
+				j--;//열 이동
+			}
+			else if (drum[i][j] == '*')
+			{
+				if (star > 0) break;// 멈춰야 된다.
+				star++;
+				i++;
+			}
+
+			//이렇게 내려가서 문제없이 밑으로 내려왔다면..??
+			if (i == drum.size()) //밑으로 빠져나왔다면
+			{
+				answer++;
+				break;
+			}
+		}
+	}
+
+	return answer;
+}
+
+int main()
+{
+	vector<string> map;
+	map.push_back("######");
+	map.push_back(">#*###");
+	map.push_back("####*#");
+	map.push_back("#<#>>#");
+	map.push_back(">#*#*<");
+	map.push_back("######");
+
+	cout<<solution(map)<<endl;
+
+	return 0;
+}
