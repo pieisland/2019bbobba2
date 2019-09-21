@@ -1,0 +1,70 @@
+#include <string>
+#include <vector>
+#include <iostream>
+#include <queue>
+#include <stdio.h>
+#include <cstring> //memset 사용을 위함
+#include <math.h> //pow 사용을 위함
+
+using namespace std;
+
+int n;
+int t[15];
+int p[15];
+
+int ans;
+
+//내가 열심히 하고있는건지 아닌건지도 모르겠는
+//그런 느낌이라.
+//이거를 근데 뭐라고 해야되는거냐 
+//dfs라고 할 수 있는거임..?
+void dfs(int day, int price)
+{
+	//일을 다 했다는 건 어떻게 판단하는데..??
+	if (ans < price) ans = price; //음..??
+	if (day >= n) return;
+
+	/*	
+	아.. 나도 모르겠다. 마지막 날 안되는 건 걸러지잖아 근데 그러면
+	마지막 날 일 안해도 최대가 될 수 있는 거잖아..
+	일 안 한 걸로 dfs도는 건가..?
+
+	예전에 할 때는 이렇게 했더라고.
+	if(day == n)
+	{
+		if(ans<price) ans=price;
+		return;
+	}
+	*/
+
+	//마지막날에 일 해도 되니까요.
+	//하루 걸리는 거니까.그 하루가 원래 사실은
+	//인덱스로는 뭐... 7일이면 6까지 가능한건데 7일 마지막에 일하는 게 하루 걸리니까.
+	//가능할 수 있으니까 그렇게 하는 거 아니겠니.
+	if(day+t[day] < n+1) //일을 해도 된다면.
+		dfs(day + t[day], price + p[day]);
+	dfs(day + 1, price);//일 안한 경우. 이렇게 해서 넘어간 경우가 있을 수 있으니까.
+
+	return;
+}
+
+int main()
+{
+	cin >> n;
+	for (int i = 0; i < n; i++)
+	{
+		cin >> t[i] >> p[i];
+	}
+
+	//이건 되게 간단하긴 한데. 
+	//그 다음에 어떻게 함..?
+
+	//남들은 다 쉽다고 하는 문제 못 푸니까
+	//뭔.. 손도 못대겠다.
+
+	dfs(0, 0);//0일에 일하려고 하는데 좀 봐주세요.
+
+	cout << ans << endl;
+
+	return 0;
+}
