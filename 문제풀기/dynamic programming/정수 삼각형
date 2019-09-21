@@ -1,0 +1,48 @@
+#include <string>
+#include <vector>
+
+using namespace std;
+
+/*
+190921 토요일
+밑에서부터 뒤를 더해가며 하는 버전이 있고
+위에서부터 하는 버전이 있다.
+이해는 밑에서부터 하는게 쉽더라.
+*/
+
+int solution(vector<vector<int>> triangle) {
+    int answer = 0;
+    
+    for(int i=triangle.size()-2;i>=0;i--)
+        for(int j=0;j<triangle[i].size();j++)
+        {
+            triangle[i][j]=triangle[i][j]+triangle[i+1][j]>triangle[i][j]+triangle[i+1][j+1]? triangle[i][j]+triangle[i+1][j]:triangle[i][j]+triangle[i+1][j+1];
+        }
+    
+    answer=triangle[0][0];
+    return answer;
+}
+
+//위에서 부터 하는 버전
+vector<vector<int>> dp(trianglesize());//이렇게 하면 초기화 되는 것도 배우고
+for(int i=0;i<triangle.size();i++)
+{
+	dp[i].reisize(triangle[i].size());
+}
+
+dp[0][0]=triangle[0][0];
+
+for(int i=0;i<triangle.size();i++){
+	for(int j=0;j<triangle[i].size();j++){
+		dp[i+1][j]=max(dp[i+1][j], dp[i][j]+triangle[i+1][j]);
+		dp[i+1][j+1]=max(dp[i+1][j+1], dp[i][j]+triangle[i+1][j+1]);
+	}
+}
+
+int maxval=0;
+int n=triangle.size()-1;
+//마지막 줄에서 가장 큰 값을 찾는다.
+for(int j=0;j<triangle[n].size();j++)
+	maxval=max(maxval, dp[n][j]);
+
+
