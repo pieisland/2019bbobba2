@@ -1,0 +1,78 @@
+#include <string>
+#include <vector>
+#include <iostream>
+#include <queue>
+#include <stdio.h>
+#include <cstring> //memset 사용을 위함
+#include <math.h> //pow 사용을 위함
+
+using namespace std;
+
+//친구관계 몇 개의 그룹이 있는지를 구하라고 한다면
+//집합의 개수를 세는 문제인데..
+//부모를.. 찾으면 되는 거 아니에요..??
+//분명히 큐를 쓰겠지요.
+//그럼 내가 문제를 만들어볼까..??
+
+//친구 관계 연결
+int num;
+int fri[101][101];
+int check[101];//친구관계 된 애인지를 체크함
+
+void bfs(int idx)
+{
+	queue<int> q;
+	q.push(idx);
+	check[idx] = 1;
+
+	while (!q.empty())
+	{
+		int f = q.front();
+		q.pop();
+		for (int i = 1; i <= num; i++)
+		{
+			//나랑은 친구인지 안봐.
+			if (i == f) continue;
+			
+			//이미 큐에 들어갔던 애라면 안봐도 된단다.
+			if (check[i] == 1) continue;
+			if (fri[f][i] == 1)//친구관계이면..
+			{
+				q.push(i);//큐에 넣어주고
+				check[i] = 1; //집단에 들어갔다는 것을 표시.
+			}
+		}
+	}
+}
+
+int main()
+{
+	//총 몇 사람이 있습니까
+	cin >> num;
+	int n;
+	cin >> n; //몇 명의 릴레이션이 있는지
+
+	int a, b;
+	for (int i = 0; i < n; i++)
+	{
+		cin >> a >> b;
+		fri[a][b] = 1;
+		fri[b][a] = 1;
+	}
+
+	int ans = 0;
+	//이제 조사해야 됩니다만.
+	//그냥 bfs 돌리면 되는 거 아님..??
+	for (int i = 1; i <= num; i++)
+	{
+		if (check[i] != 1)
+		{
+			bfs(i);
+			ans++;
+		}
+	}
+
+	cout << ans << endl;
+
+	return 0;
+}
