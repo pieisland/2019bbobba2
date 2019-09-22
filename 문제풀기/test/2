@@ -1,0 +1,64 @@
+#include <iostream>
+#include <vector>
+#include <string>
+#include <algorithm>
+using namespace std;
+
+vector<int> v; //string에서 숫자만 뽑아 따로 저장
+vector<string> numbers; //만든 숫자들 저장
+int sel[10]; //숫자 선택했을 경우 선택 표시
+int number[10]; //선택한 숫자
+
+void dfs(int depth)
+{
+    //모두 선택한 경우
+    if(depth>=v.size())
+    {
+        string tmp;
+        for(int i=0;i<v.size();i++)
+        {
+            tmp+=number[i]+'0';
+        }
+        numbers.push_back(tmp);
+        return;
+    }
+    
+    //숫자를 선택할거임...
+    for(int i=0;i<v.size();i++)
+    {
+        if(sel[v[i]]) continue;
+        sel[v[i]]=1;
+        number[depth]=v[i];
+        dfs(depth+1);
+        sel[v[i]]=0;
+    }
+}
+
+int main(void) {
+    
+    string s;
+    //s = cin.get();
+    getline(cin, s);
+    
+    for(int i=0;i<s.size();i++)
+    {
+        if('0'<=s[i]&& s[i]<='9')
+            v.push_back(s[i]-'0');
+    }
+    
+    sort(v.begin(), v.end());
+    /*for(int i=0;i<v.size();i++)
+        cout<<v[i]<<" ";*/
+    
+    int n;
+    cin>>n;
+    
+    dfs(0);
+    
+    //for(int i=0;i<numbers.size();i++)
+    //   cout<<numbers[i]<<endl;
+    
+    cout<<numbers[n-1]<<endl;
+    
+    return 0;
+}
