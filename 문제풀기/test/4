@@ -1,0 +1,55 @@
+#include <iostream>
+
+using namespace std;
+
+int seat[20000];
+int n;
+int ans;
+
+int func(int idx)
+{
+    int d1=-1000;
+    int d2=-1000;
+    for(int i=idx-1;i>=0;i--)
+    {
+        if(seat[i]==1){
+            d1=idx-i;
+            break;
+        }
+    }
+    for(int i=idx+1;i<n;i++)
+    {
+        if(seat[i]==1)
+        {
+            d2=i-idx;;
+            break;
+        }
+    }
+    
+    //둘 중에 더 작은 거를 찾아야 하기 때문
+    if(d1 < d2) return d1;
+    else return d2;
+}
+
+int main(void) {
+
+    cin>>n;
+    for(int i=0;i<n;i++)
+        cin>>seat[i];
+    
+    for(int i=0;i<n;i++)
+    {
+        //cout<<"i "<<i<<endl;        
+        if(seat[i]==1) continue;
+        int tmp = func(i);//가장 가까운 사람과의 거리를 구한다.
+        
+        //cout<<"tmp "<<tmp<<endl;
+        
+        //거리가 가장 먼 걸 찾아야 하므로
+        if(ans<tmp) ans=tmp;
+    }
+    
+    cout<<ans<<endl;
+    
+    return 0;
+}
