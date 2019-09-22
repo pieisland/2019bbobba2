@@ -8,8 +8,8 @@ int ans;
 
 int func(int idx)
 {
-    int d1=-1000;
-    int d2=-1000;
+    int d1=-1000;//왼쪽에서 가까운 사람과의 거리
+    int d2=-1000;//오른쪽에서 가까운 사람과의 거리
     for(int i=idx-1;i>=0;i--)
     {
         if(seat[i]==1){
@@ -27,8 +27,19 @@ int func(int idx)
     }
     
     //둘 중에 더 작은 거를 찾아야 하기 때문
-    if(d1 < d2) return d1;
-    else return d2;
+    //근데 왼쪽에 사람이 없는 경우가 있을 수 있음
+    if(d1 < d2) 
+    {
+        if(d1>0)
+           return d1;
+        else return d2; //왼쪽에 사람이 없어서 음수값으로 작았던 경우
+    }
+    else //오른쪽에 앉은 사람이 더 가까움 
+    {
+        if(d2>0)
+            return d2;
+        else return d1;    
+    }
 }
 
 int main(void) {
