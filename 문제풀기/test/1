@@ -1,0 +1,54 @@
+#include <iostream>
+
+using namespace std;
+
+int m[10];
+int consumer[10];
+int a; //메시지 수
+int b; //consumer
+    
+int findconsumer()
+{
+    int idx=0;
+    int min=consumer[0];
+    //모든 컨슈머에 대해 가장 일이 빨리 끝난 consumer를 찾기
+    for(int i=1;i<b;i++)
+    {
+        if(consumer[i]<min)
+        {
+            min=consumer[i];
+            idx=i;
+        }
+    }
+    return idx;
+}
+
+int main(void) {
+    
+    cin >> a >> b;
+ 
+    for(int i=0;i<a;i++)
+    {
+        cin>>m[i]; //메시지를 일단 저장하고
+    }
+    
+    //모든 메시지에 대해
+    for(int i=0;i<a;i++)
+    {
+        //가장 작은 값을 가진 consumer를 찾는다.
+        int idx = findconsumer();
+        consumer[idx]+=m[i]; //메시지 일을 준다.
+    }
+    
+    int maxval = 0;
+    //모든 컨슈머에 대해서 가장 긴 시간 가지고 있는 거 찾음
+    for(int i=0;i<b;i++)
+    {
+        if(consumer[i]>maxval)
+            maxval=consumer[i];
+    }
+    
+    cout<<maxval<<endl;
+    
+    return 0;
+}
