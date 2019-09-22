@@ -1,0 +1,56 @@
+#include <string>
+#include <vector>
+#include <iostream>
+#include <queue>
+#include <stdio.h>
+#include <cstring> //memset 사용을 위함
+#include <math.h> //pow 사용을 위함
+
+using namespace std;
+
+/*
+190922 일
+이걸 쉽게 푸는 방법이 있었구나. 숫자를 뽑아내려고 이상한 짓 했었는데
+그렇게 안해도 되는 문제였다.
+연산자가 아니라면(숫자라면) temp string에 저장을 하고
+연산자가 나타났을 때 temp에 들어있는 거를 stoi를 이용해서 int형으로 바꿔서 계산 후
+다시 초기화해주면 되는 거였다.
+
+번거롭게 atoi 쓰려고 c_str이었나 그런 것도 했었는데 안해도 되니까 너무 좋네.
+stoi 애용하게 될 것 같다.
+
+*/
+
+int main()
+{
+	string s;
+	cin >> s;
+
+	int minus = 0;
+
+	int ans = 0;
+
+	string temp;
+	for (int i = 0; i <= s.size(); i++)
+	{
+		if (s[i] == '-' || s[i] == '+' || s[i] == '\0')
+		{
+			//cout << temp << endl;
+
+			if (minus == 1)
+				ans -= stoi(temp);
+			else
+				ans += stoi(temp);
+
+			temp = "";
+
+			//연사자가 나온 이후에 되기 때문이겠죠.
+			if (s[i] == '-') minus = 1;
+		}
+		else temp += s[i];
+	}
+
+	cout << ans << endl;
+
+	return 0;
+}
