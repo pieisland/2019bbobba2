@@ -1,64 +1,39 @@
 #include <iostream>
-#include <vector>
-#include <string>
-#include <algorithm>
+
 using namespace std;
-
-vector<int> v; //string에서 숫자만 뽑아 따로 저장
-vector<string> numbers; //만든 숫자들 저장
-int sel[10]; //숫자 선택했을 경우 선택 표시
-int number[10]; //선택한 숫자
-
-void dfs(int depth)
-{
-    //모두 선택한 경우
-    if(depth>=v.size())
-    {
-        string tmp;
-        for(int i=0;i<v.size();i++)
-        {
-            tmp+=number[i]+'0';
-        }
-        numbers.push_back(tmp);
-        return;
-    }
-    
-    //숫자를 선택할거임...
-    for(int i=0;i<v.size();i++)
-    {
-        if(sel[v[i]]) continue;
-        sel[v[i]]=1;
-        number[depth]=v[i];
-        dfs(depth+1);
-        sel[v[i]]=0;
-    }
-}
+int map[26][26];
+int d[26][26];
 
 int main(void) {
+
+    int n, m;
+    cin>>n>>m; //가로, 세로
+    int x, y;
+    cin>>x>>y; //코니의 위치
     
-    string s;
-    //s = cin.get();
-    getline(cin, s);
-    
-    for(int i=0;i<s.size();i++)
-    {
-        if('0'<=s[i]&& s[i]<='9')
-            v.push_back(s[i]-'0');
+    //코니가 모눈종이 밖으로 도망간 경우
+    if(x>n || y>n||x<0 || y<0) {
+        cout<<"fail"<<endl;
+        return 0;
     }
     
-    sort(v.begin(), v.end());
-    /*for(int i=0;i<v.size();i++)
-        cout<<v[i]<<" ";*/
+    //코니가 움직이지 않은 경우
+    if(x==0 && y==0)
+    {
+        cout<<0<<endl;
+        cout<<0<<endl;
+        return 0;
+    }
     
-    int n;
-    cin>>n;
+    d[1][0] = 1;
+    //(0, 0) 부터 시작하는 바람에 좀 헷갈리게 되어서
+    //y+1 x+1이라고 잡음.
+    for(int i=1;i<=y+1;i++)
+        for(int j=1;j<=x+1;j++)
+            d[i][j]=d[i-1][j]+d[i][j-1];
     
-    dfs(0);
-    
-    //for(int i=0;i<numbers.size();i++)
-    //   cout<<numbers[i]<<endl;
-    
-    cout<<numbers[n-1]<<endl;
+    cout<<y+x<<endl; //어차피 (0,0)에서 시작한다면 거리는 y+x 가 최소 
+    cout<<d[y+1][x+1]<<endl;
     
     return 0;
 }
