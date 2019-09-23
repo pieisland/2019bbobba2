@@ -1,0 +1,84 @@
+#include <iostream>
+#include <vector>
+#include <string>
+#include <queue>
+#include <cstring>
+
+using namespace std;
+
+/*
+190924 화요일 됐네.. 월요일에 시작한건데.. ^.^
+그래프 중 트리 문제. 노드를 지웠을 때 리프노드의 수를 구하는 문제.
+여기다가 섦여하면 헷갈리기 때문에 코드에다가 적겠음.
+*/
+
+int parent[51]; //부모 값을 저장하고 있는 배열
+int child[51]; //자식이 몇 개가 있는지 저장하는 배열. 0일 경우 리프노드.
+
+int main(){
+
+	int n;
+	cin >> n;
+
+	//벡터가 이렇게 n이 미지수인데 크기가 설정이 되는구나.. 신기하네.
+	vector<vector<int>> v(n); //부모가 어떤 자식을 가지는지 저장함.
+
+	//5개의 노드에 대해서 부모를 받는다.
+	for (int i = 0; i < n; i++)
+	{
+		int p;
+		cin >> p;
+		parent[i] = p; //해당 노드의 부모 값을 저장한다.
+
+		if (p != -1) //루트노드가 아니라면, 
+		{
+			v[p].push_back(i); //해당 부모가 어떤 자식을 갖는지 저장한다.
+			child[p]++; //그 부모의 자식 수는 증가
+		}
+	}
+	
+	//삭제하려는 노드
+	int delnum;
+	cin >> delnum;
+
+	//루트 노드라면, 모든 것이 삭제되기 때문에 리프노드는 없다.
+	if (parent[delnum] == -1) //무조건 처음이, 즉 0이 루트가 아닐 수 있으니까, parent 값으로 함.
+	{
+		cout << 0 << endl;
+		return 0;
+	}
+
+	//일단 밑에 지우기 전에 할 일
+	//지우는 값의 부모의 자식 수를 하나 없앤다.
+	child[parent[delnum]]--;
+
+	//여기서부터는 지우는 노드의 자식들을 탐색하면서
+	//리프노드인 경우에 child 값을 0이 아닌 값으로 변경해주면서
+	//리프노드가 아니게 만들어주는 작업이다.
+	queue<int> q;
+	q.push(delnum);
+	while (!q.empty())
+	{
+		int node = q.front();
+		q.pop();
+
+		//리프노드라면 아니게 만들어준다.
+		if (child[node] == 0)
+		{
+			child[node] = -1;
+			continue;
+		}
+		//리프노드가 아니라면 리프노드를 찾을 때까지 더 내려간다.
+		for (int i = 0; i < v[node].size(); i++)
+			q.push(v[node][i]);
+	}
+
+	int ans = 0;
+	//자식 수가 0인 경우 리프노드이므로 그 개수를 센다.
+	for (int i = 0; i < n; i++)
+		if (child[i] == 0) ans++;
+
+	cout << ans << endl;
+
+	return 0;
+}
