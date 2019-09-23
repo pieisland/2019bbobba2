@@ -1,0 +1,81 @@
+#include <iostream>
+#include <vector>
+#include <string>
+#include <queue>
+#include <cstring>
+
+using namespace std;
+
+/*
+190923 월요일
+전형적인 bfs 문제 같은데 왜 그래프로 분류돼 있는지 모르겠다.
+그래프 할 때 주로 큐를 사용하는 것 같기는 한데.
+*/
+
+int w, h;
+int map[50][50];
+int ans;
+int check[50][50];
+int dir[8][2] = { {1, 0}, {-1, 0}, {0, 1}, {0, -1}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1} };
+
+bool isinside(int y, int x)
+{
+	if (y >= 0 && y < h && x >= 0 && x < w) return true;
+	else return false;
+}
+
+void bfs(int y, int x)
+{
+	queue<pair<int, int>> q;
+	q.push(make_pair(y, x));
+	check[y][x] = 1;
+
+	while (!q.empty())
+	{
+		int cy = q.front().first;
+		int cx = q.front().second;
+		q.pop();
+
+		for (int i = 0; i < 8; i++)
+		{
+			int ny = cy + dir[i][0];
+			int nx = cx + dir[i][1];
+
+			if (isinside(ny, nx) && check[ny][nx] == 0 && map[ny][nx]==1)
+			{
+				q.push(make_pair(ny, nx));
+				check[ny][nx] = 1;
+			}
+		}
+	}
+	
+}
+
+int main(){
+
+	while (1)
+	{
+		int ans = 0;
+		//2차원 배열도 이렇게 되나..??
+		memset(map, 0, sizeof(map));
+		memset(check, 0, sizeof(check));
+		cin >> w >> h;
+		if (w == 0 && h == 0) break;
+		for (int i = 0; i < h; i++)
+			for (int j = 0; j < w; j++)
+				cin >> map[i][j];
+
+		for(int i=0;i<h;i++)
+			for (int j = 0; j < w; j++)
+			{
+				if (map[i][j] == 1 && check[i][j] == 0)
+				{
+					bfs(i, j);
+					ans++;
+				}
+			}
+		cout << ans << endl;
+	}
+
+	return 0;
+}
