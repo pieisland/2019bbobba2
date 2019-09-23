@@ -1,0 +1,82 @@
+#include <iostream>
+#include <vector>
+#include <string>
+#include <queue>
+#include <cstring>
+
+using namespace std;
+
+/*
+190923 월요일
+초기화를 왜 음수로 했니 작은 수를 찾는건데.. ^.^
+ㅋㅋㅋ진짜 어이없음. 큰 수로 해줘야지...
+그래야 작은 걸 찾지.
+
+그리고 기억이 안났었는데 그거에다가 그냥 바로 덮어씌우는 거였다.
+값이 없어지는데 괜찮은가 싶었는데..
+나도 모르겠다......왜지...
+*/
+
+int maxval = 1000000000;
+int n;
+int bus;
+//방향그래프
+vector<int> v[100][100];
+int line[101][101];
+int ans[101][101];
+
+int main(){
+
+	cin >> n;
+
+	cin >> bus;
+	int s, e, p;
+
+	for (int i = 1; i <= n; i++)
+		for (int j = 1; j <= n; j++) {
+			line[i][j] = maxval; //일단 음수로 초기화
+		}
+
+	for (int i = 0; i < bus; i++)
+	{
+		cin >> s >> e >> p;
+		//v[s - 1][e - 1].push_back(p);
+		if(line[s][e] == 0) 
+			line[s][e] = p;
+		else
+		{
+			int tmp = line[s][e];
+			//노선이 더 짧은 데가 나오면 바꾼다.
+			if (tmp > p) line[s][e] = p;
+		}
+	}
+
+	for (int k = 1; k <= n; k++) //거쳐가는 길
+	{
+		for (int i = 1; i <= n; i++) {
+			for (int j = 1; j <= n; j++) {
+				if (k == i || k == j || i == j) continue;// 이러면 넘어간다
+
+				//if (line[i][k] > 0 && line[k][j] > 0) //암튼 이거 틀리긴 했는데 필요 엇는 거 아님.?
+				{
+					if (line[i][k] + line[k][j] < line[i][j])
+						line[i][j] = line[i][k] + line[k][j];//이렇게 해도 돼..?
+					//아니면 따로 저장하나..?
+				}
+			}
+		}
+	}
+
+	//모든 것들에 대해서
+	for (int i = 1; i <= n; i++) {
+		for (int j = 1; j <= n; j++) {
+			if (line[i][j] == maxval)
+				cout << 0 << " ";
+			else
+				cout << line[i][j] << " ";
+		}
+		cout << endl;
+	}
+
+	return 0;
+}
