@@ -1,0 +1,151 @@
+#include <iostream>
+#include <vector>
+#include <string>
+#include <queue>
+#include <cstring>
+#include <algorithm>
+
+using namespace std;
+
+int n;
+int ans;
+int dir[4][2] = { {1, 0}, {-1, 0}, {0, 1}, {0, -1} };
+
+bool isinside(int y, int x) {
+	if (y >= 0 && y < n && x >= 0 && x < n) return true;
+	else return false;
+}
+
+//샤크의 위치와.. 맵
+//어차피 주소를 받아온 거라서 변화가 되는건가..?
+int bfs(int sy, int sx, int fy, int fx, int ssize, int tmap[][20])
+{
+	int check[20][20] = { 0, };
+	check[sy][sx] = 1; //갔던 곳이니까.
+
+	int ret = 0;
+	queue<pair<int, int>> q;
+	q.push(make_pair(sy, sx));
+
+	//최단거리를 찾으면 됩니다.
+	while (!q.empty())
+	{
+		int cy = q.front().first;
+		int cx = q.front().second;
+		q.pop();
+
+		//먹이 위치에 도달했다.
+		if (cy == fy && cx == fx)
+		{
+			//왜냐면 시작 때 1 값이기 때문임.
+			ret = check[cy][cx] - 1;
+			tmap[cy][cx] = 0;//먹었으니까 0으로 만들어줌.
+			break;
+		}
+		else
+		{
+			//갈 수 있는 모든 방향으로 가보는거죠.
+			for (int i = 0; i < 4; i++) {
+				int ny = cy + dir[i][0];
+				int nx = cx + dir[i][1];
+				//샤크 사이즈랑 같아도 갈 수는 있으니까.
+				if (isinside(ny, nx) && tmap[ny][nx] <= ssize && check[ny][nx] == 0) {
+					check[ny][nx] = check[cy][cx] + 1;
+					q.push(make_pair(ny, nx));
+				}
+			}
+		}
+	}
+
+	//먹었으면.
+	//0으로 만들어줘야돼.
+
+
+	return ret;
+}
+
+void setmap(int tmap[][20], int map[][20])
+{
+	for (int i = 0; i < n; i++)
+		for (int j = 0; j < n; j++)
+			tmap[i][j] = map[i][j];
+}
+
+//어쩄든 최대가 20이니까..
+void dfs(int y, int x, int sharkSize, int eatCnt, int time, int map[][20])
+{
+	//종료조건은 먹을 게 없을 때
+	//먹을 게 없다는 것을 어떻게 찾냐.. 하면
+	int no = 1;
+	int tmap[20][20];
+
+	//할 때마다 바꿔야 되는데.. ^.^
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < n; j++) {
+			setmap(tmap, map);
+
+			//샤크가 먹을 수 있는 먹이가 있다
+
+			//여기 부분을 바꿔야 된다.
+			//왜냐하면, 
+
+			if (tmap[i][j] > 0  && tmap[i][j] < sharkSize) {
+				no = 0; //하나라도 있어요
+
+				//그러면 걸리는 시간을 반환하도록 하고
+				//그걸 더해주면 되지 않을까요
+				int ttime = bfs(y, x, i, j, sharkSize, tmap);//그 먹이까지의 최단거리를 구해야 됨.
+				
+				//cnt 값에 따라서 shark 사이즈도 변하나 안하나도 따져야 되는데..
+				if (eatCnt + 1 == sharkSize) {
+					//한 번 더 먹은 게 sharkSize가 되어서
+					//크기가 하나 증가한다면
+					dfs(i, j, sharkSize + 1, 0, time + ttime, tmap);
+				}
+				else { //아직 크기가 커질 만큼 먹지를 못함
+					dfs(i, j, sharkSize, eatCnt + 1, time + ttime, tmap);
+				}
+			}
+
+			//먹을 게 하나라도 있으면 0으로 바꿔서
+			//그렇게 할 겁니다만.
+			//근데 원래 이따구로 되나..??
+		}
+	}
+	
+	//먹을 게 없어.
+	if (no == 1)
+	{
+		cout << time << endl;
+		//최대 시간을 저장한다.
+		if (ans < time) ans = time;
+		return;
+	}
+	return;
+}
+
+int main(){
+
+	cin >> n;
+	int y, x;
+	int map[20][20] = { 0, };
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < n; j++) {
+			cin >> map[i][j];
+
+			//아기상어라면
+			if (map[i][j] == 9)
+			{
+				y = i;
+				x = j;
+				map[i][j] = 0;//굳이 아기상어 크기를 가지고 있을 이유가 없을 듯 해서
+			}
+		}
+	}
+
+	dfs(y, x, 2, 0, 0, map);
+
+	cout << ans << endl;
+
+	return 0;
+}
