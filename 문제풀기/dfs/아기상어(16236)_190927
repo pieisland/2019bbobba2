@@ -1,0 +1,196 @@
+#include <iostream>
+#include <vector>
+#include <string>
+#include <queue>
+#include <cstring>
+#include <algorithm>
+
+using namespace std;
+
+/*
+190927 금요일.
+작년에 시험장가서 못풀고 나온 문제였는데 이제야 풀었다.
+오. 그래도 풀 정도로 실력을 쌓은 것 같아 매우 뿌듯하다.
+아무튼 이 문제의 경우 조건이 많은데
+그런 것을 하나하나 하려다 보니 시간이 좀 걸렸다.
+
+dfs와 bfs를 적절히 쓰는 문제였는데
+dfs로는 다음 단계로의 이동을(굳이 여러 가지 경우가 나오지는 않았음.
+먹이는 하나만 먹기 때문에 모든 경우를 고려하는 것은 아니었다.
+그래서 어떻게 보면, dfs는 아닌 것 같기는 하다)
+bfs로는 해당 먹이를 먹으러 가기 위한 최단 거리를 구했다.
+
+근데 bfs 부분에서 잘못 생각해서 틀린 게,
+아기상어보다 크기가 더 큰 물고기가 있어 가로막는 경우에는 
+해당 위치로 갈 수 있는 상황이 없을 수 있다는 것.
+그래서 while 문 안에서 찾을 경우에는 그 값을 return하면 되지만
+못 찾고 그냥 빠져나온 경우에는 해당 위치로 갈 수 없는 것이기 때문에
+큰 값을 return해야했다.
+
+시간 안에 풀지는 못했지만.. 성장했음을 볼 수 있었던
+의미있는 문제였다.
+*/
+
+int n;
+int ans;
+int dir[4][2] = { {1, 0}, {-1, 0}, {0, 1}, {0, -1} };
+
+//정렬 조건.
+bool cmp(pair<int, int> a, pair<int, int> b) {
+	if (a.first == b.first) //y값이 같다면 x값이 작은 수를 앞으로 정렬.
+		return a.second < b.second;
+	else //y값이 다르다면 y값이 작은 수(위에 있는 경우)를 앞으로 정렬.
+		return a.first < b.first;
+}
+
+bool isinside(int y, int x) {
+	if (y >= 0 && y < n && x >= 0 && x < n) return true;
+	else return false;
+}
+
+//아기상어의 위치에서 해당 물고기까지 갈 수 있는 거리를 반환하는 함수.
+int bfs(int sy, int sx, int fy, int fx, int ssize, int tmap[][20])
+{
+	int check[20][20] = { 0, };
+	check[sy][sx] = 1; //갔던 곳이니까.
+
+	int ret = 0;
+	queue<pair<int, int>> q;
+	q.push(make_pair(sy, sx));
+
+	//최단거리를 찾으면 됩니다.
+	while (!q.empty())
+	{
+		int cy = q.front().first;
+		int cx = q.front().second;
+		q.pop();
+
+		//먹이 위치에 도달했다.
+		if (cy == fy && cx == fx)
+		{
+			//왜냐면 시작 때 1 값이기 때문임.
+			ret = check[cy][cx] - 1;
+
+			return ret;
+		}
+		else
+		{
+			//갈 수 있는 모든 방향으로 가본다.
+			for (int i = 0; i < 4; i++) {
+				int ny = cy + dir[i][0];
+				int nx = cx + dir[i][1];
+				//상어 사이즈랑 같아도 갈 수는 있으니까.
+				if (isinside(ny, nx) && tmap[ny][nx] <= ssize && check[ny][nx] == 0) {
+					check[ny][nx] = check[cy][cx] + 1;
+					q.push(make_pair(ny, nx));
+				}
+			}
+		}
+	}
+
+	//해당 물고기까지 갈 수 없다면 큰 값을 반환한다.
+	//아기상어보다 크기가 더 큰 물고기들 때문에 가로막혀서
+	//가지 못하는 경우다.
+	return 10000000000;
+}
+
+//맵 초기화.
+void setmap(int tmap[][20], int map[][20])
+{
+	for (int i = 0; i < n; i++)
+		for (int j = 0; j < n; j++)
+			tmap[i][j] = map[i][j];
+}
+
+void dfs(int y, int x, int sharkSize, int eatCnt, int time, int map[][20])
+{
+	/*cout << "shark size: " << sharkSize << endl;
+	for (int i = 0; i < n; i++)
+	{
+		for (int j = 0; j < n; j++) {
+			cout << map[i][j] << " ";
+		}
+		cout << endl;
+	}
+	cout << endl;*/
+
+	//종료조건은 먹을 게 없을 때
+	int tmap[20][20];
+	setmap(tmap, map);
+
+	//먹을 수 있는 물고기를 담는 벡터.
+	vector<pair<int, int>> fish;
+	//먹을 수 있는 물고기를 먹으러 가는 시간의 최소를 저장.
+	int mintime = 1000000000;
+
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < n; j++) {
+			if (tmap[i][j] > 0 && tmap[i][j] < sharkSize) {	//먹을 수 있는 물고기
+				//그 먹이까지의 최단거리를 구해야 됨.
+				int ttime = bfs(y, x, i, j, sharkSize, tmap);
+
+				//이제까지 구한 작은 거리보다 더 작은 거리를 가진
+				//물고기가 나왔다면, 이전에 저장한 것을 초기화한다.
+				if (ttime < mintime) {
+					mintime = ttime;
+					fish.clear(); 
+					fish.push_back(make_pair(i, j));
+				}
+				else if(mintime == ttime){ //시간이 동일하는 경우는 넣어준다.
+					fish.push_back(make_pair(i, j));
+				}
+				//시간이 더 걸리는 경우는 무시.
+			}
+		}
+	}
+
+	if (fish.size() == 0)//먹을 물고기가 한 마리도 없다면.
+	{
+		ans = time;
+		return;
+	}
+
+	sort(fish.begin(), fish.end(), cmp);
+	//이제 정렬을 했으니 해당 조건에 맞는 위치의 물고기를 먹는다.
+	tmap[fish[0].first][fish[0].second] = 0;
+
+	//cout << "mintime: " << mintime << " "<<fish[0].first << " " << fish[0].second << endl;
+	//cout << endl;
+
+	if (eatCnt + 1 == sharkSize) {
+		//한 번 더 먹은 게 sharkSize가 되어서 크기가 하나 증가한다면 cnt를 초기화.
+		dfs(fish[0].first, fish[0].second, sharkSize + 1, 0, time + mintime, tmap);
+	}
+	else { //아직 크기가 커질 만큼 먹지를 못했다면 그냥 더해준다.
+		dfs(fish[0].first, fish[0].second, sharkSize, eatCnt + 1, time + mintime, tmap);
+	}
+
+	return;
+}
+
+int main(){
+
+	cin >> n;
+	int y, x;
+	int map[20][20] = { 0, };
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < n; j++) {
+			cin >> map[i][j];
+
+			//아기상어라면
+			if (map[i][j] == 9)
+			{
+				y = i;
+				x = j;
+				map[i][j] = 0;//굳이 아기상어 크기를 가지고 있을 이유가 없다.
+			}
+		}
+	}
+
+	//아기상어의 위치와, 크기와, 먹은 횟수와, 걸린 시간과, 현재 맵.
+	dfs(y, x, 2, 0, 0, map);
+
+	cout << ans << endl;
+
+	return 0;
+}
