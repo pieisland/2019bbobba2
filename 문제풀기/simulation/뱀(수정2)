@@ -8,6 +8,16 @@
 
 using namespace std;
 
+/*
+190928 토요일.
+백준 사이트에서는 틀렸다고 나오지만
+사실 고전 뱀 게임에서는 맞는 문제.
+머리 가면서 꼬리도 줄어드는 경우.
+
+이것때문에 틀린 건 정말.. 기분이 좀 나쁜 부분이긴 하다.
+하지만 게임에서 본 형태로 프로그래밍해보는 게 재밌었다.
+*/
+
 typedef struct move {
 	int dir;
 	char c;
@@ -19,7 +29,7 @@ int l;
 int map[101][101];
 queue<Move> q;
 //오른쪽 아래 왼쪽 위
-int dir[4][2] = { {0, 1}, {1, 0}, {0, -1}, {-1, 0} };
+int dir[4][2] = { { 0, 1 },{ 1, 0 },{ 0, -1 },{ -1, 0 } };
 int direction;//처음에는 오른쪽으로 가니까 0으로 돼있음.
 int snake[101][101]; //뱀이 어디에 위치하는지를 저장하는 배열
 queue < pair<int, int>> s;// 뱀의 꼬리 알기 위해 쓰는 큐.
@@ -29,7 +39,7 @@ bool isinside(int y, int x) {
 	else return false;
 }
 
-int main(){
+int main() {
 
 	cin >> n;
 	cin >> k;
@@ -40,7 +50,7 @@ int main(){
 	}
 
 	cin >> l;//방향 변환.
-	//q에다가 방향 변환 정보를 담는다.
+			 //q에다가 방향 변환 정보를 담는다.
 	for (int i = 0; i < l; i++) {
 		Move t;
 		cin >> t.dir >> t.c;
@@ -53,7 +63,7 @@ int main(){
 	s.push(make_pair(sy, sx));
 	snake[sy][sx] = 1;//뱀도 일단 있으니까.
 
-	//시간을 세어야 하는데..
+					  //시간을 세어야 하는데..
 	int time = 0; //이게 정답이 될겁니다.
 	while (1) {
 
@@ -79,40 +89,38 @@ int main(){
 		int ny = sy + dir[direction][0];
 		int nx = sx + dir[direction][1];
 
-		//아 미친.. 결과가 더 이상해져버렸는데..;
-
 		//범위가 맞고
 		//if(isinside(ny, nx) &&)
 		//밖을 삐져나갔거나, 뱀에 부딪쳤다면
 		if (!isinside(ny, nx)) {
-			
+
 			cout << "out" << endl;
 			//멈춰야 할 때이다.
 			break;
 		}
 		//밑에 내려왔다는 거는 else 라는 뜻이겠지.
 		//그러면.. 이제 사과냐 아니냐에 따라서 달라짐
-		
+
 		if (map[ny][nx] == 1) { //사과라면
-			//꼬리는 줄어들지 않는다.
+								//꼬리는 줄어들지 않는다.
 			s.push(make_pair(ny, nx));//새로운 애만 넣어주구요.
 			snake[ny][nx] = 1;
 			map[ny][nx] = 0;//사과 한 번 먹었으면 없어져야지.
 		}
 		else {//꼬리 부분은 줄어들어. 사과가 아니라면
 
-			//뱀이 있다는 자리라지만.
+			  //뱀이 있다는 자리라지만.
 			if (snake[ny][nx] == 1) {
 				int ty = s.front().first;
 				int tx = s.front().second;
 				if (ny == ty && nx == tx) {//꼬리 위치라면 문제 없어요.
-					
+
 					cout << "tail tail" << endl;
-					
+
 					s.pop();//꼬리는 뺴주구요.
-					//어차피 꼬리 지워주고 그 위치에 머리를 넣어야하지만
-					//결론적으로 똑같아가지고..
-					//그래도 이해 쉬우라고 넣습니다.
+							//어차피 꼬리 지워주고 그 위치에 머리를 넣어야하지만
+							//결론적으로 똑같아가지고..
+							//그래도 이해 쉬우라고 넣습니다.
 					s.push(make_pair(ny, nx));//머리를 넣어줍니다.
 					snake[ty][tx] = 0;//꼬리 지우고
 					snake[ny][nx] = 1;//머리 다시 그려준다.
@@ -143,10 +151,11 @@ int main(){
 					//오른쪽으로 이동하는거
 					direction = (direction + 1) % 4;
 				}
-				else { //왼쪽으롱 이동한다.
-					//음수가 되어도 근데 이게 되는지 모르겠다 나는..
-					//안되는거라면 그에 맞게 알아서 조절 좀 하겟습니다.
+				else { //왼쪽으로 이동한다.
+					   //음수가 되어도 근데 이게 되는지 모르겠다 나는..
+					   //안되는거라면 그에 맞게 알아서 조절 좀 하겟습니다.
 					direction = (direction - 1) % 4;
+					if (direction < 0) direction = 3;
 
 					cout << "direction: " << direction << endl;
 				}
