@@ -1,0 +1,126 @@
+#include <iostream>
+#include <vector>
+#include <string>
+#include <queue>
+#include <cstring>
+#include <algorithm>
+#include <math.h>
+
+using namespace std;
+
+typedef struct move {
+	int dir;
+	char c;
+}Move;
+
+int n;
+int k;
+int l;
+int map[101][101];
+queue<Move> q;
+//오른쪽 아래 왼쪽 위
+int dir[4][2] = { {0, 1}, {1, 0}, {0, -1}, {-1, 0} };
+int direction;//처음에는 오른쪽으로 가니까 0으로 돼있음.
+int snake[101][101]; //뱀이 어디에 위치하는지를 저장하는 배열
+queue < pair<int, int>> s;// 뱀의 꼬리 알기 위해 쓰는 큐.
+
+bool isinside(int y, int x) {
+	if (y >= 1 && y <= n && x >= 1 && x <= n) return true;
+	else return false;
+}
+
+int main(){
+
+	cin >> n;
+	cin >> k;
+	int y, x;
+	for (int i = 0; i < k; i++) {
+		cin >> y >> x;
+		map[y][x] = 1; //사과를 표시.
+	}
+
+	cin >> l;//방향 변환.
+	//q에다가 방향 변환 정보를 담는다.
+	for (int i = 0; i < l; i++) {
+		Move t;
+		cin >> t.dir >> t.c;
+		q.push(t);
+	}
+
+	//맨 처음 시작 위치는 1, 1입니다.
+	//뱀은 처음에 1, 1 위치에 있다.
+	int sy = 1, sx = 1;
+	s.push(make_pair(y, x));
+	snake[sy][sx] = 1;//뱀도 일단 있으니까.
+
+	//시간을 세어야 하는데..
+	int time = 0; //이게 정답이 될겁니다.
+	while (1) {
+
+		//맨 처음에 일단 증가를 하고
+		time++;
+
+		//새로 움직이는 위치가 범위에 맞으면
+		//그리고 사실 부딪치지도 않아야 된다
+		//뱀이 맵 내에서 어디에 있는지를 저장하는
+		//배열도 필요하다.
+		//사과이면 먹어서 길이 처리하는 것도 있어야 되고.
+		//꼬리가 있었던 곳을 없애지 않는거죠.
+		int ny = sy + dir[direction][0];
+		int nx = sx + dir[direction][1];
+
+		//범위가 맞고
+		//if(isinside(ny, nx) &&)
+		//밖을 삐져나갔거나, 뱀에 부딪쳤다면
+		if (!isinside(ny, nx) || snake[ny][nx] == 1) {
+			//멈춰야 할 때이다.
+			break;
+		}
+		//밑에 내려왔다는 거는 else 라는 뜻이겠지.
+		//그러면.. 이제 사과냐 아니냐에 따라서 달라짐
+		
+		if (map[ny][nx] == 1) { //사과라면
+			//꼬리는 줄어들지 않는다.
+			s.push(make_pair(ny, nx));//새로운 애만 넣어주구요.
+			snake[ny][nx] = 1;
+			map[ny][nx] = 0;//사과 한 번 먹었으면 없어져야지.
+		}
+		else {//꼬리 부분은 줄어들어.
+			s.push(make_pair(ny, nx));//새로운 애는 동일하게 넣어줄거임.
+			snake[ny][nx] = 1;
+			int ty = s.front().first;
+			int tx = s.front().second;
+			snake[ty][tx] = 0; //꼬리 부분 없앰.
+			s.pop();
+		}
+
+		//큐가 empty가 아닐 때 체크하면 되구요.
+		//방향을 바꿔야하는 시점인지를 체크한다.
+		if (q.size() != 0) {
+			int tmptime = q.front().dir;
+
+			if (time == tmptime) { //방향전환이 일어나라고 하는 시간과 일치한다면
+				char c = q.front().c;
+				if (c == 'D') {
+					//오른쪽으로 이동하는거
+					direction = (direction + 1) % 4;
+				}
+				else { //왼쪽으롱 이동한다.
+					//음수가 되어도 근데 이게 되는지 모르겠다 나는..
+					//안되는거라면 그에 맞게 알아서 조절 좀 하겟습니다.
+					direction = (direction - 1) % 4;
+				}
+
+				//방향을 전환한 후에
+				q.pop();//하나 빼면 되는거죠.
+			}
+		}
+
+		//머리위치를 재정의해준다.
+		sy = ny;
+		sx = nx;
+	}
+	cout << time << endl;
+
+	return 0;
+}
