@@ -1,0 +1,207 @@
+#include <iostream>
+#include <vector>
+#include <string>
+#include <queue>
+#include <cstring>
+#include <algorithm>
+#include <math.h>
+
+using namespace std;
+
+int n, l, r;
+int arr[51][51];
+int connect[51][51][51][51];
+int lock[51][51];
+int dir[4][2] = { {1, 0}, {-1, 0}, {0, 1}, {0, -1} };
+int checkarr[51][51];
+
+bool isinside(int y, int x) {
+	if (y >= 0 && y < n && x >= 0 && x < n) return true;
+	else return false;
+}
+
+void bfs(int y, int x, int num) {
+	queue<pair<int, int>> q;
+
+	q.push(make_pair(y, x));
+	checkarr[y][x] = num;
+
+	//더해가지구 바꿔야될텐데..
+	int sum = arr[y][x];
+	int cnt = 1;
+	while (!q.empty()) {
+		int cy = q.front().first;
+		int cx = q.front().second;
+		q.pop();
+
+		for (int i = 0; i < 4; i++) {
+			int ny = cy + dir[i][0];
+			int nx = cx + dir[i][1];
+
+			if (isinside(ny, nx) && checkarr[ny][nx] == 0 && connect[cy][cx][ny][nx] == 1) {
+				sum += arr[ny][nx];
+				cnt++;
+				checkarr[ny][nx] = num;
+				q.push(make_pair(ny, nx));
+			}
+		}
+	}
+
+	//근데 이렇게 돈 친구들에 대해서 이제.. 해줘야되는건데 ㅋㅋㅋ
+	int setnum = sum / cnt;
+	for(int i = 0; i < n; i++)
+		for (int j = 0; j < n; j++) {
+			if (checkarr[i][j] == num)
+				arr[i][j] = setnum;
+		}
+}
+
+int main(){
+
+	scanf("%d %d %d", &n, &l, &r);
+	for (int i = 0; i < n; i++)
+		for (int j = 0; j < n; j++)
+			scanf("%d", &arr[i][j]);
+		
+//	int check = 0; 
+
+	//몇 번이나 되는지를 세야합니다.
+	int ans = 0;
+	while (1) {
+
+		int check = 0;
+
+		//cout << "mang" << endl;
+
+		memset(connect, 0, sizeof(connect));
+		memset(lock, 0, sizeof(lock));
+		memset(checkarr, 0, sizeof(checkarr));
+		
+		//cout << 1 << endl;
+
+		//여기다가 다 담으면 되는 듯.
+		for (int i = 0; i < n; i++) {
+			for (int j = 0; j < n - 1; j++) {
+				int tmp = abs(arr[i][j] - arr[i][j + 1]);
+				if (l <= tmp && tmp <= r) {
+					connect[i][j][i][j + 1] = 1;
+					connect[i][j + 1][i][j] = 1;
+					//cout << i << " " << j << " " << i << " " << j + 1 << endl;
+					check++;
+				}
+			}
+		}
+
+		//cout << 2 << endl;
+
+		for (int j = 0; j < n; j++) {
+			for (int i = 0; i < n - 1; i++) {
+				int tmp = abs(arr[i][j] - arr[i + 1][j]);
+				if (l <= tmp && tmp <= r) {
+					connect[i][j][i + 1][j] = 1;
+					connect[i + 1][j][i][j] = 1;
+					//cout << i << " " << j << " " << i + 1 << " " << j << endl;
+					check++;
+				}
+			}
+		}
+
+		//cout << 3 << endl;
+
+		//cout << "check " << check << endl;
+
+		if (check == 0)
+			break;
+
+
+		//네 모서리들 다 더해줌
+		/*for (int i = 0; i < n; i++) {
+			lock[0][i]++;
+			lock[i][0]++;
+			lock[n - 1][i]++;
+			lock[i][n - 1]++;
+		}
+
+		for (int i = 0; i < n; i++)
+		{
+			for (int j = 0; j < n; j++) {
+				cout << lock[i][j] << " ";
+			}
+			cout << endl;
+		}
+
+		//cout << 4 << endl;
+
+		for (int i = 0; i < n; i++) {
+			for (int j = 0; j < n; j++) {
+				for (int k = 0; k < 4; k++) {
+					int ni = i + dir[k][0];
+					int nj = j + dir[k][1];
+					if (isinside(ni, nj) && connect[i][j][ni][nj] == 0) {
+						cout << i << " " << j << " " << ni << " " << nj << endl;
+						lock[i][j]++;
+					}
+				}
+			}
+		}
+
+		cout << "lock " << endl;
+		for (int i = 0; i < n; i++) {
+			for (int j = 0; j < n; j++)
+				cout << lock[i][j] << " ";
+			cout << endl;             
+		}
+		cout << 5 << endl;*/
+
+		//이렇게 푸는 게 아니라면 lock을 셀 필요도 없다.
+		//bfs로 해야됨.랙
+		int num = 1;
+		for (int i = 0; i < n; i++) {
+			for (int j = 0; j < n; j++) {
+				if (checkarr[i][j] == 0) {
+					bfs(i, j, num);
+					num++;
+				}
+			}
+		}
+
+		/*int sum = 0;
+		int cnt = 0;
+		for (int i = 0; i < n; i++)
+			for (int j = 0; j < n; j++) {
+				if (lock[i][j] != 4) {
+					sum += arr[i][j];
+					cnt++;
+				}
+			}
+
+		cout << 6 << endl;
+
+		int val = sum / cnt;
+		cout << val << endl;
+
+		for (int i = 0; i < n; i++) {
+			for (int j = 0; j < n; j++) {
+				if (lock[i][j] != 4) {
+					arr[i][j] = val;
+				}
+			}
+		}
+		ans++;
+
+		cout << "why not" << endl;
+		*/
+		
+		/*for (int i = 0; i < n; i++) {
+			for (int j = 0; j < n; j++)
+				cout << arr[i][j] << " ";
+			cout << endl;
+		}*/
+
+		ans++;
+	}
+
+	cout << ans << endl;
+
+	return 0;
+}
