@@ -1,0 +1,72 @@
+#include <iostream>
+#include <vector>
+#include <string>
+#include <queue>
+#include <cstring>
+#include <algorithm>
+#include <math.h>
+
+using namespace std;
+
+int n, m;
+int arr[500][500];
+int tetromino[19][4][2] = {
+{{0, 0}, {0, 1}, {0, 2}, {0, 3}},
+{{0, 0}, {1, 0}, {2, 0}, {3, 0}}, 
+{{0, 0}, {1, 0}, {0, 1}, {1, 1}},
+{ {0, 0},{1, 0},{2, 0},{2, 1} },
+{ {0, 0},{1, 0},{2, 0},{2, -1} },
+{ {0, 0},{0, 1},{2, 0},{1, 0} },
+{ {0, 0},{0, 1},{0, 2},{1, 2} },
+{ {0, 0},{1, 0},{1, 1},{1, 2} },
+{ {0, 0},{1, 0},{1, -1},{1, -2} },
+{ {0, 0},{0, 1},{1, 0},{2, 0} },
+{ {0, 0},{0, 1},{1, 1},{2, 1} },
+{ {0, 0},{1, 0},{1, 1},{2, 1} },
+{ {0, 0},{0, 1},{1, 0},{1, -1} },
+{ {0, 0},{1, 0},{1, -1},{2, -1} },
+{ {0, 0},{0, 1},{1, 1},{1, 2} },
+{ {0, 0},{0, 1},{0, 2},{1, 1} },
+{ {0, 0},{1, 0},{1, 1},{2, 0} },
+{ {0, 0},{1, 0},{1, -1},{2, 0} },
+{ {0, 0},{1, -1},{1, 0},{1, 1} }
+};
+
+bool isinside(int y, int x) {
+	if (y >= 0 && y < n && x >= 0 && x < m) return true;
+	else return false;
+}
+
+int main(){
+
+	scanf("%d %d", &n, &m);
+
+	for (int i = 0; i < n; i++)
+		for (int j = 0; j < m; j++)
+			cin >> arr[i][j];
+
+	int ans = 0;
+
+	for(int i=0;i<n;i++)
+		for (int j = 0; j < m; j++) { //모든 시작 위치
+			for (int k = 0; k < 19; k++) { //모든 19개의 테트로미노
+				int tempsum = 0;
+				for (int t = 0; t < 4; t++) { //모든 4개의 구성요소
+					int ny = i + tetromino[k][t][0];
+					int nx = j + tetromino[k][t][1];
+					if (isinside(ny, nx)) {
+						tempsum += arr[ny][nx];
+					}
+					else {
+						tempsum = 0;
+						break;
+					}
+				}
+				if (tempsum > ans) ans = tempsum;
+			}
+		}
+
+	cout << ans << endl;
+
+	return 0;
+}
