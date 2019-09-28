@@ -1,0 +1,101 @@
+#include <iostream>
+#include <vector>
+#include <string>
+#include <queue>
+#include <cstring>
+#include <algorithm>
+#include <math.h>
+
+using namespace std;
+
+/*
+190928 토요일
+https://jaimemin.tistory.com/1064
+꾸준함 님은 정말 꾸준하게 하셔서 그런지 엄청 잘 푸신다.
+이 문제를 원래 이렇게 푸는거구나.
+나는 있는 그대로 문 열린 수 세면서 그거 체크하고
+풀었는데 그런 게 아니라
+dfs를 이용해서 조건에 맞을 시 찾아나가고 얼마나 연결이 되어있는지 세고
+그것들을 v에 저장을 해서 나중에 바꿔주고.. 하면 되는 거였구나.
+
+언제 이런 생각을 할 수 있을까 ㅋㅋㅋㅋ..
+*/
+
+int arr[50][50];
+int visit[50][50];
+int dir[4][2] = { {1, 0}, {-1, 0}, {0, 1}, {0, -1} };
+int n, l, r;
+int num;
+int people;
+vector<pair<int, int>> v; //인구 이동 공평하게 될 위치들 모음.
+
+bool isinside(int y, int x) {
+	if (0 <= y && y < n && 0 <= x && x < n) return true;
+	else return false;
+}
+
+//인구이동 가능한 곳들을 찾는다.
+void dfs(int y, int x) {
+	for (int i = 0; i < 4; i++) {
+		int ny = y + dir[i][0];
+		int nx = x + dir[i][1];
+		int tmp = abs(arr[y][x] - arr[ny][nx]);
+
+		//범위에 맞고 아직 방문을 안했고 그 범위가 맞다면,
+		if (isinside(ny, nx) && visit[ny][nx] == 0 && l <= tmp && tmp <= r) {
+			num++;//열려 있는 것을 하나 추가해줍니다. 나와 함께 가자.
+			people += arr[ny][nx]; //여기서 사람들 수까지 세면 나중에 바로 계산 가능.
+
+			visit[ny][nx] = 1; //방문 체크
+			v.push_back(make_pair(ny, nx)); //넣어줌. 나중에 공평히 나눈 수로 바꿔주기 위함임.
+
+			dfs(ny, nx);//또 찾아나가자.
+		}
+	}
+}
+
+int main(){
+
+	int ans = 0;
+	
+	cin >> n >> l >> r;
+	for (int i = 0; i < n; i++)
+		for (int j = 0; j < n; j++)
+			cin >> arr[i][j];
+
+	while (1) {
+
+		bool found = false;
+		memset(visit, 0, sizeof(visit));
+
+		for (int i = 0; i < n; i++) {
+			for (int j = 0; j < n; j++) {
+				if (visit[i][j] == 1) continue; //이미 방문한 경우는 안보고.
+
+				visit[i][j] = 1;
+				people = arr[i][j];
+				num = 1;
+				v.clear(); //다시 리셋하고 해야지.
+				v.push_back(make_pair(i, j));
+
+				//찾아나선다.
+				dfs(i, j);
+
+				//연결된 애들이 있으면
+				if (num >= 2) {
+					//인구이동 결과를 넣어준다.
+					for (int k = 0; k < v.size(); k++) {
+						arr[v[k].first][v[k].second] = people / num;
+					}
+					found = true;
+				}
+			}
+		}
+		if (found) ans++;
+		else break;
+	}
+
+	cout << ans << endl;
+
+	return 0;
+}
