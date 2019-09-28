@@ -1,0 +1,15 @@
+1. 동물의 정보를 담고 있는 테이블에서 동물 이름 순서로 모든 정보 추출하기
+SELECT  *
+FROM ANIMAL_INS
+ORDER BY ANIMAL_NAME
+
+
+2. 동물의 정보를 담고 있는 테이블에서 동물 아이디의 역순으로
+동물의 이름과 다른 정보를 함께 추출하기
+SELECT ANIMAL_NAME, 00
+FROM ANIMAL_iNS
+ORDER BY ANIMAL_ID DESC
+
+ORDER BY에서 쓸 수 있는 게 
+DESC 와 ASC가 있는데
+DESC는 역순이고 ASC는 오름차순으로 기본 설정 값이다.
