@@ -1,0 +1,84 @@
+#include <iostream>
+#include <vector>
+#include <string>
+#include <queue>
+#include <cstring>
+#include <algorithm>
+#include <math.h>
+
+using namespace std;
+
+int map[100][100];
+int n, l;
+
+int main(){
+	cin >> n >> l;
+	for (int i = 0; i < n; i++)
+		for (int j = 0; j < n; j++)
+			cin >> map[i][j];
+
+	int ans = 0;
+	for (int i = 0; i < n; i++) {
+		int num = map[i][0];
+		int cnt = 1;
+		int possible = 1;
+		for (int j = 1; j < n; j++) {
+			if (map[i][j] == num) cnt++;
+			else {
+				if (abs(num - map[i][j]) == 1) {
+					if (cnt%l == 0) {
+						num = map[i][j];
+						cnt = 1;
+					}
+					else {
+						possible = 0;
+						break;
+					}
+				}
+				else {
+					possible = 0;
+					break;
+				}
+			}
+		}
+		if (possible == 1) {
+			ans++;
+			cout << "row " << i << endl;
+		}
+	}
+
+	for (int j = 0; j < n; j++) {
+		int num = map[0][j];
+		int cnt = 1;
+		int possible = 1;
+		for (int i = 1; i < n; i++) {
+			if (map[i][j] == num) {
+				cnt++;
+			}
+			else {
+				if (abs(num - map[i][j]) == 1) {
+					if (cnt%l == 0) {
+						num = map[i][j];
+						cnt = 1;
+					}
+					else {
+						possible = 0;
+						break;
+					}
+				}
+				else {
+					possible = 0;
+					break;
+				}
+			}
+		}
+		if (possible == 1) {
+			ans++;
+			cout << "col " << j << endl;
+		}
+	}
+
+	cout << ans << endl;
+
+	return 0;
+}
