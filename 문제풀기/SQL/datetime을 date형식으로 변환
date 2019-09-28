@@ -1,0 +1,17 @@
+#DATE_FORMAT
+시도를 좀 많이 했었는데, 핵심은 DATE_FORMAT 이라는 함수였다.
+SELECT ANIMAL_ID, NAME, DATE_FORMAT(DATETIME, '%Y-%m-%d') AS '날짜' 
+FROM ANIMAL_INS
+ORDER BY ANIMAL_ID
+
+
+->DATE_FORMAT(날을 넣고, '%Y-%m-%d')
+대문자랑 소문자에 따라서 달라지는 듯 하다.
+2015-09-20 이런 식으로 나오게 하기 위해선 m과 d를 소문자로 써야되고
+대문자로 쓰게 되면 Sep 7th 이런 식으로 나온다.
+y도 소문자로 쓰면 15 만 나온다.
+
+그러니까 정리하자면 
+Y M D -> 2019 Sep 28th
+y m d -> 19 09 28
+이렇게 나온다는 말.
