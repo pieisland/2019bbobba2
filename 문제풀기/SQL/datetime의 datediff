@@ -1,0 +1,13 @@
+#입양을 간 동물 중 보호 기간이 가장 길었던 동물 두 마리의 아이디와 이름을 조회하기.
+SELECT ANIMAL_ID, NAME
+FROM ANIMAL_OUTS JOIN ANIMAL_INS USING(ANIMAL_ID, NAME)
+#WHERE ANIMAL_INS.ANIMAL_ID=ANIMAL_OUTS.ANIMAL_ID
+ORDER BY DATEDIFF(ANIMAL_OUTS.DATETIME, ANIMAL_INS.DATETIME) DESC
+LIMIT 2
+
+DATEDIFF이라는 애는 DATETIME 속성에서 날짜를 빼줘서 며칠인지를 나타내줍니다.
+앞에 날 빼기 뒤의 날을 한 결과, 즉 며칠인지 숫자를 나타냅니다.
+
+그리고 DESC는 뒤에 써줘야 되는 거였다.. ㅎㅎ
+ORDER BY 뭐로 어떻게(DESC 또는 ASC)
+기본 설정은 ASC(작은 수에서 큰 수 순서로)
