@@ -1,0 +1,25 @@
+1. 고양이와 강아지의 수 세기. COUNT 와 GROUP BY
+SELECT ANIMAL_TYPE, COUNT(ANIMAL_TYPE) AS count
+FROM ANIMAL_INS
+GROUP BY ANIMAL_TYPE
+>> 수를 센 결과를 나타내고 싶으면 COUNT를 사용. 어떤 거에 대해 셀 것인지는 괄호 안에 적어주면 된다.
+여기서는 동물 타입이 고양이와 강아지가 있는데 그 타입들에 대해 셀 것이기 때문에 넣어준 것
+>> 원하는 형태로 열을 만들면 AS 를 사용해서 이름 붙여준다.
+>> GROUP BY를 사용하면 그룹따라서 카운팅이 된다.
+
+
+2. 동명 동물 수 찾기, HAVING
+SELECT NAME, COUNT(NAME) AS COUNT
+FROM ANIMAL_INS
+GROUP BY NAME
+HAVING COUNT(NAME)>=2
+>> HAVING 절을 사용해 조건을 추가할 수 있다.
+동물 이름을 센 수가 2 이상인 것만 찾아준다.
+
+----
+
+오늘은 좀 시간이 걸렸고, 기억도 잘 안나기 때문에 정처기 책을 다시 뒤적거려 적어본다.
+일단, 조작어에 해당하는 거구요.
+GROUP BY 절은 한 속성값을 그룹으로 분류하고자 할 때 사용한다.
+HAVING은 GROUP BY에 의해 그룹으로 분류한 후 조건을 제시할 때 사용한다.
+COUNT(속성 이름)는 지정된 속성의 튜플 수를 세어주는 함수이다.
