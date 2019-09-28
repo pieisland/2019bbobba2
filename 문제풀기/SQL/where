@@ -1,0 +1,13 @@
+1. where 절로 해당 조건 찾기
+SELECT ID, NAME
+FROM TABLE
+WHERE CONDITION = 'Healthy'
+-> 해당하는 것을 찾고 싶으면 = 를 사용한다.
+문자일 경우 ''가 있어야 하고 숫자는 그냥 써도 된다.
+
+
+2. where 절로 해당하지 않는 조건 찾기
+SELECT ID, NAME
+FROM TABLE
+WHERE CONDITION <> 'Sick'
+-> 해당하지 않는 것을 찾고 싶으면 <>를 사용한다.
