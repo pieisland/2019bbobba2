@@ -1,0 +1,13 @@
+#LIMIT과 ORDER BY를 사용해 상위 데이터를 가져올 수 있다.
+SELECT NAME
+FROM ANIMAL_INS
+ORDER BY DATETIME
+LIMIT 1
+
+
+#여러 기준으로 정렬하고 싶을 땐 , 를 사용한다.
+SELECT ANIMAL_ID, NAME, DATETIME
+FROM ANIMAL_INS
+ORDER BY NAME, DATETIME DESC
+** DESC는 내림차순으로, 숫자가 큰 게 먼저 나오고 
+ASC는 오름차순으로 숫자가 작은 게 먼저 나온다.
