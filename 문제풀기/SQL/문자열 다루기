@@ -1,0 +1,19 @@
+1. 이름이 원하는 값과 같은 데이터 찾기
+OR를 적절하게 사용하면 된다. 문자열은 그냥 '' 안에 써주면 된다.
+-------------------------------------------------------------
+SELECT ANIMAL_ID, NAME, SEX_UPON_INTAKE
+FROM ANIMAL_INS
+WHERE NAME = 'Lucy' OR NAME = 'Ella' OR NAME='Pickle' OR NAME = 'Rogan' OR NAME = 'Sabrina' OR NAME = 'Mitty'
+
+#혹시 이렇게 말고, 한꺼번에 넣어서 그 안에 있는가를 확인할 수 있는 방법이 있을까?
+-> 있다.
+WHERE ANIMAL_NAME IN ('Lucy', 'Ella')
+
+
+2. 이름에 특정한 값이 들어가는 개 찾기
+어제 했던 LIKE를 사용하면 된다. 그리고 개 이기 때문에 타입도 조건에 넣어주면 끝
+--------------------------------------------------------------
+SELECT ANIMAL_ID, NAME
+FROM ANIMAL_INS
+WHERE NAME LIKE '%el%' AND ANIMAL_TYPE = 'Dog'
+ORDER BY NAME
