@@ -1,0 +1,11 @@
+1. min 값인 데이터 확인하기
+SELECT MIN(DATE)
+FROM TABLE
+-> MAX와 MIN을 쓸 수 있다.
+
+
+2. NULL값을 가지는 데이터 출력하기
+SELECT NAME
+FROM TABLE
+WHERE ID IS NULL
+-> NULL은 = 이 아니라 IS를 사용한다. 
