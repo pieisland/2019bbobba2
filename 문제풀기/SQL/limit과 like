@@ -1,0 +1,20 @@
+1. 서브쿼리와 한계(LIMIT)
+입양을 가지 못한 동물의 아이디를 보호소에 들어온 기간이 긴 순으로 3마리 출력하기.
+원하는 개수만큼 출력하고자 할 때는 LIMIT 값을 주면 튜플 개수가 그 수에 맞춰 나온다.
+-----------------------------------------------------------------------
+SELECT NAME, DATETIME
+FROM ANIMAL_INS
+WHERE ANIMAL_INS.ANIMAL_ID NOT IN (SELECT ANIMAL_ID FROM ANIMAL_OUTS)
+ORDER BY DATETIME
+LIMIT 3
+
+
+2. JOIN과 LIKE, AND, OR 
+보호소에 들어올 때 미중성화였으나 입양을 갈 때 중성화가 된 동물의 ID와 타입, 이름을 ID 순으로 출력하기.
+특정 문자가 포함된 데이터를 찾고 싶을 때는 LIKE와 %를 이용해 찾으면 된다.
+AND와 OR를 통해 조건을 매길 수 있다.
+-----------------------------------------------------------------------
+SELECT ANIMAL_ID, ANIMAL_TYPE, NAME
+FROM ANIMAL_INS JOIN ANIMAL_OUTS USING(ANIMAL_ID, ANIMAL_TYPE, NAME)
+WHERE ANIMAL_INS.SEX_UPON_INTAKE LIKE 'Intact%' AND (ANIMAL_OUTS.SEX_UPON_OUTCOME LIKE 'Spayed%' OR ANIMAL_OUTS.SEX_UPON_OUTCOME LIKE 'Neutered%')
+ORDER BY ANIMAL_ID
