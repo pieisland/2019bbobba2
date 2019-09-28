@@ -1,0 +1,5 @@
+1. 중성화한 동물은 O로, 아닌 동물은 X로 출력하기
+SELECT ANIMAL_ID, NAME, IF(SEX_UPON_INTAKE LIKE 'Neutered %' OR SEX_UPON_INTAKE LIKE 'Spayed %', 'O', 'X') AS '중성화'
+FROM ANIMAL_INS
+->SELECT 문 안에서 IF 문을 통해서 조건을 확인하고 출력해주면 된다.
+IF(조건, 맞을 경우, 아닐 경우)
