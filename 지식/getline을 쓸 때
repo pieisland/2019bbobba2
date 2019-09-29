@@ -1,0 +1,18 @@
+string s;
+getline(cin, s);
+를 쓰는 건 가능하다만,
+
+int num;
+int s2;
+cin>>num
+getline(cin, s2);
+를 하면 버퍼 문제로 s2를 받지 않고 넘어간다.
+
+고로 버퍼를 비워줘야 하는데,
+cin>>num 이후에
+cin.ignore(256, '\n'); //인자 두 개는 1) 읽어들일 문자의 개수, 2) 읽어들이면 종료할 문자.
+를 써주면 버퍼가 비워지고
+getline도 문제없이 쓸 수가 있다.
+
+참고 사이트: https://leeusin.tistory.com/418
+http://blog.naver.com/PostView.nhn?blogId=lyw94k&logNo=220859905348&categoryNo=11&parentCategoryNo=0&viewDate=&currentPage=1&postListTopCurrentPage=1&from=search
