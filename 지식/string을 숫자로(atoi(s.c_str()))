@@ -12,3 +12,5 @@
   
   cout << atoi(st.c_str()) << endl; //그리고 string 자체를 숫자로 만들어주려면
   //먼저 c_str으로 char *로 만든 후에 atoi를 사용하면 숫자가 된다.
+
+더 간단하게, stoi(st)를 쓰면 된다고 함.
