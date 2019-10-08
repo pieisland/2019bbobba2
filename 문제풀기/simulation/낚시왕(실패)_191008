@@ -1,0 +1,232 @@
+#include <iostream>
+#include <string>
+#include <cstdio>
+#include <vector>
+using namespace std;
+
+int r, c, m;
+int map[101][101];//상어들 몇 마리 있는지를				  
+				  //저장할거에요.
+//근데 이렇게 하는것보다 그냥 vector로 해야되는건지
+//모르겠음.. ^.^ 저는 개못하니까 일깐 생각나는대로
+//코딩을 한 다음에 생각해볼게요.
+
+int dirchange[5] = { 0, 2, 1, 4, 3 };
+int dir[5][2] = { {0, 0}, {-1, 0}, {1, 0}, {0, 1}, {0, -1} };
+
+typedef struct {
+	int y;
+	int x;
+	int s;
+	int d;
+	int z;
+	int die;
+}Shark;
+
+//이렇게 하면 만ㄷ르어지는 거 아닌가여..
+vector<Shark> sharks;
+vector<Shark> map2[101][101]; //이게 되기는 하구나.
+
+int findShark(int y, int x) {
+	
+	//여기서 죽은 상어인지를 할 필요가 없는 이유는..
+	//어차피 죽은 상어이면.. 내가 어떻게 해줄건데
+	//근데 혹시 모르니..;
+	for (int i = 0; i < m; i++) {
+		//죽은 애라면 건너뛴다.
+		if (sharks[i].die == 1) continue;
+
+		if (sharks[i].y == y && sharks[i].x == x) return i;
+	}
+}
+
+int main() {
+	int ans = 0;//잡은 상어의 크기를 저장합니다.
+
+	scanf("%d %d %d", &r, &c, &m);
+
+	cout << "아니 너는 왜 또 그랭ㅇㄹㅇ" << endl;
+
+	//상어정보를 받는다.
+	for (int i = 0; i < m; i++) {
+		Shark s;
+
+	
+		cin >> s.y >> s.x >> s.s >> s.d >> s.z;
+		s.die = 0;
+		//scanf("%d %d %d %d %d", &sharks[i].y, &sharks[i].x, &sharks[i].s, &sharks[i].d, &sharks[i].z);
+		//sharks[i].die = 0; //일단은 안 죽었습니다.
+		map[s.y][s.x] += 1;//상어 한마리~
+		sharks.push_back(s);
+		//이렇게 하면 될까..??
+		//[sharks[i].y][sharks[i].x].push_back(sharks[i]);
+	}
+
+	int kpos = 0;//낚시왕의 위치
+	while (1) {
+		kpos++;
+		if (kpos > c) break; //열 위치를 벗어나면 끝
+
+		cout << "뭐가 안되는거야..?" << kpos << endl;
+
+		cout << "잡기 전 맵 상태" << endl;
+		for (int i = 1; i <= r; i++) {
+			for (int j = 1; j <= c; j++) {
+				cout << map[i][j] << " ";
+			}
+			cout << endl;
+		}
+		cout << endl;
+
+		//낚시왕이 먼저 상어를 잡아야 됩니다.
+		for (int i = 1; i <= r; i++) {
+			/*if (map2[kpos][i].size() == 1)//한 마리가 있으면
+			{
+				//해당 상어는
+				ans += map2[kpos][i][0].s;
+				map2[kpos][i][0].die = 1;//죽였음
+				//잡혀도 죽고 먹혀도 죽는거지....
+				//와 왜이렇게 어렵냐고....
+				map2[kpos][i].pop_back();//죽었으니까 그냥 없애기..??
+				break;//그리고 나감.
+			}*/
+
+			if (map[i][kpos] == 1) { //한 마리가 있어요
+				//그 상어의.. 크기를 받아와야되는데 ㅋㅋㅋㅋㅋ
+
+				int idx = findShark(i, kpos);
+				ans += sharks[idx].s; //잡은 상어임.
+				sharks[idx].die = 1;
+				sharks[idx].y = -100;
+				sharks[idx].x = -100; //혹시 몰라서 해주는 일입니다.
+				map[i][kpos] -= 1;//하나 빼주구.. 이것도 해야되는지는 모르겠다만.
+				/////////////해당 상어의 크기를 저장해야된다.
+				//해당 상어가 어떤앤지 어떻게 아냐.
+
+				//그 상어를 바로 찾으려면 어떻게 해야되는거지..ㅠㅠㅠ
+				break;//한 마리만 잡으면 되는것.
+				//그리고 그 상어를 die로 바꿔준다.
+			}
+		}
+
+		cout << "잡은 후 맵 상태" << endl;
+		for (int i = 1; i <= r; i++) {
+			for (int j = 1; j <= c; j++) {
+				cout << map[i][j] << " ";
+			}
+			cout << endl;
+		}
+		cout << endl;
+
+
+		//낚시왕이 상어를 잡은 후, 이제 상어는 움직인다.
+		//여기가 엉망인 것 같다.
+		for (int i = 0; i < sharks.size(); i++) {//모든 상어에 대해서
+			if (sharks[i].die == 1) continue;//죽은 친구는 움직이지 않아
+
+			cout << sharks[i].y << " " << sharks[i].x << endl;
+
+			//다른 데로 갈 것이기 떄문에 이렇게 해준거.
+			map[sharks[i].y][sharks[i].x] -= 1;
+			//어차피 한 마리라서요.
+			//죽은애는 안한다고 했고.
+			//죽은애 처리를 진짜 잘해줘야 오류 안 나겠다.
+			//어 근데 이거 개 오류날 듯..
+			//원래 있던 자리에 들어간 경우가 있을 수 있겠는데여..
+			//아직 안 움직인 애에 대해서..
+			//그러면 이거 쓰면 안됨.. ^.^
+			//map2[sharks[i].y][sharks[i].x].pop_back();//
+			//아니면 초기화를 시키죠.
+			//맵을 어떻게 초기화시키지 ㅋㅋㅋㅋㅋ
+
+			//상어가 움직일 거니까... 그러면 빼야되는 거 아님..??
+			//맨 처음에는.. 어차피 한 마리만 있다고 했으니
+			//문제는 안 생길 것 같기는 한데..
+
+			for (int j = 0; j < sharks[i].s; j++) {
+				//스피드만큼 움직이거든요 한 번에
+				if (sharks[i].d == 1 || sharks[i].d == 2) { //위아래로 움직인다.
+					int ny = sharks[i].y + dir[sharks[i].d][0];
+					if (ny < 1) {
+						sharks[i].y = sharks[i].y + 1;
+						sharks[i].d = 2;
+					}
+					else if (ny > r) {
+						sharks[i].y = sharks[i].y - 1;
+						sharks[i].d = 1;
+					}
+					else {
+						sharks[i].y = ny;
+					}
+				}
+				else { //가로로 움직인다면
+					int nx = sharks[i].x + dir[sharks[i].d][1];
+					if (nx < 1) { //왼쪽 끝까지 갔다. 오른쪽으로 움직여야 함
+						sharks[i].x = sharks[i].x + 1;
+						sharks[i].d = 3;
+					}
+					else if (nx > c) {
+						sharks[i].x = sharks[i].x - 1;
+						sharks[i].d = 4;
+					}
+					else {
+						sharks[i].x = nx;
+					}
+				}
+				cout <<"움직임:" << sharks[i].y << " " << sharks[i].x << endl;
+
+			}
+			//d
+			map[sharks[i].y][sharks[i].x] += 1;//이제 위치를 바꿨으니까
+			//거기다가 더해주는거
+			//map2[sharks[i].y][sharks[i].x].push_back(sharks[i]);
+		}
+
+		cout << "상어 움직인 후 맵 상태" << endl;
+		for (int i = 1; i <= r; i++) {
+			for (int j = 1; j <= c; j++) {
+				cout << map[i][j] << " ";
+			}
+			cout << endl;
+		}
+
+		//이제 상어가 다 움직였으니..
+		//그.. 동일한 게 있는지를 찾아야 함.
+		//근데 그러면 맵을 뒤져야 되나여.....
+		//아니겠지
+		for (int i = 0; i < m; i++) {//모든 상어에 대해서
+			if (map[sharks[i].y][sharks[i].x] > 1) {
+				//중복저장 돼있다면..
+				int y_ = sharks[i].y;
+				int x_ = sharks[i].x;
+				int maxsize = 0;
+
+				//동일한 영역이 같이 있는 상어중에 제일 큰 거 찾아요
+				for (int j = 0; j < m; j++) {
+					if (sharks[j].y == y_ && sharks[j].x == x_) {
+						if (sharks[j].s > maxsize)
+							maxsize = sharks[j].s;
+					}
+				}
+
+				//제일 큰 애 제외하고는 죽여요. 먹을거니까..
+				for (int j = 0; j < m; j++) {
+					if (sharks[j].y == y_ && sharks[j].x == x_) {
+						if (sharks[j].s < maxsize){
+							sharks[j].die = 1;
+							sharks[j].y = -100;
+							sharks[j].x = -100;
+							map[y_][x_] -= 1;//하나 감소하고요.
+						}
+					}
+				}
+				//그러면 된 거 아닌가.
+			}
+		}
+	}
+
+	//근데 안나온다구.
+	cout << ans << endl;
+
+	return 0;
+}
