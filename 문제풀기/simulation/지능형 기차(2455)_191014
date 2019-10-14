@@ -1,0 +1,22 @@
+#include <vector>
+#include <iostream>
+using namespace std;
+
+int main() {
+
+	int answer = 0;
+	int people = 0;
+	int get, out;
+	while (1) {
+		cin >> out >> get;
+		people = people - out + get;
+
+		if (people > answer) answer = people;
+
+		if (get == 0) break;
+	}
+
+	cout << answer << endl;
+
+	return 0;
+}
