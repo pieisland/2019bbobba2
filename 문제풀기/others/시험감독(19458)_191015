@@ -1,0 +1,52 @@
+#include <vector>
+#include <iostream>
+using namespace std;
+
+/*
+191015 화요일.
+변수 타입이 중요함을 일깨워주고자 낸 문제같다.
+얼마나 다들. 틀렸을까 진짜 ㅋㅋㅋ.
+너무 쉬운 문제라서 왜 그렇게 정답률이 낮지 했는데
+정답을 더할 때 매우 큰 숫자가 나올 수 있기 때문에
+int 타입이 아니라 long long int를 써야되는 게 문제였다.
+그거 빼고는 어려운 거 없다.
+*/
+
+int N;
+int B, C;
+long long int answer; //이 문제 틀리는 이유가 다 이거일 듯.
+int A[1000000];
+
+int main() {
+
+	scanf("%d", &N);
+
+	for (int i = 0; i < N; i++) {
+		scanf("%d", &A[i]);//몇 명인지
+	}
+	
+	//총감과 부감이 확인할 수 있는 사람 수.
+	scanf("%d %d", &B, &C);
+
+	for (int i = 0; i < N; i++) {
+		int temp = A[i];
+		int m, n;
+		
+		//감독관 한 명만 들어가도 되면 그냥 가면 됩니다.
+		if (A[i] <= B) {
+			answer += 1;
+			continue;
+		}
+
+		temp -= B;
+		answer += 1; //총감이 봄.
+		m = temp / C;//부감이 얼마나 할 수 있는지
+		n = temp % C;//부감이 더 필요하려나
+		answer += m; //부감이 할 수 있는 사람 수 더함
+		if (n != 0) answer += 1; //남은 사람 있으면 부감 한 명 더 필요하다.
+	}
+	
+	printf("%lld\n", answer);
+
+	return 0;
+}
