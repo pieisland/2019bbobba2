@@ -1,0 +1,165 @@
+#include <vector>
+#include <iostream>
+#include <queue>
+using namespace std;
+
+/*
+191015 화요일.
+바이러스 문제에서 중요한 건..
+비활성화된 바이러스가 활성화가 되는데
+큐가 빌 때까지 돌리는 게 아니라는 거였다..
+비활성화를 굳이 할 필요가 없어서 멈춰야 되는 걸
+알아야 되는 문제였다.
+이거.. 시험에서 보면 테케만 맞고 해서
+맞춘 줄 알고 뿌듯해할 뻔 했네...
+아니.. 진짜 ㅠㅠㅠ
+큐도 비워줘야 했고.
+아까 안 비워줘서 더 작은 값이 나왔었다.
+에휴...
+*/
+
+int N;
+int M;
+//바이러스를 놓을 수 있는 위치가 M보다 크네;;
+//왜냐면, 그 위치에서 선택해서 놓으려고 하는거니까
+//좀 헷갈렸었다만, 그 여러 위치 중에서 M을 선택하면 됩니다.
+
+int map[50][50];
+int tmap[50][50];//바이러스 위치를 저장하려고 해.
+vector<pair<int, int>> virus;
+vector<vector<int>> viruspos; //가능하네.
+queue<pair<int, int>> q;
+int dir[4][2] = { {0, 1}, {0, -1}, {1, 0}, {-1, 0} };
+int ans = 100000; //제일 작은 수를 찾는 것이기 떄문임.
+
+bool isinside(int y, int x) {
+	if (y >= 0 && y < N && x >= 0 && x < N) return true;
+	else return false;
+}
+
+//
+void dfs(int idx, int cnt, vector<int> idxs) {
+	if (cnt == M) {
+		//M마리를 모두 선택했다면 이제 저장을 해줘야 됩니다.
+		viruspos.push_back(idxs);//해당 인덱스 모음을 저장해줍니다.
+	}
+	//있는 모든 바이러스 지나친건데도 못한거라면.
+	if (idx >= virus.size()) {
+		return;
+	}
+
+	vector<int> temp;
+	temp = idxs;
+	dfs(idx + 1, cnt, temp); //선택 안함
+	temp.push_back(idx);//선택함
+	dfs(idx + 1, cnt + 1, temp);
+
+	return;
+}
+
+int main(){
+
+	cin >> N >> M;
+	int zero = 0; 
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < N; j++) {
+			scanf("%d", &map[i][j]);
+			if (map[i][j] == 2) { //바이러스를 놓을 수 있는 위치라면
+				virus.push_back(make_pair(i, j));
+				tmap[i][j] = -2;//바이러스가 있거나 벽이 있는 곳이라면 -라고 해줄거야.
+				//놓을 수 없는 곳이라는 거를 만들려구.
+			}
+			if (map[i][j] == 1)//벽이라면
+				tmap[i][j] = -1;
+			if (map[i][j] == 0)
+				zero++;//애초에 개수를 저장해둔다.
+		}
+	}
+
+	if (zero == 0)
+	{
+		cout << 0 << endl;
+		return 0;
+	}
+
+	//이렇게 맵을 만든 후에
+	vector<int> idx;
+	dfs(0, 0, idx);
+
+	int newmap[50][50];
+	int newmap2[50][50];
+
+	for (int i = 0; i < viruspos.size(); i++) {
+		int tzero = zero;
+		while (!q.empty()) q.pop();
+
+		for (int i = 0; i < N; i++)
+			for (int j = 0; j < N; j++) {
+				newmap2[i][j] = newmap[i][j] = tmap[i][j];
+			}
+
+		for (int j = 0; j < viruspos[i].size(); j++)//어차피 M이긴 함
+		{
+			int vidx = viruspos[i][j];//바이러스 인덱스를 가져왔어요.
+			int y = virus[vidx].first;
+			int x = virus[vidx].second;
+			//이게 바로 바이러스의 위치입니다.
+
+			newmap[y][x] = -1;
+			newmap2[y][x] = -1;//바이러스는 -1 값으로 범접하지 못하게.
+
+			//선택된 바이러스를 저장합니다.
+			q.push(make_pair(y, x));//
+			
+		}
+
+		int maxval = -100;
+		while (!q.empty()) {
+
+			if (tzero == 0) break;
+
+			int cy = q.front().first;
+			int cx = q.front().second;
+			q.pop(); 
+
+			//이제 네 방향으로 가는데
+			//마이너스 값이 아니어야 한다는거죠.
+			for (int i = 0; i < 4; i++) {
+				int ny = cy + dir[i][0];
+				int nx = cx + dir[i][1];
+				
+				//바이러스 안 퍼진 곳이거나 비활성바이러스였다면
+				if (isinside(ny, nx) && (newmap[ny][nx] == 0 || newmap[ny][nx] == -2)) {
+					
+					if(newmap[ny][nx]==0)
+						tzero--;//제로 개수 감소
+
+					if (newmap2[cy][cx] == -1) //활성화된 바이러스
+						newmap[ny][nx] = 1;
+					else
+						newmap[ny][nx] = newmap[cy][cx] + 1;//그 위치에 몇 시간이 걸렸다는 거를 저장해준다
+							
+					if (maxval < newmap[ny][nx]) {
+						maxval = newmap[ny][nx]; //젤 큰 수를 여기서 찾아주면 되지 않을까.
+					}
+
+					q.push(make_pair(ny, nx));
+				}
+			}			
+		}
+
+		if (tzero > 0) {
+			maxval = 1000000;		}
+
+		if (ans > maxval) {
+			ans = maxval;
+		}
+	}
+
+	//변화가 없으면 
+	if (ans == 100000)
+		cout << -1 << endl;
+	else cout << ans << endl;
+
+	return 0;
+}
