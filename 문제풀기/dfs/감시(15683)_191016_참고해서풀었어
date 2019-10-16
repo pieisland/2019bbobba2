@@ -4,6 +4,11 @@
 #include <math.h>
 using namespace std;
 
+/*
+break이 엄청 중요하네
+ㅎㅎㅎㅎ
+*/
+
 int n, m;  //세로 크기랑 가로크기
 int map[8][8];
 int copymap[8][8];
@@ -86,31 +91,34 @@ int main(){
 
 			//카메라라면
 			if (1 <= map[i][j] && map[i][j] <= 5)//카메라다
-			{
 				camera.push_back({ i, j });//카메라를 담는다.
 
 				//카메라인데
-				switch (map[i][j]) {
-				case 1:
-					direction[i][j][0] = 1;
-					break;
 
-				case 2:
-					direction[i][j][0] = 1;
-					direction[i][j][2] = 1;
-				case 3:
-					direction[i][j][0] = 1;
-					direction[i][j][1] = 1;
-				case 4:
-					direction[i][j][0] = 1;
-					direction[i][j][1] = 1;
-					direction[i][j][2] = 1;
-				case 5:
-					direction[i][j][0] = 1;
-					direction[i][j][1] = 1;
-					direction[i][j][2] = 1;
-					direction[i][j][3] = 1;
-				}
+			//아니.. break 안했다고 그러기 있냐.
+			switch (map[i][j]) {
+			case 1:
+				direction[i][j][0] = 1;
+				break;
+			case 2:
+				direction[i][j][0] = 1;
+				direction[i][j][2] = 1;
+				break;
+			case 3:
+				direction[i][j][0] = 1;
+				direction[i][j][1] = 1;
+				break;
+			case 4:
+				direction[i][j][0] = 1;
+				direction[i][j][1] = 1;
+				direction[i][j][2] = 1;
+				break;
+			case 5:
+				direction[i][j][0] = 1;
+				direction[i][j][1] = 1;
+				direction[i][j][2] = 1;
+				direction[i][j][3] = 1;
+				break;
 			}
 		}
 	}
@@ -122,5 +130,3 @@ int main(){
 
 	return 0;
 }
-
-//도대체 왜 똑같이 했는데도 안나오는건데..
