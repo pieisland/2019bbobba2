@@ -1,0 +1,126 @@
+#include <vector>
+#include <iostream>
+#include <queue>
+#include <math.h>
+using namespace std;
+
+int n, m;  //세로 크기랑 가로크기
+int map[8][8];
+int copymap[8][8];
+int dir[4][2] = { {0, 1}, {-1, 0}, {0, -1}, {1, 0} };
+vector<pair<int, int>> camera;
+vector<int> angle;
+int answer = 100000000;
+int direction[8][8][4];
+
+void mapcpy() {
+	for (int i = 0; i < n; i++)
+		for (int j = 0; j < m; j++)
+			copymap[i][j] = map[i][j];
+}
+
+bool isinside(int y, int x)
+{
+	if (y >=0 && y < n && x >= 0 && x < m) return true;
+	else return false;
+}
+
+int zeronum() {
+	int ret = 0;
+	for (int i = 0; i < n; i++)
+		for (int j = 0; j < m; j++)
+			if (copymap[i][j] == 0)
+				ret++;
+
+	return ret;
+}
+
+void dfs(int cnt) {
+
+	//카메라 개수만큼 선택했다면 
+	if (cnt == camera.size()) {
+		//해당 카메라들을 돌려야겠지..?
+		for (int i = 0; i < angle.size(); i++) {
+			int y = camera[i].first;
+			int x = camera[i].second;
+
+			//cout << angle[i] << endl;
+
+			//몇 번을 비추고 있는지를 확인하는 겁니다.
+			for (int j = 0; j < 4; j++) {
+
+				if (direction[y][x][j] == 1) {
+					int ny = y + dir[(angle[i] + j) % 4][0];
+					int nx = x + dir[(angle[i] + j) % 4][1];
+
+					//해당 copymap에다가 하는거아닌가.
+					while (1) {
+						if (copymap[ny][nx] == 6) break;//벽이면 중단
+						if (isinside(ny, nx) == false) break;
+						if (copymap[ny][nx] == 0) copymap[ny][nx] = -1;
+
+						ny += dir[(angle[i] + j) % 4][0];
+						nx += dir[(angle[i] + j) % 4][1];
+					}
+				}	
+			}
+		}
+		answer = min(answer, zeronum());
+		mapcpy();
+		return;
+	}
+
+	for (int i = 0; i < 4; i++) {
+		angle.push_back(i);
+		dfs(cnt + 1);
+		angle.pop_back();
+	}
+}
+
+int main(){
+
+	cin >> n >> m;
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < m; j++) {
+			cin >> map[i][j];
+
+			//카메라라면
+			if (1 <= map[i][j] && map[i][j] <= 5)//카메라다
+			{
+				camera.push_back({ i, j });//카메라를 담는다.
+
+				//카메라인데
+				switch (map[i][j]) {
+				case 1:
+					direction[i][j][0] = 1;
+					break;
+
+				case 2:
+					direction[i][j][0] = 1;
+					direction[i][j][2] = 1;
+				case 3:
+					direction[i][j][0] = 1;
+					direction[i][j][1] = 1;
+				case 4:
+					direction[i][j][0] = 1;
+					direction[i][j][1] = 1;
+					direction[i][j][2] = 1;
+				case 5:
+					direction[i][j][0] = 1;
+					direction[i][j][1] = 1;
+					direction[i][j][2] = 1;
+					direction[i][j][3] = 1;
+				}
+			}
+		}
+	}
+
+	//이제 뭐라고 해야되는거지..?
+	mapcpy();
+	dfs(0);
+	cout << answer << endl;
+
+	return 0;
+}
+
+//도대체 왜 똑같이 했는데도 안나오는건데..
