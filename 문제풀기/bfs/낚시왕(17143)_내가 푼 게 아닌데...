@@ -1,0 +1,146 @@
+#include <vector>
+#include <iostream>
+#include <queue>
+#include <math.h>
+using namespace std;
+
+//어떤 것도 집중이 되지 않는다.
+
+const int MAX = 100 + 1;
+
+typedef struct
+{
+	int y, x;
+}Dir;
+
+Dir moveDir[4] = { {-1, 0}, {1, 0}, {0, 1}, {0, -1} };
+
+int R, C, M;
+int arr[MAX][MAX];
+//샤크를 이렇게 놓는 데에 감탄했어요.
+vector<pair<int, pair<int, int>>> shark[MAX][MAX];
+
+//근데 나는 헷갈려서 저렇게 못 할 것 같고.
+typedef struct
+{
+	int size;
+	int speed;
+	int direction;
+}sharkinfo;
+//이렇게 해서 넣을 것 같다.
+
+//뒤에 있는 큐도 마찬가지..
+typedef struct {
+	int y;
+	int x;
+	sharkinfo s;
+}tempShark;
+
+//나는 큐에 저렇게 넣는 게 어려웡...
+//이거 내가 푼 거 아니라서 진짜 ㅋㅋㅋ 미친다.
+
+int main(){
+
+	cin >> R >> C >> M;
+	for (int i = 0; i < M; i++) {
+		int r, c, s, d, z;
+		cin >> r >> c >> s >> d >> z;
+
+		shark[r][c].push_back({ z, {s, d - 1} });
+	}
+
+	int cur = 0;
+	int result = 0;
+
+	for (int c = 0; c < C; c++) {
+		cur++;
+
+		//상어를 잡는 거거든요.
+		//제일 가까운 상어를 일단 잡았어요.
+		for (int i = 1; i <= R; i++) {
+			if (shark[i][cur].size())
+			{
+				result += shark[i][cur][0].first;
+				shark[i][cur].clear();
+				break;
+			}	
+		}
+
+		//해당 위치에 상어가 있으면 큐에 다 넣어준 다음에
+		//그 위치에 있는 상어를 없애줘요.
+		//어차피 초기에 한 마리밖에 없어요.
+		queue<pair<pair<int, int>, pair<int, pair<int, int>>>> q;
+		queue<tempShark> q2;
+		for (int i = 1; i <= R; i++) {
+			for (int j = 1; j <= C; j++) {
+				if (shark[i][j].size()) {
+
+				/*	tempShark t;
+					t.y = i;
+					t.x = j;
+					t.s = shark[i][j][0];
+					q2.push();
+*/
+					q.push({ {i, j}, {shark[i][j][0]} });
+					shark[i][j].clear();
+				}
+			}
+		}
+
+		//상어가 움직입니다.
+		while (!q.empty()) {
+			int y = q.front().first.first;
+			int x = q.front().first.second;
+			int size = q.front().second.first;
+			int speed = q.front().second.second.first;
+			int dir = q.front().second.second.second;
+			q.pop();
+
+			//이 사람은 진짜 똑똑한 것 같아요.
+			//스피드만큼 위치 바꾸고 방향도 바꿔줍니다.
+			for (int i = 0; i < speed; i++) {
+				if (dir == 0 || dir == 1) {
+					int next = y + moveDir[dir].y;
+					//아직 적용하기 전에 next 값을 구해 본 거고
+					//이 값에 따라서 보는거죠..?
+					//위치에 안 맞다면 dir를 바꿔주고
+					//바꾼 dir에 맞게 움직이게 해주는거죠..
+					if (!(1 <= next && next <= R))
+						dir = 1 - dir; //이런 식으로 쉽게 해줄 수 있구나..
+					y += moveDir[dir].y;
+				}
+				else
+				{
+					int next = x + moveDir[dir].x;
+					if (!(1 <= next && next <= C))
+						dir = 5 - dir;
+					x += moveDir[dir].x;
+				}
+			}
+
+			//이제 상어를 다 움직였는데
+			//상어가.. 해당
+			//내가 최종적으로 도착한 위치가 y, x 이거든
+			//근데
+
+			if (shark[y][x].size()) {
+				if (shark[y][x][0].first < size) {
+					shark[y][x].clear();
+					shark[y][x].push_back({ size,{ speed, dir } });
+				}
+			}
+			else
+				shark[y][x].push_back({ size,{ speed, dir } });
+		}
+	}
+
+	cout << result << endl;
+
+	return 0;
+}
+
+//미친 진짜 전부 다 망해버림 ㅋㅋㅋㅋ
+//어떡하지..ㅠㅠㅠ 으헝헝...
+
+//큐에다가 pair 로 안하고 구조체로 해서 하는 걸로 해봤는데
+//오답이 나와서.. 왜 그런지를 모르겠는데 ㅋㅋㅋ 어떡해야하는거지.
