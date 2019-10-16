@@ -1,0 +1,123 @@
+#include <vector>
+#include <iostream>
+#include <queue>
+#include <math.h>
+using namespace std;
+
+int N; //이거는 얼마나 큰 맵인지.
+int L; //사다리 길이
+int arr[100][100];
+int check[100][100];
+
+int main(){
+
+	int ans = 0;
+
+	scanf("%d %d", &N, &L);
+
+	for (int i = 0; i < N; i++)
+		for (int j = 0; j < N; j++)
+			scanf("%d", &arr[i][j]);
+
+	//가로로 내려가면서
+	for (int r = 0; r < N; r++) {
+		
+		int idx = 0;
+		int possible = 1;
+		while (1) {
+			if (idx + 1 >= N) break;
+
+			if (arr[r][idx] == arr[r][idx + 1])//같은 값이면
+			{
+				idx++;
+				continue;
+			}
+			else //다른 값이다 
+			{
+				//차이가 1이 아니라 더 크다면 못 간다.
+				if (abs(arr[r][idx] - arr[r][idx + 1]) > 1) {
+					possible = 0;
+					break;
+				}
+
+				//내가 더 크다면
+				if (arr[r][idx] > arr[r][idx + 1]) {
+					int minipossible = 1;//놓을 수 있다 없다의 
+
+					if (idx + 1 + L - 1 >= N) {
+						minipossible = 0; break;
+					}
+					for (int pos = 0; pos < L; pos++) {
+						if (check[r][idx + 1 + pos] == 1) {
+							//이미 놓은 곳이ㄹ면
+							minipossible = 0;
+							break;
+						}
+						if (arr[r][idx + 1] != arr[r][idx + 1 + pos])
+						{
+							minipossible = 0;
+							break;
+						}
+					}
+
+					//다 놓았을 때 가능하다면
+					if (minipossible == 0) {
+						possible = 0;
+						break;
+					}
+					else
+					{
+						for (int pos = 0; pos < L; pos++) {
+							check[r][idx + 1 + pos] = 1; //놓았음을 ㅛ시해준다.
+						}
+						idx = idx + L + 1;
+					}
+				}
+				else //내가 더 작은경우
+				{
+					int minipossible = 1;//놓을 수 있다 없다의 
+
+					if (idx - L + 1 < 0) {
+						minipossible = 0; break;
+					}
+					for (int pos = 0; pos < L; pos++) {
+						if (check[r][idx - pos] == 1) {
+							//이미 놓은 곳이ㄹ면
+							minipossible = 0;
+							break;
+						}
+						if (arr[r][idx] != arr[r][idx - pos])
+						{
+							minipossible = 0;
+							break;
+						}
+					}
+
+					//다 놓았을 때 가능하다면
+					if (minipossible == 0) {
+						possible = 0;
+						break;
+					}
+					else
+					{
+						for (int pos = 0; pos < L; pos++) {
+							check[r][idx - pos] = 1; //놓았음을 ㅛ시해준다.
+						}
+						idx = idx + 2;
+					}
+				}
+			
+			}
+		}
+		if (possible == 1) {
+			cout << r << endl;
+			ans++;//마지막까지 가능함이라고 판단되면
+		}
+				  //답을 증가시킨다.
+	}
+
+	//제대로 되는지 모르곘네
+	cout << ans << endl;
+
+	return 0;
+}
