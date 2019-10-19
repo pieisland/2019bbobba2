@@ -1,0 +1,141 @@
+#include <vector>
+#include <stdio.h>
+#include <iostream>
+#include <queue>
+#include <math.h>
+#include <algorithm>
+using namespace std;
+
+/*
+191020 일요일
+wow 이전보다 더 좋게 풀었다아~~~
+기분 좋아짐 ㅎ.ㅎ
+예전에 시간초과 났는데 이제 좀
+생각하는 게 바뀐건지 잘 풀려서 행복.
+*/
+
+int n;
+int m;
+int k;
+int nut[10][10];
+int map[10][10];
+int dir[8][2] = { {1, 0}, {-1, 0}, {0, 1}, {0, -1}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1} };
+
+vector<int> tree2[10][10];
+
+bool isinside(int y, int x) {
+	if (y >= 0 && y < n && x >= 0 && x < n)
+		return true;
+	else return false;
+}
+
+int main() {
+
+	scanf("%d %d %d", &n, &m, &k);
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < n; j++) {
+			scanf("%d", &nut[i][j]);
+			map[i][j] = 5; //맨 처음 영양분은 5만큼 있다.
+		}
+	}
+
+	//m개의 나무에 대한 정보
+	for (int i = 0; i < m; i++) {
+		int y, x, a;
+		scanf("%d %d %d", &y, &x, &a);
+		tree2[y-1][x-1].push_back(a);
+	}
+
+	//위치 따라서 좀 막 넣어놓기는 했는데.
+	while (k--) {
+		//봄- 나이만큼 양분을 먹는데 나이가 적은애부터 먹으므로 나이순 정렬 필요.
+		for (int i = 0; i < n; i++) {
+			for (int j = 0; j < n; j++) {
+				sort(tree2[i][j].begin(), tree2[i][j].end());
+			}
+		}
+		//나무를 정렬을 하면 나이가 작은 순으로 정렬됨.
+
+		//영양분을 먼저 먹습니다.
+		for (int i = 0; i < n; i++) {
+			for (int j = 0; j < n; j++) {
+				if (tree2[i][j].size() == 0) continue;
+
+				for (int k = 0; k < tree2[i][j].size(); k++) {
+					if (map[i][j] >= tree2[i][j][k]) {
+						//남은 양분이 더 크면 먹어도 됩니다.
+						map[i][j] -= tree2[i][j][k];
+						tree2[i][j][k] += 1;//양분을 먹고 나이가 증가한다.
+					}
+					else { //나이순으로 되어있기 때문에 이게 한번 그러면 뒤는 다 그럼
+						tree2[i][j][k] *= -1; //음수는 죽었음을 표시
+					}
+				}
+			}
+		}
+
+		//여름
+		for (int i = 0; i < n; i++) {
+			for (int j = 0; j < n; j++) {
+				if (tree2[i][j].size() == 0) continue;
+
+				vector<int> temp;
+
+				//죽은 나무들반큼 양분을 더해줍니다.
+				for (int k = 0; k < tree2[i][j].size(); k++) {
+					if (tree2[i][j][k] < 0) {
+						map[i][j] += -(tree2[i][j][k] / 2);
+					}
+					else if (tree2[i][j][k] > 0) {
+						//살아있는 나무라면
+						temp.push_back(tree2[i][j][k]);
+					}
+				}
+
+				//살아있는 나무들로만 다시 넣어준다.
+				tree2[i][j] = temp;
+			}
+		}
+
+		//가을에는 나무가 번식한다.
+		for (int i = 0; i < n; i++) {
+			for (int j = 0; j < n; j++) {
+				if (tree2[i][j].size() == 0) continue;
+				//0이 아니라면
+				for (int k = 0; k < tree2[i][j].size(); k++)
+				{
+					//나이가 5의 배수인 애들
+					if (tree2[i][j][k] % 5 == 0) {
+						for (int a = 0; a < 8; a++)
+						{
+							int ny = i + dir[a][0];
+							int nx = j + dir[a][1];
+							if (isinside(ny, nx)) {
+								//그래서 나이가 1인 나무를 그 위치에 심어준다.
+								tree2[ny][nx].push_back(1);
+							}
+						}
+					}
+				}
+			}
+		}
+
+		//겨울에는 양분을 보충해준다.
+		for (int i = 0; i < n; i++)
+			for (int j = 0; j < n; j++)
+				map[i][j] += nut[i][j];
+	}
+
+	//그럼 이제 k년이 흘렀습니다.
+	//나무의 개수를 구해봅니다.
+	int answer = 0;
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < n; j++) {
+			answer += tree2[i][j].size();
+		}
+	}
+
+	printf("%d\n", answer);
+
+	return 0;
+}
