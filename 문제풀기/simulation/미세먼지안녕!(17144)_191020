@@ -1,0 +1,152 @@
+#include <vector>
+#include <stdio.h>
+#include <iostream>
+#include <queue>
+#include <math.h>
+using namespace std;
+
+int r, c, t;
+int map[50][50];
+int dir[4][2] = { {1, 0}, {-1, 0}, {0, 1}, {0, -1} };
+//위쪽 공기청정기가 도는 방향.
+int direction1[4][2] = { {0, 1}, {-1, 0}, {0, -1}, {1, 0} };
+//아래쪽 공기청정기가 도는 방향.
+int direction2[4][2] = { {0, 1}, {1, 0}, {0, -1}, {-1, 0} };
+vector<pair<int, int>> cleaner;
+
+bool isinside(int y, int x) {
+	if (y >= 0 && y < r && x >= 0 && x < c)
+		return true;
+	else return false;
+}
+
+void setmap(int tmap[][50]) {
+	for (int i = 0; i < r; i++) {
+		for (int j = 0; j < c; j++) {
+			tmap[i][j] = map[i][j];
+		}
+	}
+}
+
+void tmaptomap(int tmap[][50]) {
+	for(int i = 0; i < r; i++)
+		for (int j = 0; j < c; j++) {
+			map[i][j] = tmap[i][j];
+		}
+}
+
+void showmap() {
+	for (int i = 0; i < r; i++) {
+		for (int j = 0; j < c; j++)
+			cout << map[i][j] << " ";
+		cout << endl;
+	}
+	cout << endl;
+}
+
+int main() {
+	scanf("%d %d %d", &r, &c, &t);
+
+	//map을 세팅한다.
+	for (int i = 0; i < r; i++) {
+		for (int j = 0; j < c; j++){
+			scanf("%d", &map[i][j]);
+			
+			//공기청정기의 위치다.
+			if (map[i][j] == -1) {
+				cleaner.push_back({ i, j });
+			}
+		}
+	}
+
+	while (t--) {
+		int tmap[50][50];
+		setmap(tmap);//tmap에 map 값을 담아준다.
+
+		//map을 세팅했으므로, 확산을 시킨다.
+		for (int i = 0; i < r; i++) {
+			for (int j = 0; j < c; j++) {
+				if (map[i][j] > 0) {
+					int val = map[i][j] / 5;
+
+					//4방향에 대해서 갈 수 있다면 확산을 시켜준다.
+					for (int k = 0; k < 4; k++) {
+						int ny = i + dir[k][0];
+						int nx = j + dir[k][1];
+
+						//범위에 맞으며, 공기청정기 위치가 아니라면
+						if (isinside(ny, nx) && map[ny][nx] != -1) {
+							tmap[ny][nx] += val;
+							tmap[i][j] -= val;
+						}
+					}
+				}
+			}
+		} //여기까지 확산 과정
+
+		//이렇게 구한 tmap 값을 map에 넣어준다.
+		tmaptomap(tmap);
+
+		//위쪽 공기청정기
+		int wy = cleaner[0].first;
+		int wx = cleaner[0].second;
+		int d = 0;
+		wx += 1;
+		map[wy][wx] = 0;
+
+		while (1) {
+			int ny = wy + direction1[d][0];
+			int nx = wx + direction1[d][1];
+
+			if (ny == cleaner[0].first && nx == cleaner[0].second) {
+				break;
+			}
+
+			//이제 tmap이 고정이고 map을 변경시켜준다..
+			//좀 헷갈리겠지만.
+			if (isinside(ny, nx)) {
+				map[ny][nx] = tmap[wy][wx];
+				wy = ny;
+				wx = nx;
+			}
+			else
+			{
+				d++;
+			}
+		}
+
+		//아래쪽 공기청정기
+		d = 0;
+		wy = cleaner[1].first;
+		wx = cleaner[1].second;
+		wx += 1;
+		map[wy][wx] = 0;
+
+		while (1) {
+			int ny = wy + direction2[d][0];
+			int nx = wx + direction2[d][1];
+
+			if (ny == cleaner[1].first && nx == cleaner[1].second)
+				break;
+			
+			if (isinside(ny, nx)) {
+				map[ny][nx] = tmap[wy][wx];
+				wy = ny;
+				wx = nx;
+			}
+			else
+			{
+				d++;
+			}
+		}
+	}
+
+	int answer = 0;
+	for (int i = 0; i < r; i++)
+		for (int j = 0; j < c; j++)
+			if (map[i][j] > 0) answer += map[i][j];
+
+	printf("%d\n", answer);
+
+	return 0;
+}
