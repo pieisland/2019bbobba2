@@ -1,0 +1,142 @@
+#include <vector>
+#include <stdio.h>
+#include <iostream>
+#include <queue>
+#include <math.h>
+using namespace std;
+
+/*
+191020 일요일
+오랜만에 다시 풀었는데
+이전보다 좀 더 효율적으로 풀어서 뿌듯!
+*/
+
+int n;
+int map[20][20];
+int dir[4][2] = { {1, 0}, {-1, 0}, {0, 1}, {0, -1} };
+
+typedef struct
+{
+	int y;
+	int x;
+	int size;
+	int eatcnt;
+}Shark;
+
+Shark shark;
+
+bool isinside(int y, int x) {
+	if (y >= 0 && y < n && x >= 0 && x < n) return true;
+	else return false;
+}
+
+//상어에서 y, x로 가는 길의 최소거리를 구한다.
+int getdist(int y, int x) {
+
+	int check[20][20] = {0};
+	check[shark.y][shark.x] = 1;
+
+	queue<pair<int, int>> q;
+	q.push({ shark.y, shark.x });
+	while (!q.empty()) {
+		int cy = q.front().first;
+		int cx = q.front().second;
+		q.pop();
+
+		if (cy == y && cx == x) {
+			return check[cy][cx] - 1; //걸리는 시간을 리턴한다
+		}
+
+		for (int i = 0; i < 4; i++) {
+			int ny = cy + dir[i][0];
+			int nx = cx + dir[i][1];
+
+			//범위에 맞고, 가지 않은 길이고, 상어가 지나갈 수 있는 길이라면
+			if (isinside(ny, nx) && map[ny][nx] <= shark.size && check[ny][nx] == 0) {
+				check[ny][nx] = check[cy][cx] + 1;
+				q.push({ ny, nx });
+			}
+		}
+	}
+
+	return -1;
+}
+
+int main(){
+
+	int answer = 0;
+
+	scanf("%d", &n);
+	for(int i = 0;i < n;i++)
+		for (int j = 0; j < n; j++) {
+			scanf("%d", &map[i][j]);
+			//상어라면
+			if (map[i][j] == 9) {
+				shark.y = i;
+				shark.x = j;
+				shark.size = 2;
+				map[i][j] = 0; //상어 위치를 0으로 안해준 것 때문에 틀리기도 함.
+			}
+		}
+	
+	while (1) {
+
+		int mintime = 100000000;
+		int py = -1;
+		int px = -1;
+
+		//이렇게 돌고나면, 
+		for (int i = 0; i<n; i++)
+			for (int j = 0; j < n; j++) {
+				if ( 0 < map[i][j] && map[i][j] < shark.size) {
+					//먹을 수 있는 물고기라면
+					int time = getdist(i, j);
+
+					//그 길로 못간다.
+					if (time < 0) continue;
+
+					//구한 시간이 더 작다면 작은 위치를 갱신해준다.
+					if (time < mintime) {
+						mintime = time;
+						py = i;
+						px = j;
+					}
+					else if (time == mintime) { //걸리는 시간이 동일하면 
+						if (i < py) { //가장 위에 있는 물고기 선택
+							py = i;
+							px = j;
+						}
+						else if (i == py) {
+							//그런데 y값도 같다면
+							if (j < px) { //가장 왼쪽에 있는 물고기 선택
+								py = i;
+								px = j;
+							}
+						}
+					}
+				}
+			}
+
+		//먹을 물고기가 없다면 break.
+		if (py == -1 && px == -1) {
+			break;
+		}
+
+		//먹을 물고기가 있다면 py, px 위치에 있는 물고기를 먹게 된다.
+		//그런 후에는 다시 돌아야된다.
+		map[py][px] = 0;
+		shark.y = py;
+		shark.x = px;
+		shark.eatcnt += 1; //먹은 횟수를 증가하는데
+		//사이즈만큼 먹었다면 사이즈를 증가하고 수를 다시 0으로.
+		if (shark.size == shark.eatcnt) {
+			shark.size += 1;
+			shark.eatcnt = 0;
+		}
+		answer += mintime;
+	}
+	
+	printf("%d\n", answer);
+
+	return 0;
+}
