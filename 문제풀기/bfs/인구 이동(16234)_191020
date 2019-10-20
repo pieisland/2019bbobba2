@@ -1,0 +1,133 @@
+#include <vector>
+#include <stdio.h>
+#include <iostream>
+#include <queue>
+#include <math.h>
+#include <algorithm>
+#include <cstring>
+using namespace std;
+
+/*
+191020 일요일
+시간초과가 나서.. 3중 포문을 없애기 위해
+벡터에 넣어서 해줬더만 통과됐다..
+또 하나하나씩 찾는 일을 하지 말라는 의미겠지..
+원래 이런거 그렇게 막.. 문제되는 건 아니었던 것 같은데
+이제 이런 것도 신경을 쓰면서 코딩해야될 것 같다.
+*/
+
+int n, l, r;
+int map[50][50];
+int check[50][50];
+int dir[4][2] = { {1, 0}, {-1, 0}, {0, 1}, {0, -1} };
+int savesum[50 * 50][2];//
+
+bool isinside(int y, int x) {
+	if (y >= 0 && y < n && x >= 0 && x < n) return true;
+	else return false;
+}
+
+//같은 인덱스 애들을 잡아주는 겁니다.
+void bfs(int y, int x, int idx) {
+	queue<pair<int, int>> q;
+	q.push({ y, x });
+	check[y][x] = idx;
+	savesum[idx][0] = 1;
+	savesum[idx][1] = map[y][x];
+
+	vector<pair<int, int >> pos;
+	pos.push_back({ y, x });
+
+	while (!q.empty()) {
+		int cy = q.front().first;
+		int cx = q.front().second;
+		q.pop();
+
+		for (int i = 0; i < 4; i++) {
+			int ny = cy + dir[i][0];
+			int nx = cx + dir[i][1];
+			
+			if (isinside(ny, nx) && check[ny][nx] == 0) {
+				int val = abs(map[ny][nx] - map[cy][cx]);
+				if (!(l <= val && val <= r)) continue;
+
+				//국경이 열리려면 그 차이가 그 안에 디는데
+				pos.push_back({ ny, nx });
+				q.push({ ny, nx });
+				check[ny][nx] = idx;
+				savesum[idx][0] += 1; //몇 개 인지
+				savesum[idx][1] += map[ny][nx];//값을 저장.
+			}
+		}
+	}
+
+	int cnt = savesum[idx][0];
+	int sum = savesum[idx][1];
+	int val = sum / cnt;
+
+	//국경이 열린 곳에는 값을 넣어준다.
+	for (int i = 0; i < pos.size(); i++) {
+		map[pos[i].first][pos[i].second] = val;
+	}
+}
+
+int main() {
+	scanf("%d %d %d", &n, &l, &r);
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < n; j++) {
+			scanf("%d", &map[i][j]);
+		}
+	}
+
+	//이건 그냥 bfs 문제같습니다.
+	
+	//될 때까지 인구이동 해야되잖아요.
+	int ans = 0;
+	while(1){
+		//cout << "dfdfdf" << endl;
+
+		memset(check, 0, sizeof(check));
+		memset(savesum, 0, sizeof(savesum));
+		int stop = 0; //전부다 1이 되면 
+		int idx = 1;
+		for (int i = 0; i < n; i++) {
+			for (int j = 0; j < n; j++) {
+				if (check[i][j] == 0) {
+					bfs(i, j, idx);
+					idx++;//그거 매겨주는 거에요.
+					stop++;
+				}
+			}
+		}
+
+		//cout << stop << endl;
+
+		//모든 애들이 됐다면..
+		if (stop == n * n) break;
+
+		//이렇게해서 다 매겨주고 나서 이제 확인을 해야됩니다.
+		//해당 것들이 몇 개가 있는지를..
+		//같은 인덱스를 가진 것들에 대해서 매기고 값을 조정해줘야되거든요.
+		//마지막 인덱스가 idx-1이기 때문에
+		/*for (int a = 1; a < idx; a++) {
+			//cout << "what" << endl;
+			int cnt = savesum[a][0];
+			int sum = savesum[a][1];
+			int val = sum / cnt;
+
+			//국경이 열린 곳에는 값을 넣어준다.
+			for (int i = 0; i < n; i++) {
+				for (int j = 0; j < n; j++) {
+					if (check[i][j] == a) {
+						map[i][j] = val;
+					}
+				}
+			}
+		}*/
+		ans++;
+	}
+
+	printf("%d\n", ans);
+
+	return 0;
+}
