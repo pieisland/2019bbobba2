@@ -1,0 +1,98 @@
+#include <vector>
+#include <stdio.h>
+#include <iostream>
+#include <queue>
+#include <math.h>
+#include <algorithm>
+#include <cstring>
+#include <string>
+using namespace std;
+
+/*
+19.10.29.화.
+숫자 야구(2503)
+dfs로 모든 경우의 수를 만들고
+주어진 숫자에 대해서
+모두 strike와 ball 수가 맞으면 ans를 증가한다.
+strike인지 ball인지를 판단하기 위해서
+string으로 확인하는 게 더 쉬운 것 같아서
+애초에 구조체를 만들 때 string으로 만들었다.
+구조체까지 만들어야하는 일인가 싶기는 했는데
+pair로 하면 헷갈리니까 그냥 구조체로 했다.
+*/
+
+int N;
+int sel[10];
+int ans;
+
+typedef struct {
+	string s;
+	int strike;
+	int ball;
+}Nums;
+
+vector<Nums> vec;
+
+void dfs(int cnt, string s)
+{
+	if (cnt == 3) {
+		//vec에 넣은 모든 수에 대해서 
+
+		bool ok = true;
+
+		for (int i = 0; i < N; i++) {
+			int tstrike = 0;
+			int tball = 0;
+			
+			string tmps = vec[i].s;
+			//strike 수를 센다.
+			for (int a = 0; a < 3; a++) {
+				if (tmps[a] == s[a]) tstrike++;
+			}
+
+			//ball 수를 센다. 서로 다른 숫자라서 괜찮다.
+			for (int a = 0; a < 3; a++) {
+				for (int b = 0; b < 3; b++) {
+					if (a == b) continue;
+					if (tmps[a] == s[b]) tball++;
+				}
+			}
+
+			//하나라도 다르다면 false로 바꿔줘야 한다.
+			if (tstrike != vec[i].strike || tball != vec[i].ball)
+				ok = false;
+		}
+
+		//바뀌지 않았다면 증가.
+		if (ok == true)
+			ans++;
+
+		return;
+	}
+
+	for (int i = 1; i <= 9; i++) {
+		if (sel[i] == 1) continue;
+		sel[i] = 1;
+		string tmp = s + to_string(i);
+		dfs(cnt + 1, tmp);
+		sel[i] = 0;
+	}
+}
+
+int main() {
+
+	scanf("%d", &N);
+
+	for (int i = 0; i < N; i++) {
+		Nums tmp;
+		cin >> tmp.s >> tmp.strike >> tmp.ball;
+		vec.push_back(tmp);
+	}
+
+	string s;
+	dfs(0, s);
+
+	cout << ans << endl;
+
+	return 0;
+}
