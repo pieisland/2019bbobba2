@@ -1,0 +1,71 @@
+#include <vector>
+#include <stdio.h>
+#include <iostream>
+#include <queue>
+#include <math.h>
+#include <algorithm>
+#include <cstring>
+#include <string>
+using namespace std;
+
+/*
+19.10.29.화.
+숫자판 점프(2210)_백트래킹
+간단한 백트래킹 문제.
+dfs 손 풀기 문제.
+*/
+
+int arr[5][5];
+int dir[4][2] = { {1, 0}, {-1, 0}, {0, 1}, {0, -1} };
+vector<string> numbers;
+
+void dfs(int y, int x, int cnt, string s) {
+	
+	//6개 다 골랐다면
+	if (cnt == 6) {
+		//내가 만든 s가 벡터에 있는지 확인하고
+		//없으면 추가한다.
+		int check = 0;
+		for (int i = 0; i < numbers.size(); i++) {
+			if (numbers[i] == s) {
+				check = 1; 
+				break;
+			}
+		}
+		//한 번도 같은 게 안나왔다면 벡터에 넣어준다.
+		if (check == 0) {
+			numbers.push_back(s);
+		}
+
+		return;
+	}
+
+	for (int i = 0; i < 4; i++) {
+		int ny = y + dir[i][0];
+		int nx = x + dir[i][1];
+		//범위에 맞으면이면 됨. 갔다온 거 상관 없음.
+		if (0 <= ny && ny < 5 && 0 <= nx && nx < 5) {
+			string tmp = s + to_string(arr[ny][nx]);
+			dfs(ny, nx, cnt + 1, tmp);
+		}
+	}
+	
+	return;
+}
+
+int main(){
+
+	for (int i = 0; i < 5; i++)
+		for (int j = 0; j < 5; j++)
+			scanf("%d", &arr[i][j]);
+
+	//어디서든 시작.
+	for(int i = 0; i < 5; i++)
+		for (int j = 0; j < 5; j++) {
+			dfs(i, j, 1, to_string(arr[i][j]));
+		}
+
+	cout << numbers.size() << endl;
+
+	return 0;
+}
