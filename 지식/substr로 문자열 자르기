@@ -1,9 +1,0 @@
-string s;
-s.substr(start, end);
-을 하면 start 인덱스에서 end까지의 문자를 잘라준다.
-
-만약
-s="abced";
-s.substr(2, 4);
-라면 ced가 나온다.
-허..??
