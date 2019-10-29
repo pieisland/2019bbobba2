@@ -1,0 +1,59 @@
+#include <vector>
+#include <stdio.h>
+#include <iostream>
+#include <queue>
+#include <math.h>
+#include <algorithm>
+#include <cstring>
+#include <string>
+using namespace std;
+
+/*
+191029
+왜틀렸는지 모르겠는데....
+*/
+
+//둘 중 작은 수를 받아가지고
+//그 수만큼 어떻게 해야겠음.
+int N;
+int M;
+int arr[50][50];
+int ans;
+
+int main(){
+
+	int small;
+	scanf("%d %d", &N, &M);
+	if (N < M)
+		small = N;
+	else
+		small = M;
+
+	for (int i = 0; i < N; i++)
+		for (int j = 0; j < M; j++)
+			scanf("%1d", &arr[i][j]);
+
+	/*for(int i=0;i<=N-small; i++)
+		for (int j = 0; j <= M - small; j++) {
+
+		}*/
+
+	//근데 사실 ssize가 점점 커질 것이기 때문에
+	//굳이 큰 거를 비교하지 않아도 되기는 할 듯.
+	for (int size = 0; size <= small; size++) {
+		for (int i = 0; i < N - size; i++) {
+			for (int j = 0; j < M - size; j++) {
+				cout << i + 1 << j + 1 << endl;
+				if (arr[i][j] == arr[i + size][j] == arr[i][j + size] == arr[i + size][j + size])
+				{
+					int ssize = (size + 1)*(size + 1);
+					if (ans < ssize) ans = ssize;
+				}
+			}
+		}
+	}
+	
+	printf("%d\n", ans);
+
+	return 0;
+}
