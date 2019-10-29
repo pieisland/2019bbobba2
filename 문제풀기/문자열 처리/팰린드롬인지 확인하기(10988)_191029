@@ -1,0 +1,40 @@
+#include <vector>
+#include <stdio.h>
+#include <iostream>
+#include <queue>
+#include <math.h>
+#include <algorithm>
+#include <cstring>
+#include <string>
+using namespace std;
+
+/*
+19.10.29.화.
+팰린드롬인지 확인하기(10988)_문자열처리
+기본 문제.
+짝수나 홀수나 동일하게 된다는 걸 알게됐다.
+*/
+
+int main(){
+
+	string s;
+	cin >> s;
+	int length = s.length();
+	length /= 2;//반으로 나누고
+
+	int check = 1;
+	
+	for (int i = 0; i < length; i++) {
+		if (s[i] != s[s.length() - 1 - i])
+		{
+			check = 0;
+			break;
+		}
+	}
+
+	if (check == 1) cout << 1 << endl;
+	else
+		cout << 0 << endl;
+
+	return 0;
+}
