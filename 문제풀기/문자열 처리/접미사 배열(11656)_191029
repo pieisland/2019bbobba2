@@ -1,0 +1,36 @@
+#include <vector>
+#include <stdio.h>
+#include <iostream>
+#include <queue>
+#include <math.h>
+#include <algorithm>
+#include <cstring>
+#include <string>
+using namespace std;
+
+/*
+19.10.29.화.
+접미사 배열(11656)_문자열처리
+sort 아니었으면 어떻게 풀었을까..;
+*/
+
+int main(){
+	
+	vector<string> vec;
+	string s;
+	cin >> s;
+	for (int i = 0; i < s.length(); i++) {
+		string tmp;
+		for (int j = i; j < s.length(); j++) {
+			tmp += s[j];
+		}
+		vec.push_back(tmp);
+		//cout << tmp << endl;
+	}
+	
+	sort(vec.begin(), vec.end());
+	for (int i = 0; i < vec.size(); i++)
+		cout << vec[i] << endl;
+
+	return 0;
+}
