@@ -1,0 +1,50 @@
+#include <vector>
+#include <stdio.h>
+#include <iostream>
+#include <queue>
+#include <math.h>
+#include <algorithm>
+#include <cstring>
+#include <string>
+using namespace std;
+
+/*
+19.10.29.화.
+간단 시뮬레이션 문제.
+어디에 그 숫자가 있는지를 찾아서 인덱스를 저장하고
+그 인덱스에 서로 바꿔서 넣어줘야되는건데
+그걸 잘못 이해해서 초반에 이상하게 풀었다.
+문제에서 -1이 출력되는 조건을 고려하지 않아도 되는 문제였다.
+공이.. 안사라지는걸 왜.. ㅋㅋ
+*/
+
+int cup[4] = {0, 1, 2, 3};
+
+void change(int a, int b) {
+	int t1, t2;
+	for (int i = 1; i <= 3; i++) {
+		if (cup[i] == a)
+			t1 = i;
+		if (cup[i] == b)
+			t2 = i;
+	}
+
+	cup[t1] = b;
+	cup[t2] = a;
+}
+
+int main(){
+	
+	//공이 사라지는 경우가 뭐냐.. 개이상하네.
+	int n;
+	cin >> n;
+	for(int i=0;i<n;i++){
+		int a, b;
+		cin >> a >> b;
+		change(a, b);
+	}
+
+	cout << cup[1] << endl;
+
+	return 0;
+}
