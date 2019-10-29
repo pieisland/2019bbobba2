@@ -1,0 +1,14 @@
+shirt_size[i].compare("XS") == 0
+
+string s;
+cin>>s;
+if(s.compare("good") == 0)
+  cout<<"answer"<<endl;
+
+스트링에 . compare ("비교하려는 문자열")
+값이 0이라면 동일하다는 의미!
+다르면 -1인걸로 알고있기는 한데.. 맞나?!
+아무튼 0이어야 같은 것을 알고있자.
+
+사실 string은 == 로 해도 되기는 한다.
+하지만 compare도 알아두자.
