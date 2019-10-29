@@ -1,8 +1,13 @@
 string s;
 s.substr(a, b);
 a부터 시작해서 b개를 가져오기.
+만약 s.substr(a);
+를 하면 a부터 시작해서 끝까지 출력한다.
 
 string a, b;
 a.compare(b);
 0값이면 둘이 동일함을 의미.
 -1이면 다른 값임을 의미.
+
+
+//참고: https://blockdmask.tistory.com/338
