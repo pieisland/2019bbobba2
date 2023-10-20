@@ -1,9 +1,16 @@
-
 // Online C++ compiler to run C++ program online
 #include <iostream>
 #include <vector>
 
 using namespace std;
+
+/*
+풀리지만 시간초과다.
+그건 해결 못하겠다.. ^^)
+있는 상어인지 확인하는 부분때문에 시간초과 나는 것 같다.
+상어 수가 많을 수 있어서.. 아오..
+시간 너무 오래걸림 ㅋㅋㅋㅋ
+*/
 
 typedef struct {
     int posy;
@@ -15,6 +22,7 @@ typedef struct {
 } Shark;
 
 vector<Shark> sharks;
+int checkSharkCnt[100][100];
 
 int r, c, m;
 
@@ -23,14 +31,37 @@ int getShark(int col) {
     
     int cnt = sharks.size();
     
-    for(int i=0;i<c; i++){
+    //땅과 가장 가까운 상어를 잡는거래...
+    int ground = 987654321;
+    int idx;
+    for(int i=0;i<cnt; i++){
         if(sharks[i].posx == col && sharks[i].dead ==0) {
-            ret += sharks[i].size;
-            sharks[i].dead = 1;
+            //ret += sharks[i].size;
+            //sharks[i].dead = 1;
+            if(sharks[i].posy < ground) {
+                ground = sharks[i].posy;
+                idx = i;
+            } 
         }
     }
     
+    if(ground != 987654321) {
+        ret = sharks[idx].size;
+        sharks[idx].dead =1;
+    }
+    
     return ret;
+}
+
+void showShark(){
+    cout<<"shark cnt"<<endl;
+    for(int i=0;i<r;i++){
+        for(int j=0;j<c;j++){
+            cout<<checkSharkCnt[i][j]<<' ';
+        }
+        cout<<endl;
+    }
+    cout<<endl;
 }
 
 void moveShark() {
@@ -59,24 +90,27 @@ void moveShark() {
         int speed = sharks[i].speed;
 
         int dir = sharks[i].dir;
-        if(dir %2 ==0) {
+        
+        //cout<<"sharkpos before: "<<sharks[i].posy<<" "<<sharks[i].posx<<endl;
+        
+        if(dir >= 2) {
             //좌우 움직임
             int cx = sharks[i].posx;
             for(int k=0;k<speed;k++) {
-                if(dir == 0) {
+                if(dir == 2) {//오른쪽으로
                     int nx = cx +1;
                     if(nx == c) {
                         cx = c-2;
-                        dir = 2;
+                        dir = 3;
                     } else {
                         cx = nx;
                     }
                 }
-                else {
+                else {//왼쪽으로
                     int nx = cx -1;
                     if(nx == -1) {
                         cx = 1;
-                        dir = 0;
+                        dir = 2;
                     }
                     else {
                         cx = nx;
@@ -84,42 +118,87 @@ void moveShark() {
                     
                 }
             }
-            sharks[i].cx = cx;
+            sharks[i].posx = cx;
             sharks[i].dir = dir;
         }
         else {
             //상하 움직임
             int cy = sharks[i].posy;
             for(int k=0;k<speed;k++) {
-                if(dir == 3) {
+                if(dir == 1) {//아래로
                     int ny = cy +1;
-                    if(nx ==r) {
+                    if(ny ==r) {
                         cy = r-2;
-                        dir = 1;
+                        dir = 0;
                     } else {
                         cy = ny;
                     }
                 }
-                else {
+                else {//위로
                     int ny = cy -1;
-                    if(nx == -1) {
+                    if(ny == -1) {
                         cy = 1;
-                        dir = 3;
+                        dir = 1;
                     }
                     else {
                         cy = ny;
                     }
                 }
             }
-            sharks[i].cy = cy;
+            sharks[i].posy = cy;
             sharks[i].dir = dir;
         }
+                    
+        //cout<<"sharkpos after: "<<sharks[i].posy<<" "<<sharks[i].posx<<endl;
+        checkSharkCnt[sharks[i].posy][sharks[i].posx] +=1;
     }
+    
+    //showShark();
+}
+
+void killShark(int y, int x) {
+    //이름이 잘 안 맞기는 하지만;; 하는대로 하자고.
+    int len = sharks.size();
+    
+    int maxSharkSize = 0;
+    vector<int> sameSizeSharkIdx;
+    //int bigSharkIdx;
+    for(int i=0;i<len;i++) {
+        if(sharks[i].posy == y && sharks[i].posx == x) {
+            sameSizeSharkIdx.push_back(i);
+            if(maxSharkSize < sharks[i].size) {
+                maxSharkSize = sharks[i].size;
+            }
+        }
+    }
+    
+    for(int i=0;i<sameSizeSharkIdx.size();i++) {
+        if(sharks[i].size!=maxSharkSize){
+            sharks[i].dead = 1;
+        }
+    }
+    
+    //이렇게 작성하면 할 이유가 없음. 
+    //return maxSharkSize;
 }
 
 void eatShark() {
-    //동일한 위치에 있다면 더 몸집이 큰 상어가 잡아먹어야 한다.
+    //동일한 위치에 있다면 더 몸집이 큰 상어가 잡아먹어야 한다
     //동일한 위치에 있음을 파악하는 방법?
+    //쓰다가 또 거져가지고;;; 어이가 없음.. ㅋㅋㅋㅋ
+    for(int i=0;i<r;i++){
+        for(int j=0;j<c;j++) {
+            if(checkSharkCnt[i][j]>1) {
+                //여러 명의 상어가 있는 곳이라면, 
+                //int maxSharkSize = getMaxSharkSize(i, j);
+                killShark(i, j);
+            }
+            
+            //볼장다봤으니 그냥 영기서 클리어해버림....
+            checkSharkCnt[i][j] = 0;
+        }
+    }
+    
 }
 
 int main() {
@@ -128,25 +207,25 @@ int main() {
     cin>>r>>c>>m;
     
     for(int i=0;i<m;i++) {
-        Shart s;
+        Shark s;
         cin>>s.posy>>s.posx>>s.speed>>s.dir>>s.size;
         s.posy = s.posy-1;
         s.posx = s.posx-1;
+        s.dir = s.dir-1;
         s.dead = 0;
         sharks.push_back(s);
     }
 
     for(int i=0;i<c;i++) {
         //상어를 잡는다.
-        answer += getShark();
+        answer += getShark(i);
         
         //상어가 이동한다.
         moveShark();
+        eatShark();
     }
+    
+    cout<<answer;
 
     return 0;
 }
-
-/*
-정답 아님. 근데 일단 올려놓음...
-*/
